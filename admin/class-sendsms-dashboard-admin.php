@@ -101,29 +101,30 @@ class Sendsms_Dashboard_Admin
 	public function load_settings()
 	{
 		register_setting(
-			'sendsms_dashboard_general',
-			'sendsms_dashboard_settings',
+			'sendsms_dashboard_plugin_settings',
+			'sendsms_dashboard_plugin_settings',
 			array($this, 'sendsms_dashboard_settings_sanitize')
 		);
 
 		add_settings_section(
-			'sendsms_dashboard_section_general',
+			'sendsms_dashboard_general',
 			__('General Settings', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_section_callback'),
-			'sendsms_dashboard_general'
+			'sendsms_dashboard_plugin'
 		);
 
 		add_settings_field(
 			'sendsms_dashboard_username',
 			__('SendSMS Username', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_setting_username_callback'),
-			'sendsms_dashboard_general',
-			'sendsms_dashboard_section_general'
+			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_general'
 		);
 	}
 
 	public function sendsms_dashboard_settings_sanitize($args)
 	{
+		error_log(json_encode($args));
 		return $args;
 	}
 
@@ -140,11 +141,11 @@ class Sendsms_Dashboard_Admin
 	//Validators
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
-		$setting = get_option('sendsms_dashboard_settings');
+		$setting = get_option('sendsms_dashboard_plugin_settings')['username'];
 		error_log($setting);
 		// output the field
 ?>
-		<input id="sendsms_dashboard_setting_username"type="text" name="sendsms_dashboard_username" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+		<input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 <?php
 	}
 }

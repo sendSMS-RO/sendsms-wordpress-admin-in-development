@@ -16,8 +16,8 @@ settings_errors('sendsms-dashboard_messages');
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     <form action="options.php" method="post">
         <?php
-        settings_fields('sendsms_dashboard_general');
-        do_settings_sections('sendsms_dashboard_general');
+        settings_fields('sendsms_dashboard_plugin_settings');
+        do_settings_sections('sendsms_dashboard_plugin');
         // output save settings button
         submit_button('Save Settings');
         ?>
