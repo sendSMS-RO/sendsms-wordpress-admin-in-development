@@ -42,7 +42,6 @@ class Sendsms_Dashboard_Admin
 	 */
 	public function __construct($plugin_name, $version)
 	{
-
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 	}
@@ -83,14 +82,14 @@ class Sendsms_Dashboard_Admin
 			plugin_dir_url(__FILE__) . 'img/sendsms-dashboard-setting.png'
 		);
 		#this will add a submenu
-		// add_submenu_page(
-		// 	$this->plugin_name,
-		// 	"Test",
-		// 	"Test Title",
-		// 	"manage_options",
-		// 	$this->plugin_name . "idk yet",
-		// 	plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-test-admin-display.php'
-		// );
+		add_submenu_page(
+			$this->plugin_name,
+			"Send a test",
+			"Send a test SMS",
+			"manage_options",
+			$this->plugin_name . ' send a test',
+			array($this, 'page_test')
+		);
 	}
 
 	/**
@@ -120,14 +119,40 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_plugin',
 			'sendsms_dashboard_general'
 		);
+
+		add_settings_field(
+			'sendsms_dashboard_password',
+			__('SendSMS Password / Api Key', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_password_callback'),
+			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_general'
+		);
+
+		add_settings_field(
+			'sendsms_dashboard_label',
+			__('SendSMS Label', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_label_callback'),
+			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_general'
+		);
 	}
 
 	public function sendsms_dashboard_settings_sanitize($args)
 	{
-		error_log(json_encode($args));
+		foreach ($args as $key => $value) {
+			$args[$key] =  trim($value);
+		}
 		return $args;
 	}
 
+	//TEST PAGE
+	public function page_test()
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-test-admin-display.php');
+	}
+	//EO TEST PAGE
+
+	//SETINGS PAGE
 	public function page_settings()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-admin-display.php');
@@ -141,11 +166,34 @@ class Sendsms_Dashboard_Admin
 	//Validators
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
-		$setting = get_option('sendsms_dashboard_plugin_settings')['username'];
-		error_log($setting);
-		// output the field
+		$setting = $this->get_setting('username');
 ?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+	<?php
+	}
+
+	public function sendsms_dashboard_setting_password_callback($args)
+	{
+		$setting = $this->get_setting('password');
+	?>
+		<input type="password" name="sendsms_dashboard_plugin_settings[password]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+	<?php
+	}
+
+	public function sendsms_dashboard_setting_label_callback($args)
+	{
+		$setting = $this->get_setting('label', '1898');
+
+	?>
+		<input type="text" name="sendsms_dashboard_plugin_settings[label]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 <?php
 	}
+	//EO SETTINGS PAGE
+
+	//GENERAL FUNCTIONS
+	public function get_setting($setting, $default = "")
+	{
+		return esc_html(isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default);
+	}
+	//EO GENERAL FUNCTIONS
 }
