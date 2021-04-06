@@ -31,6 +31,8 @@ class Sendsms_Dashboard_Admin
 	 */
 	private $version;
 
+
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -63,5 +65,86 @@ class Sendsms_Dashboard_Admin
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sendsms-dashboard-admin.js', array('jquery'), $this->version, false);
+	}
+
+	/**
+	 * Loads the menu file
+	 * 
+	 * @since	1.0.0
+	 */
+	public function load_menu()
+	{
+		add_menu_page(
+			__('SendSMS Dashboard', 'sendsms-dashboard'),
+			__('SendSMS', 'sendsms-dashboard'),
+			'manage_options',
+			$this->plugin_name,
+			array($this, 'page_settings'),
+			plugin_dir_url(__FILE__) . 'img/sendsms-dashboard-setting.png'
+		);
+		#this will add a submenu
+		// add_submenu_page(
+		// 	$this->plugin_name,
+		// 	"Test",
+		// 	"Test Title",
+		// 	"manage_options",
+		// 	$this->plugin_name . "idk yet",
+		// 	plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-test-admin-display.php'
+		// );
+	}
+
+	/**
+	 * Register setting fields
+	 * 
+	 * @since	1.0.0
+	 */
+	public function load_settings()
+	{
+		register_setting(
+			'sendsms_dashboard_general',
+			'sendsms_dashboard_settings',
+			array($this, 'sendsms_dashboard_settings_sanitize')
+		);
+
+		add_settings_section(
+			'sendsms_dashboard_section_general',
+			__('General Settings', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_section_callback'),
+			'sendsms_dashboard_general'
+		);
+
+		add_settings_field(
+			'sendsms_dashboard_username',
+			__('SendSMS Username', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_username_callback'),
+			'sendsms_dashboard_general',
+			'sendsms_dashboard_section_general'
+		);
+	}
+
+	public function sendsms_dashboard_settings_sanitize($args)
+	{
+		return $args;
+	}
+
+	public function page_settings()
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-admin-display.php');
+	}
+
+	public function sendsms_dashboard_section_callback($args)
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-section-admin-display.php');
+	}
+
+	//Validators
+	public function sendsms_dashboard_setting_username_callback($args)
+	{
+		$setting = get_option('sendsms_dashboard_settings');
+		error_log($setting);
+		// output the field
+?>
+		<input id="sendsms_dashboard_setting_username"type="text" name="sendsms_dashboard_username" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+<?php
 	}
 }
