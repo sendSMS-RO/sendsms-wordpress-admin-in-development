@@ -135,12 +135,27 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_plugin',
 			'sendsms_dashboard_general'
 		);
+
+		add_settings_field(
+			'sendsms_dashboard_store_type',
+			__('Do you own a Romanian store?', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_store_type_callback'),
+			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_general'
+		);
 	}
 
 	public function sendsms_dashboard_settings_sanitize($args)
 	{
 		foreach ($args as $key => $value) {
-			$args[$key] =  trim($value);
+			switch ($key) {
+				case 'password':
+					$args[$key] = trim($value);
+					break;
+				case 'store_type':
+					$args[$key] = 1;
+					break;
+			}
 		}
 		return $args;
 	}
@@ -163,7 +178,7 @@ class Sendsms_Dashboard_Admin
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-section-admin-display.php');
 	}
 
-	//Validators
+	//Field creators
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
 		$setting = $this->get_setting('username');
@@ -183,9 +198,18 @@ class Sendsms_Dashboard_Admin
 	public function sendsms_dashboard_setting_label_callback($args)
 	{
 		$setting = $this->get_setting('label', '1898');
-
 	?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[label]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+	<?php
+	}
+
+	public function sendsms_dashboard_setting_store_type_callback($args)
+	{
+		$setting = $this->get_setting('store_type', false);
+		error_log($setting);
+	?>
+		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="true" <?= $setting ? "checked" : "" ?>>
+		<p><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
 <?php
 	}
 	//EO SETTINGS PAGE
