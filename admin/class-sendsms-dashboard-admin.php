@@ -54,7 +54,7 @@ class Sendsms_Dashboard_Admin
 	public function enqueue_styles()
 	{
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sendsms-dashboard-admin.css', array(), $this->version, 'all');
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . "-bootstrap", plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Sendsms_Dashboard_Admin
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sendsms-dashboard-admin.js', array('jquery'), $this->version, false);
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name . "-bootstrap", plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), $this->version, false);
 		wp_localize_script(
 			$this->plugin_name,
 			'sendsms_ajax_object',
