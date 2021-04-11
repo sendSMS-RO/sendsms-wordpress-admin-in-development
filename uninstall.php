@@ -26,6 +26,16 @@
  */
 
 // If uninstall not called from WordPress, then exit.
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+if (!defined('WP_UNINSTALL_PLUGIN'))
 	exit;
-}
+
+
+if (!current_user_can('activate_plugins'))
+	return;
+
+check_admin_referer('bulk-plugins');
+
+// Important: Check if the file is the one
+// that was registered during the uninstall hook.
+if (__FILE__ != WP_UNINSTALL_PLUGIN)
+	return;
