@@ -68,10 +68,12 @@ class Sendsms_Dashboard_Admin
 		wp_enqueue_script($this->plugin_name . "-bootstrap", plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
 		wp_localize_script(
 			$this->plugin_name,
-			'sendsms_ajax_object',
+			'sendsms_object',
 			[
 				'ajax_url' => admin_url('admin-ajax.php'),
-				'security' => wp_create_nonce('sendsms-security-nonce')
+				'security' => wp_create_nonce('sendsms-security-nonce'),
+				'text_message_contains_something' => __('The approximate number of messages: ', 'wc_sendsms'),
+				'text_message_is_empty' => __('The field is empty', 'wc_sendsms')
 			]
 		);
 	}
@@ -179,10 +181,12 @@ class Sendsms_Dashboard_Admin
 	//Ajax handler
 	public function send_a_test_sms()
 	{
+		error_log("merge");
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error(__('Invalid security token sent.', 'sendsms-dashboard'));
 			wp_die();
 		}
+		error_log("correctToken");
 	}
 	//EO TEST PAGE
 
