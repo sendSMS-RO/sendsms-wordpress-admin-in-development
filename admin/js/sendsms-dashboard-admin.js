@@ -23,7 +23,7 @@ jQuery(document).ready(function() {
 
 //count the number of characters
 document.addEventListener("DOMContentLoaded", (event) => {
-    var sendsms_daschboard_content = document.getElementsByClassName('sendsms_daschboard_content')[0];
+    var sendsms_daschboard_content = document.getElementsByClassName('sendsms_dashboard_content')[0];
     sendsms_daschboard_content.addEventListener("input", (event) => 
         {
             lenghtCounter(event.target, document.getElementById(event.target.dataset['sendsmsCounter']));
