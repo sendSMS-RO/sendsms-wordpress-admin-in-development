@@ -14,7 +14,11 @@ jQuery(document).ready(function() {
         });
     });
     new jBox('Tooltip', {
-        attach: '.tooltip'
+        attach: '.tooltip',
+        preventDefault: true,
+        getTitle: 'data-title',
+        addClass: 'sendsms-general-tooltip',
+        maxWidth: 200
     });
 });
 

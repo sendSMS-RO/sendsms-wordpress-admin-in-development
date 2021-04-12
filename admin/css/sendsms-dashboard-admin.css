@@ -94,41 +94,7 @@
     }
 }
 
-.sendsms-tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-  }
-  
-  .sendsms-tooltip .sendsms-tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .sendsms-tooltip .sendsms-tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-  }
-  
-  .sendsms-tooltip:hover .sendsms-tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
+.sendsms-general-tooltip > div > div > div
+{
+    font-weight: 400;
+}
