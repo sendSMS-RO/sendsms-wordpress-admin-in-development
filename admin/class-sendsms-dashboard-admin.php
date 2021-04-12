@@ -64,6 +64,8 @@ class Sendsms_Dashboard_Admin
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sendsms-dashboard-admin.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name . "-font-awesome", plugin_dir_url(__FILE__) . 'js/all.min.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name . "-jBox", 'https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.2.7/dist/jBox.all.min.js', array('jquery'), $this->version, false);
 		wp_localize_script(
 			$this->plugin_name,
 			'sendsms_object',

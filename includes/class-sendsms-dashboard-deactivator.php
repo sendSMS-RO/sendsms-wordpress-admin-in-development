@@ -26,6 +26,5 @@ class Sendsms_Dashboard_Deactivator
 			return;
 		$plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
 		check_admin_referer("deactivate-plugin_{$plugin}");
-		error_log("deactivate");
 	}
 }
