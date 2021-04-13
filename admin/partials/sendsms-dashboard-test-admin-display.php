@@ -10,19 +10,13 @@
             </div>
             <input id="phone_number" type="tel" class="sendsms-item-input-1" placeholder="40727363767" aria-label="Phone number" aria-describedby="forPhoneNumber">
             <div class="sendsms-item-input-1">
-                <span id="forFrom"><?= __('From', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('Your SendSMS Label', 'sendsms-dashboard') ?>"></i>
-            </div>
-            <input id="label" type="text" class="sendsms-item-input-1" value="1898" aria-label="Label" aria-describedby="forLabel">
-
-            <div class="sendsms-item-input-1">
-                <span id="forGdpr"><?= __('Unsubscribe link?', 'sendsms-dashboard') ?></span>
+                <span id="forGdpor"><?= __('Add unsubscribe link?', 'sendsms-dashboard') ?></span>
                 <i class="fas fa-question-circle tooltip" data-title="<?= __('You must specify {gdpr} key message. {gdpr} key will be replaced automaticaly with confirmation unique confirmation link. If {gdpr} key is not specified confirmation link will be placed at the end of message.', 'sendsms-dashboard') ?>"></i>
             </div>
             <input id="gdpr" class="sendsms-item-input-1" type="checkbox" value="gdrp" aria-label="Unsubscribe Link" aria-describedby="forGdpr">
             <div class="sendsms-item-input-1">
                 <span id="forShort"><?= __('Shrink urls?', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('Searches long url and replaces them with coresponding sort url', 'sendsms-dashboard') ?>"></i>
+                <i class="fas fa-question-circle tooltip" data-title="<?= __('Searches long url and replaces them with coresponding short url. Please use only urls that start with https:// or http://', 'sendsms-dashboard') ?>"></i>
             </div>
             <input id="short" class="sendsms-item-input-1" type="checkbox" value="short" aria-label="Shrink urls?" aria-describedby="forShort">
 

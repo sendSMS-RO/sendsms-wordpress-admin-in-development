@@ -125,7 +125,6 @@ class Sendsms_Dashboard
 	 */
 	private function set_locale()
 	{
-
 		$plugin_i18n = new Sendsms_Dashboard_i18n();
 
 		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');

@@ -1,5 +1,5 @@
 <?php
-
+require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -73,8 +73,10 @@ class Sendsms_Dashboard_Admin
 			[
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'security' => wp_create_nonce('sendsms-security-nonce'),
-				'text_message_contains_something' => __('The approximate number of messages: ', 'wc_sendsms'),
-				'text_message_is_empty' => __('The field is empty', 'wc_sendsms')
+				'text_message_contains_something' => __('The approximate number of messages: ', 'sendsms-dashboard'),
+				'text_message_is_empty' => __('The field is empty', 'sendsms-dashboard'),
+				'text_button_sending' => __('It\'s being sent...', 'sendsms-dashboard'),
+				'text_button_send' => __('Send Message', 'sendsms-dashboard')
 			]
 		);
 	}
@@ -97,11 +99,19 @@ class Sendsms_Dashboard_Admin
 		#this will add a submenu
 		add_submenu_page(
 			$this->plugin_name,
-			"Send a test",
-			"Send a test SMS",
+			__("Send a test", 'sendsms-dashboard'),
+			__("Send a test SMS", 'sendsms-dashboard'),
 			"manage_options",
 			$this->plugin_name . ' send a test',
 			array($this, 'page_test')
+		);
+		add_submenu_page(
+			$this->plugin_name,
+			__("History", 'sendsms-dashboard'),
+			__("History", 'sendsms-dashboard'),
+			"manage_options",
+			$this->plugin_name . ' history',
+			array($this, 'page_history')
 		);
 	}
 
@@ -173,6 +183,13 @@ class Sendsms_Dashboard_Admin
 		return $args;
 	}
 
+	//HISTORY PAGE
+	public function page_history()
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-history-admin-display.php');
+	}
+	//EO HISTORY PAGE
+
 	//TEST PAGE
 	public function page_test()
 	{
@@ -182,12 +199,26 @@ class Sendsms_Dashboard_Admin
 	//Ajax handler
 	public function send_a_test_sms()
 	{
-		error_log("merge");
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error(__('Invalid security token sent.', 'sendsms-dashboard'));
 			wp_die();
 		}
-		error_log("correctToken");
+		if (empty($_POST['message'])) {
+			wp_send_json_error(__('The message box is empty', 'sendsms-dashboard'));
+		}
+		$api = new SendSMS();
+		$result = $api->message_send(
+			$_POST['short'] == 'true' ? true : false,
+			$_POST['gdpr'] == 'true' ? true : false,
+			isset($_POST['phone_number']) ? $_POST['phone_number'] : "",
+			isset($_POST['message']) ? $_POST['message'] : "",
+			'TEST'
+		);
+		if ($result['status'] > 0) {
+			wp_send_json_success(__('Message sent', 'sendsms-dashboard'));
+		} else {
+			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . $result['status'] . __("\nMessage: ", 'sendsms-dashboard') . $result['message'] . __("\nDetails: ", 'sendsms-dashboard') . $result['details']);
+		}
 	}
 	//EO TEST PAGE
 
