@@ -13,13 +13,38 @@ if (isset($_GET['settings-updated'])) {
 settings_errors('sendsms-dashboard_messages');
 ?>
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-    <form action="options.php" method="post">
-        <?php
-        settings_fields('sendsms_dashboard_plugin_settings');
-        do_settings_sections('sendsms_dashboard_plugin');
-        // output save settings button
-        submit_button('Save Settings');
-        ?>
-    </form>
+    <h1 class="sendsms-text-center"><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <div class="sendsms-containter-grid-settings">
+        <div class="sendsms-item-input-1 sendsms-left-panel-settings">
+            <img class="sendsms-image-center-xs" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
+            <p><?= __('If you don\'t have an account, you can register <a href="https://hub.sendsms.ro/register" target="_blank">here</a>', 'sendsms-dashboard') ?></p>
+            <ul class="sendsms-setting-list">
+                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'general')); ?>>General</a></li>
+                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'user')); ?>>User</a></li>
+            </ul>
+        </div>
+        <form action="options.php" method="post">
+            <?php
+            settings_fields('sendsms_dashboard_plugin_settings');
+            ?>
+            <div class="sendsms-pc-setting-view">
+                <?php
+                $page = sanitize_text_field($_GET['tab']);
+                if (empty($page))
+                    $page = 'general';
+                do_settings_sections("sendsms_dashboard_plugin_$page");
+                // output save settings button
+                submit_button('Save Settings');
+                ?>
+            </div>
+            <div class="sendsms-mobile-setting-view">
+                <?php
+                do_settings_sections("sendsms_dashboard_plugin_general");
+                do_settings_sections("sendsms_dashboard_plugin_user");
+                // output save settings button
+                submit_button('Save Settings');
+                ?>
+            </div>
+        </form>
+    </div>
 </div>

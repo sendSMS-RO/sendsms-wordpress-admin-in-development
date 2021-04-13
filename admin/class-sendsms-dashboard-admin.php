@@ -130,16 +130,16 @@ class Sendsms_Dashboard_Admin
 
 		add_settings_section(
 			'sendsms_dashboard_general',
-			__('General Settings', 'sendsms-dashboard'),
+			"<div class='sendsms-settings-title'>" . __('General Settings', 'sendsms-dashboard') . "</div>",
 			array($this, 'sendsms_dashboard_section_callback'),
-			'sendsms_dashboard_plugin'
+			'sendsms_dashboard_plugin_general'
 		);
 
 		add_settings_field(
 			'sendsms_dashboard_username',
 			__('SendSMS Username', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_setting_username_callback'),
-			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_plugin_general',
 			'sendsms_dashboard_general'
 		);
 
@@ -147,7 +147,7 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_password',
 			__('SendSMS Password / Api Key', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_setting_password_callback'),
-			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_plugin_general',
 			'sendsms_dashboard_general'
 		);
 
@@ -155,7 +155,7 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_label',
 			__('SendSMS Label', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_setting_label_callback'),
-			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_plugin_general',
 			'sendsms_dashboard_general'
 		);
 
@@ -163,8 +163,23 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_store_type',
 			__('Do you own a Romanian store?', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_setting_store_type_callback'),
-			'sendsms_dashboard_plugin',
+			'sendsms_dashboard_plugin_general',
 			'sendsms_dashboard_general'
+		);
+
+		add_settings_section(
+			'sendsms_dashboard_user',
+			"<div class='sendsms-settings-title'>" . __('User Settings', 'sendsms-dashboard') . "</div>",
+			array($this, 'sendsms_dashboard_section_user_callback'),
+			'sendsms_dashboard_plugin_user'
+		);
+
+		add_settings_field(
+			'sendsms_dashboard_user_username',
+			__('SendSMS Username', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_user_username_callback'),
+			'sendsms_dashboard_plugin_user',
+			'sendsms_dashboard_user'
 		);
 	}
 
@@ -230,7 +245,10 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_section_callback($args)
 	{
-		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-section-admin-display.php');
+	}
+
+	public function sendsms_dashboard_section_user_callback($args)
+	{
 	}
 
 	//Field creators
@@ -239,6 +257,14 @@ class Sendsms_Dashboard_Admin
 		$setting = $this->get_setting('username');
 ?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+	<?php
+	}
+
+	public function sendsms_dashboard_setting_user_username_callback($args)
+	{
+		$setting = $this->get_setting('user_username');
+?>
+		<input type="text" name="sendsms_dashboard_plugin_settings[user_username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
 	}
 
