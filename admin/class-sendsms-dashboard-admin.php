@@ -102,7 +102,7 @@ class Sendsms_Dashboard_Admin
 			__("Send a test", 'sendsms-dashboard'),
 			__("Send a test SMS", 'sendsms-dashboard'),
 			"manage_options",
-			$this->plugin_name . ' send a test',
+			$this->plugin_name . '_send_a_test',
 			array($this, 'page_test')
 		);
 		add_submenu_page(
@@ -110,7 +110,7 @@ class Sendsms_Dashboard_Admin
 			__("History", 'sendsms-dashboard'),
 			__("History", 'sendsms-dashboard'),
 			"manage_options",
-			$this->plugin_name . ' history',
+			$this->plugin_name . '_history',
 			array($this, 'page_history')
 		);
 	}
