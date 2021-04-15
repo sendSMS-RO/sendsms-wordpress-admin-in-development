@@ -27,24 +27,14 @@ settings_errors('sendsms-dashboard_messages');
             <?php
             settings_fields('sendsms_dashboard_plugin_settings');
             ?>
-            <div class="sendsms-pc-setting-view">
-                <?php
-                $page = sanitize_text_field($_GET['tab']);
-                if (empty($page))
-                    $page = 'general';
-                do_settings_sections("sendsms_dashboard_plugin_$page");
-                // output save settings button
-                submit_button('Save Settings');
-                ?>
-            </div>
-            <div class="sendsms-mobile-setting-view">
-                <?php
-                do_settings_sections("sendsms_dashboard_plugin_general");
-                do_settings_sections("sendsms_dashboard_plugin_user");
-                // output save settings button
-                submit_button('Save Settings');
-                ?>
-            </div>
+            <?php
+            $page = sanitize_text_field($_GET['tab']);
+            if (empty($page))
+                $page = 'general';
+            do_settings_sections("sendsms_dashboard_plugin_$page");
+            // output save settings button
+            submit_button('Save Settings');
+            ?>
         </form>
     </div>
 </div>

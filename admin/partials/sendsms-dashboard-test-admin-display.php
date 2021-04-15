@@ -2,7 +2,7 @@
     <div class="sendsms-container">
         <img class="sendsms-image-center" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
         <h1 class="sendsms-text-center"><?= __('Send a test SMS', 'sendsms-dashboard') ?></h1>
-
+        <?php wp_nonce_field('sendsms-security-nonce'); ?>
         <div class="sendsms-containter-grid-test">
             <div class="sendsms-item-input-1">
                 <span id="forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></span>

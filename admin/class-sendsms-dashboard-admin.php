@@ -175,9 +175,9 @@ class Sendsms_Dashboard_Admin
 		);
 
 		add_settings_field(
-			'sendsms_dashboard_user_username',
-			__('SendSMS Username', 'sendsms-dashboard'),
-			array($this, 'sendsms_dashboard_setting_user_username_callback'),
+			'sendsms_dashboard_user_add_phone_field',
+			__('Add phone number field?', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_user_add_phone_field_callback'),
 			'sendsms_dashboard_plugin_user',
 			'sendsms_dashboard_user'
 		);
@@ -260,12 +260,13 @@ class Sendsms_Dashboard_Admin
 	<?php
 	}
 
-	public function sendsms_dashboard_setting_user_username_callback($args)
+	public function sendsms_dashboard_user_add_phone_field_callback($args)
 	{
-		$setting = $this->get_setting('user_username');
-?>
-		<input type="text" name="sendsms_dashboard_plugin_settings[user_username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
-	<?php
+		$setting = $this->get_setting('add_phone_field', false);
+		error_log(json_encode(get_option('sendsms_dashboard_plugin_settings')));
+	?>
+		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
+<?php
 	}
 
 	public function sendsms_dashboard_setting_password_callback($args)
@@ -287,9 +288,8 @@ class Sendsms_Dashboard_Admin
 	public function sendsms_dashboard_setting_store_type_callback($args)
 	{
 		$setting = $this->get_setting('store_type', false);
-		error_log($setting);
 	?>
-		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="true" <?= $setting ? "checked" : "" ?>>
+		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="1" <?= $setting ? "checked" : "" ?>>
 		<p><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
 <?php
 	}
