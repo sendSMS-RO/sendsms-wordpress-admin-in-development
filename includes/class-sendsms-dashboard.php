@@ -144,10 +144,16 @@ class Sendsms_Dashboard
 
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+		//load settings
 		$this->loader->add_action('admin_menu', $plugin_admin, 'load_menu');
 		$this->loader->add_action('admin_init', $plugin_admin, 'load_settings');
 		//ajax
 		$this->loader->add_action('wp_ajax_send_a_test_sms', $plugin_admin, 'send_a_test_sms');
+		//load phone fields
+		if ($this->get_setting('add_phone_field', false)) {
+			$this->loader->add_action('user_new_form', $plugin_admin, 'add_new_user_field');
+			$this->loader->add_action('user_register', $plugin_admin, 'user_register_metadata');
+		}
 	}
 
 	/**
@@ -208,5 +214,15 @@ class Sendsms_Dashboard
 	public function get_version()
 	{
 		return $this->version;
+	}
+
+	/**
+	 * Get a setting
+	 * 
+	 * @since 1.0.0
+	 */
+	public function get_setting($setting, $default = "")
+	{
+		return isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default;
 	}
 }

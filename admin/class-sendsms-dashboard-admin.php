@@ -183,6 +183,9 @@ class Sendsms_Dashboard_Admin
 		);
 	}
 
+	/**
+	 * Sanitize the settings before they are saved to the db
+	 */
 	public function sendsms_dashboard_settings_sanitize($args)
 	{
 		foreach ($args as $key => $value) {
@@ -212,6 +215,9 @@ class Sendsms_Dashboard_Admin
 	}
 
 	//Ajax handler
+	/**
+	 * This will send a test message when an ajax event is called
+	 */
 	public function send_a_test_sms()
 	{
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
@@ -243,6 +249,9 @@ class Sendsms_Dashboard_Admin
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-admin-display.php');
 	}
 
+	/**
+	 * These are the callbacks to each section
+	 */
 	public function sendsms_dashboard_section_callback($args)
 	{
 	}
@@ -252,6 +261,9 @@ class Sendsms_Dashboard_Admin
 	}
 
 	//Field creators
+	/**
+	 * There functions will just display the fields of the setings page
+	 */
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
 		$setting = $this->get_setting('username');
@@ -301,4 +313,24 @@ class Sendsms_Dashboard_Admin
 		return esc_html(isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default);
 	}
 	//EO GENERAL FUNCTIONS
+
+	/**
+	 * Add the phone number field inside the add new user
+	 * 
+	 * @since 1.0.0	 
+	 */
+	public function add_new_user_field()
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/user/sendsms-dashboard-mobile-field.php');
+	}
+
+	/**
+	 * Save the phone number to db
+	 */
+	public function user_register_metadata($user_id)
+	{
+		if (isset($_POST['sendsms_phone_number'])) {
+            update_user_meta($user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number']);
+        }
+	}
 }
