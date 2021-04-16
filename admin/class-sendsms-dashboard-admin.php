@@ -293,7 +293,7 @@ class Sendsms_Dashboard_Admin
 		$setting = $this->get_setting_esc('store_type', false);
 	?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="1" <?= $setting ? "checked" : "" ?>>
-		<p><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
+		<p class="sendsms-dashboard-subscript"><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
 	<?php
 	}
 
@@ -302,7 +302,7 @@ class Sendsms_Dashboard_Admin
 		$setting = $this->get_setting_esc('add_phone_field', false);
 	?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
-		<p class="sendsms-dashboard-subscript">Text</p>
+		<p class="sendsms-dashboard-subscript"><?= __("Add a phone number field in the user editing and user registration form", "sendsms-dashboard") ?></p>
 <?php
 	}
 	//EO SETTINGS PAGE
@@ -350,5 +350,14 @@ class Sendsms_Dashboard_Admin
 		$fields['sendsms_phone_number'] = __('Phone number', 'sendsms-dashboard');
 
 		return $fields;
+	}
+
+	/**
+	 * Add a field to the register form aka wp-login.php
+	 */
+	public function add_register_field()
+	{
+		error_log("ajunge aici");
+		include(plugin_dir_path(__FILE__) . 'partials/user/sendsms-dashboard-mobile-field-register.php');
 	}
 }

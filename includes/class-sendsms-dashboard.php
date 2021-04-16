@@ -154,6 +154,7 @@ class Sendsms_Dashboard
 			$this->loader->add_action('user_new_form', $plugin_admin, 'add_new_user_field');
 			$this->loader->add_action('user_register', $plugin_admin, 'user_register_metadata');
 			$this->loader->add_filter('user_contactmethods', $plugin_admin, 'add_new_user_field_to_edit_form');
+			$this->loader->add_action('register_form', $plugin_admin, 'add_register_field');
 		}
 	}
 
