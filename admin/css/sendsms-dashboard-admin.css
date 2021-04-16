@@ -82,6 +82,10 @@
     border-bottom: 1px solid #b7b3b3;
 }
 
+.sendsms-dashboard-subscript {
+    color:rgba(0, 0, 0, 0.52);
+}
+
 @media (min-width: 576px) {
     .sendsms-container {
         max-width: 540px;

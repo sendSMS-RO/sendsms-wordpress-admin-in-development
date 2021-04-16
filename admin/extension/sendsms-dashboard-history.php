@@ -141,7 +141,6 @@ class Sendsms_Dashboard_History extends WP_List_Table
 
         $search = '';
 
-        error_log("ajunge aici");
         //die();
         if (!empty($_REQUEST['s'])) {
             $search = "AND phone LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";

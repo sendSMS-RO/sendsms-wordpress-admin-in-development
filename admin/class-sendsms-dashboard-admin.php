@@ -266,24 +266,15 @@ class Sendsms_Dashboard_Admin
 	 */
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
-		$setting = $this->get_setting('username');
+		$setting = $this->get_setting_esc('username');
 ?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
 	}
 
-	public function sendsms_dashboard_user_add_phone_field_callback($args)
-	{
-		$setting = $this->get_setting('add_phone_field', false);
-		error_log(json_encode(get_option('sendsms_dashboard_plugin_settings')));
-	?>
-		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
-<?php
-	}
-
 	public function sendsms_dashboard_setting_password_callback($args)
 	{
-		$setting = $this->get_setting('password');
+		$setting = $this->get_setting_esc('password');
 	?>
 		<input type="password" name="sendsms_dashboard_plugin_settings[password]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
@@ -291,7 +282,7 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_setting_label_callback($args)
 	{
-		$setting = $this->get_setting('label', '1898');
+		$setting = $this->get_setting_esc('label', '1898');
 	?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[label]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
@@ -299,18 +290,31 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_setting_store_type_callback($args)
 	{
-		$setting = $this->get_setting('store_type', false);
+		$setting = $this->get_setting_esc('store_type', false);
 	?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="1" <?= $setting ? "checked" : "" ?>>
 		<p><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
+	<?php
+	}
+
+	public function sendsms_dashboard_user_add_phone_field_callback($args)
+	{
+		$setting = $this->get_setting_esc('add_phone_field', false);
+	?>
+		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
+		<p class="sendsms-dashboard-subscript">Text</p>
 <?php
 	}
 	//EO SETTINGS PAGE
 
 	//GENERAL FUNCTIONS
-	public function get_setting($setting, $default = "")
+	public function get_setting_esc($setting, $default = "")
 	{
 		return esc_html(isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default);
+	}
+	public function get_setting($setting, $default = "")
+	{
+		return isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default;
 	}
 	//EO GENERAL FUNCTIONS
 
@@ -326,11 +330,25 @@ class Sendsms_Dashboard_Admin
 
 	/**
 	 * Save the phone number to db
+	 * 
+	 * @since 1.0.0
 	 */
 	public function user_register_metadata($user_id)
 	{
 		if (isset($_POST['sendsms_phone_number'])) {
-            update_user_meta($user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number']);
-        }
+			update_user_meta($user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number']);
+		}
+	}
+
+	/**
+	 * Show the phone number field in the editing page of an user
+	 * 
+	 * @since 1.0.0
+	 */
+	public function add_new_user_field_to_edit_form($args)
+	{
+		$fields['sendsms_phone_number'] = __('Phone number', 'sendsms-dashboard');
+
+		return $fields;
 	}
 }

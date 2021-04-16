@@ -23,7 +23,7 @@ settings_errors('sendsms-dashboard_messages');
                 <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'user')); ?>>User</a></li>
             </ul>
         </div>
-        <form action="options.php" method="post">
+        <form class="sendsms-item-input-1" action="options.php" method="post">
             <?php
             settings_fields('sendsms_dashboard_plugin_settings');
             ?>
