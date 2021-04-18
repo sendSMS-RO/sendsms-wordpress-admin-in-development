@@ -1,5 +1,6 @@
 <?php
 require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
+require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -31,7 +32,7 @@ class Sendsms_Dashboard_Admin
 	 */
 	private $version;
 
-
+	private $functions;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -44,6 +45,7 @@ class Sendsms_Dashboard_Admin
 	{
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->functions = new SendsmsFunctions();
 	}
 
 	/**
@@ -160,9 +162,9 @@ class Sendsms_Dashboard_Admin
 		);
 
 		add_settings_field(
-			'sendsms_dashboard_store_type',
-			__('Do you own a Romanian store?', 'sendsms-dashboard'),
-			array($this, 'sendsms_dashboard_setting_store_type_callback'),
+			'sendsms_dashboard_cc',
+			__('Country Code', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_setting_cc_callback'),
 			'sendsms_dashboard_plugin_general',
 			'sendsms_dashboard_general'
 		);
@@ -266,7 +268,7 @@ class Sendsms_Dashboard_Admin
 	 */
 	public function sendsms_dashboard_setting_username_callback($args)
 	{
-		$setting = $this->get_setting_esc('username');
+		$setting = $this->functions->get_setting_esc('username');
 ?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
@@ -274,7 +276,7 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_setting_password_callback($args)
 	{
-		$setting = $this->get_setting_esc('password');
+		$setting = $this->functions->get_setting_esc('password');
 	?>
 		<input type="password" name="sendsms_dashboard_plugin_settings[password]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
@@ -282,41 +284,36 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_setting_label_callback($args)
 	{
-		$setting = $this->get_setting_esc('label', '1898');
+		$setting = $this->functions->get_setting_esc('label', '1898');
 	?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[label]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 	<?php
 	}
 
-	public function sendsms_dashboard_setting_store_type_callback($args)
+	public function sendsms_dashboard_setting_cc_callback($args)
 	{
-		$setting = $this->get_setting_esc('store_type', false);
+		$setting = $this->functions->get_setting_esc('cc', "INT");
 	?>
-		<input type="checkbox" name="sendsms_dashboard_plugin_settings[store_type]" value="1" <?= $setting ? "checked" : "" ?>>
-		<p class="sendsms-dashboard-subscript"><?= __("This setting helps make phone number formatting easier", "sendsms-dashboard") ?></p>
+		<select type="checkbox" name="sendsms_dashboard_plugin_settings[cc]">
+			<option value="INT">International</option>
+			<?php
+			foreach ($this->functions->country_codes as $key => $value) {
+				echo "<option value='$key' " . ($setting == $key ? "selected" : "") . ">$key (+$value)</option>";
+			}
+			?>
+		</select>
 	<?php
 	}
 
 	public function sendsms_dashboard_user_add_phone_field_callback($args)
 	{
-		$setting = $this->get_setting_esc('add_phone_field', false);
+		$setting = $this->functions->get_setting_esc('add_phone_field', false);
 	?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
 		<p class="sendsms-dashboard-subscript"><?= __("Add a phone number field in the user editing and user registration form", "sendsms-dashboard") ?></p>
 <?php
 	}
 	//EO SETTINGS PAGE
-
-	//GENERAL FUNCTIONS
-	public function get_setting_esc($setting, $default = "")
-	{
-		return esc_html(isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default);
-	}
-	public function get_setting($setting, $default = "")
-	{
-		return isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default;
-	}
-	//EO GENERAL FUNCTIONS
 
 	/**
 	 * Add the phone number field inside the add new user
@@ -357,7 +354,6 @@ class Sendsms_Dashboard_Admin
 	 */
 	public function add_register_field()
 	{
-		error_log("ajunge aici");
 		include(plugin_dir_path(__FILE__) . 'partials/user/sendsms-dashboard-mobile-field-register.php');
 	}
 }

@@ -1,6 +1,17 @@
 <?php
+require_once('functions.php');
+if (!defined('WPINC')) {
+	die;
+}
+
 class SendSMS
 {
+    var $functions;
+
+    function __construct()
+    {
+        $this->functions = new SendsmsFunctions();
+    }
     /**
      * Send a message with sendsms
      * 
@@ -10,8 +21,9 @@ class SendSMS
     {
         global $wpdb;
         $content = sanitize_textarea_field($content);
-        $this->get_auth($username, $password, $label);
-        $to = $this->validate_phone($to);
+        $this->functions->get_auth($username, $password, $label);
+        $to = $this->functions->validate_phone($to);
+        error_log($to);
         $content = sanitize_textarea_field($content);
         $args['headers'] = [
             'url' => get_site_url()
@@ -34,43 +46,5 @@ class SendSMS
             )
         );
         return $results;
-    }
-
-    /**
-     * Get Plugin settings
-     * 
-     * @since 1.0.0
-     */
-    function get_auth(&$username, &$password, &$label)
-    {
-        $username = $this->get_setting('username', '');
-        $password = $this->get_setting('password', '');
-        $label = $this->get_setting('label', '1898');
-    }
-
-    /**
-     * Validate the phone number if needed
-     * 
-     * @since 1.0.0
-     */
-    function validate_phone($phone)
-    {
-        $phone = preg_replace('/\D/', '', $phone);
-        if (substr($phone, 0, 1) == '0' && strlen($phone) == 10) {
-            $phone = '4' . $phone;
-        } elseif (substr($phone, 0, 1) != '0' && strlen($phone) == 9) {
-            $phone = '40' . $phone;
-        } elseif (strlen($phone) == 13 && substr($phone, 0, 2) == '00') {
-            $phone = substr($phone, 2);
-        }
-        return $phone;
-    }
-
-    /**
-     * Get an individual setting
-     */
-    public function get_setting($setting, $default = "")
-    {
-        return isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default;
     }
 }
