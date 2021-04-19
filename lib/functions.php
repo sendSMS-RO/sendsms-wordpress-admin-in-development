@@ -3,7 +3,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-class SendsmsFunctions
+class SendSMSFunctions
 {
     /**
      * Get Plugin settings auth settings

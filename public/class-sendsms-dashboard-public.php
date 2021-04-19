@@ -1,5 +1,6 @@
 <?php
-
+require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
+require_once(dirname(__FILE__) . '\extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
 /**
  * The public-facing functionality of the plugin.
  *
@@ -31,6 +32,7 @@ class Sendsms_Dashboard_Public
 	 */
 	private $version;
 
+	private $functions;
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -40,7 +42,7 @@ class Sendsms_Dashboard_Public
 	 */
 	public function __construct($plugin_name, $version)
 	{
-
+		$this->functions = new SendSMSFunctions();
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 	}
@@ -63,5 +65,10 @@ class Sendsms_Dashboard_Public
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sendsms-dashboard-public.js', array('jquery'), $this->version, false);
+	}
+
+	public function subscribe_widget()
+	{
+		register_widget('SendSMSSubscriber');
 	}
 }

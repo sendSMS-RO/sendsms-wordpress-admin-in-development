@@ -3,7 +3,7 @@
 /**
  * Plugin Name: SendSMS Dashboard
  * Description: Use this plugin to comunicate with everyone on your site
- * Version: 0.1
+ * Version: 1.0.0
  * Author: sendSMS
  * Author URI: https://www.sendsms.ro/en/
  * License: GPLv2
@@ -21,6 +21,10 @@ if (!defined('WPINC')) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define('SENDSMS_DASHBOARD_VERSION', '1.0.0');
+/**
+ * Currentlu DB version
+ */
+define('SENDSMS_DB_VERSION', '0.4');
 
 /**
  * The code that runs during plugin activation.

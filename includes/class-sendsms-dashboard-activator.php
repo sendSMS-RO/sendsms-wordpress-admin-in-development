@@ -31,12 +31,13 @@ class Sendsms_Dashboard_Activator
 		$installed_ver = get_option('sendsms_dashboard_db_version');
 
 		//updates
-		if ($installed_ver != SENDSMS_DASHBOARD_VERSION) {
+		if ($installed_ver != SENDSMS_DB_VERSION) {
 			error_log($wpdb->prefix);
-			$table_name = $wpdb->prefix . 'sendsms_dashboard_history';
+			$table_name_history = $wpdb->prefix . 'sendsms_dashboard_history';
+			$table_name_subscribers = $wpdb->prefix . 'sendsms_dashboard_subscribers';
 			$charset_collate = $wpdb->get_charset_collate();
 
-			$sql = "CREATE TABLE `$table_name` (
+			$sql1 = "CREATE TABLE `$table_name_history` (
 				  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 				  `phone` varchar(255) DEFAULT NULL,
 				  `status` varchar(255) DEFAULT NULL,
@@ -47,11 +48,18 @@ class Sendsms_Dashboard_Activator
 				  `sent_on` datetime DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) $charset_collate;";
-
+			$sql2 = "CREATE TABLE `$table_name_subscribers` (
+				  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+				  `phone` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `date` datetime NOT NULL,
+				  PRIMARY KEY (`id`)
+				) $charset_collate;";
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-			dbDelta($sql);
+			dbDelta($sql1);
+			dbDelta($sql2);
 
-			add_option('sendsms_dashboard_db_version', SENDSMS_DASHBOARD_VERSION);
+			add_option('sendsms_dashboard_db_version', SENDSMS_DB_VERSION);
 		}
 	}
 }

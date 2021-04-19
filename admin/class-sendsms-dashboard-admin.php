@@ -45,7 +45,7 @@ class Sendsms_Dashboard_Admin
 	{
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->functions = new SendsmsFunctions();
+		$this->functions = new SendSMSFunctions();
 	}
 
 	/**
@@ -240,7 +240,7 @@ class Sendsms_Dashboard_Admin
 		if ($result['status'] > 0) {
 			wp_send_json_success(__('Message sent', 'sendsms-dashboard'));
 		} else {
-			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . $result['status'] . __("\nMessage: ", 'sendsms-dashboard') . $result['message'] . __("\nDetails: ", 'sendsms-dashboard') . $result['details']);
+			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . $result['status'] . __("<br>Message: ", 'sendsms-dashboard') . $result['message'] . __("<br>Details: ", 'sendsms-dashboard') . $result['details']);
 		}
 	}
 	//EO TEST PAGE
