@@ -21,6 +21,7 @@ settings_errors('sendsms-dashboard_messages');
             <ul class="sendsms-setting-list">
                 <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'general')); ?>>General</a></li>
                 <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'user')); ?>>User</a></li>
+                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'subscription')); ?>>Subscription</a></li>
             </ul>
         </div>
         <form class="sendsms-item-input-1" action="options.php" method="post">

@@ -24,7 +24,7 @@ define('SENDSMS_DASHBOARD_VERSION', '1.0.0');
 /**
  * Currentlu DB version
  */
-define('SENDSMS_DB_VERSION', '0.4');
+define('SENDSMS_DB_VERSION', '0.9');
 
 /**
  * The code that runs during plugin activation.

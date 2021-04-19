@@ -8,7 +8,7 @@ class SendSMSSubscriber extends WP_Widget
     {
         $widget_ops = array(
             'classname' => 'sendssms_dashboard_subscriber',
-            'description' => __('Use this widget so anyone can subscribe to your SMS newsletter.', 'sendsms-dashboard'),
+            'description' => __('Use this widget so anyone can subscribe to your SMS newsletter. This widget complies with gdpr standards', 'sendsms-dashboard'),
             'customize_selective_refresh' => true,
         );
         parent::__construct('sendssms_dashboard_subscriber', 'SendSMS Subscription', $widget_ops);
@@ -33,7 +33,6 @@ class SendSMSSubscriber extends WP_Widget
     public function form($instance)
     {
         include(plugin_dir_path(dirname(__FILE__)) . 'partials/sendsms-dashboard-subscription-widget-admin-form.php');
-        // outputs the options form on admin
     }
 
 
@@ -49,6 +48,7 @@ class SendSMSSubscriber extends WP_Widget
     {
         $instance = array();
         $instance['title'] = (!empty($new_instance['title'])) ? sanitize_text_field($new_instance['title']) : '';
+        $instance['gdpr_link'] = (!empty($new_instance['gdpr_link'])) ? sanitize_text_field($new_instance['gdpr_link']) : '';
 
         return $instance;
     }

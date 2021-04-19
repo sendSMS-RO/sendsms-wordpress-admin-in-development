@@ -35,6 +35,7 @@ class Sendsms_Dashboard_Activator
 			error_log($wpdb->prefix);
 			$table_name_history = $wpdb->prefix . 'sendsms_dashboard_history';
 			$table_name_subscribers = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+			$table_name_ip_address = $wpdb->prefix . 'sendsms_dashboard_ip_address';
 			$charset_collate = $wpdb->get_charset_collate();
 
 			$sql1 = "CREATE TABLE `$table_name_history` (
@@ -50,14 +51,23 @@ class Sendsms_Dashboard_Activator
 				) $charset_collate;";
 			$sql2 = "CREATE TABLE `$table_name_subscribers` (
 				  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-				  `phone` varchar(255) NOT NULL,
+				  `phone` varchar(50) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `date` datetime NOT NULL,
-				  PRIMARY KEY (`id`)
+				  `ip_address` varchar(20) DEFAULT NULL,
+				  `browser` TEXT DEFAULT NULL 
+				  PRIMARY KEY (`phone`)
+				) $charset_collate;";
+			$sql3 = "CREATE TABLE `$table_name_ip_address` (
+				  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+				  `ip_address` varchar(20) DEFAULT NULL,
+				  `date_cycle_start` datetime DEFAULT NULL,
+				  PRIMARY KEY (`ip_address`)
 				) $charset_collate;";
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql1);
 			dbDelta($sql2);
+			dbDelta($sql3);
 
 			add_option('sendsms_dashboard_db_version', SENDSMS_DB_VERSION);
 		}

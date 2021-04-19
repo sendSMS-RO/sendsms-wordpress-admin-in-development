@@ -65,10 +65,31 @@ class Sendsms_Dashboard_Public
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sendsms-dashboard-public.js', array('jquery'), $this->version, false);
+		wp_localize_script(
+			$this->plugin_name,
+			'sendsms_object_public',
+			[
+				'ajax_url' => admin_url('admin-ajax.php'),
+				'security' => wp_create_nonce('sendsms-security-nonce'),
+				'text_success' => __('Successful subscription', 'sendsms-dashboard'),
+				'text_nogdpr' => __('You need to accept the privacy policy', 'sendsms-dashboard'),
+				'text_internal_error' => __('Internal error', 'sendsms-dashboard'),
+				'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
+				'text_dublicate_number' => __('The number is already in the database', 'sendsms-dashboard'),
+			]
+		);
 	}
 
 	public function subscribe_widget()
 	{
 		register_widget('SendSMSSubscriber');
+	}
+
+	/**
+	 * This will handle the ajax call of someone subscribing to your newsletter
+	 */
+	public function subscribe_to_newsletter()
+	{
+
 	}
 }

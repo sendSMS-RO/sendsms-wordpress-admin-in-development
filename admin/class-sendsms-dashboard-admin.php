@@ -183,6 +183,21 @@ class Sendsms_Dashboard_Admin
 			'sendsms_dashboard_plugin_user',
 			'sendsms_dashboard_user'
 		);
+
+		add_settings_section(
+			'sendsms_dashboard_subscription',
+			"<div class='sendsms-settings-title'>" . __('Subscription Settings', 'sendsms-dashboard') . "</div>",
+			array($this, 'sendsms_dashboard_section_subscription_callback'),
+			'sendsms_dashboard_plugin_subscription'
+		);
+
+		add_settings_field(
+			'sendsms_dashboard_ip_limits_field',
+			__('IP registration limit', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_ip_limit_field_callback'),
+			'sendsms_dashboard_plugin_subscription',
+			'sendsms_dashboard_subscription'
+		);
 	}
 
 	/**
@@ -262,6 +277,9 @@ class Sendsms_Dashboard_Admin
 	{
 	}
 
+	public function sendsms_dashboard_section_subscription_callback($args)
+	{
+	}
 	//Field creators
 	/**
 	 * There functions will just display the fields of the setings page
@@ -312,6 +330,15 @@ class Sendsms_Dashboard_Admin
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
 		<p class="sendsms-dashboard-subscript"><?= __("Add a phone number field in the user editing and user registration form", "sendsms-dashboard") ?></p>
 <?php
+	}
+
+	public function sendsms_dashboard_ip_limit_field_callback($args)
+	{
+		$setting = $this->functions->get_setting_esc('ip_limit', '5/10');
+		?>
+			<input type="text" name="sendsms_dashboard_plugin_settings[ip_limit]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
+			<p class="sendsms-dashboard-subscript"><?= __("The maximum number of subscriptions an IP address can make per minute. This is used as follows: maximum_ip_addresses/minutes (eg: 5/10 - 5 maximum registrations every 10 minutes). You can use -1 for no restrictions (eg: 5/-1 - 5 maximum registrations on that ip). No restriction will be applied if the field is empty or if it has invalid characters.", 'sendsms-dashboard') ?></p>
+		<?php
 	}
 	//EO SETTINGS PAGE
 
