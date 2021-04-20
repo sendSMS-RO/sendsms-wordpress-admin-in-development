@@ -22,9 +22,9 @@ if (!defined('WPINC')) {
  */
 define('SENDSMS_DASHBOARD_VERSION', '1.0.0');
 /**
- * Currentlu DB version
+ * Currently DB version
  */
-define('SENDSMS_DB_VERSION', '0.9');
+define('SENDSMS_DB_VERSION', '1.1');
 
 /**
  * The code that runs during plugin activation.

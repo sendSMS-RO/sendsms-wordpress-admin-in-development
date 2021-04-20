@@ -76,6 +76,7 @@ class Sendsms_Dashboard_Public
 				'text_internal_error' => __('Internal error', 'sendsms-dashboard'),
 				'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
 				'text_dublicate_number' => __('The number is already in the database', 'sendsms-dashboard'),
+				'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
 			]
 		);
 	}
@@ -90,6 +91,5 @@ class Sendsms_Dashboard_Public
 	 */
 	public function subscribe_to_newsletter()
 	{
-
 	}
 }
