@@ -1,6 +1,6 @@
 <?php
 require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
-require_once(dirname(__FILE__) . '\extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
+require_once(dirname(__FILE__) . '/extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
 /**
  * The public-facing functionality of the plugin.
  *
