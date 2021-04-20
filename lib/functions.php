@@ -24,10 +24,7 @@ class SendSMSFunctions
      */
     public function validate_phone($phone_number)
     {
-        $phone_number = str_replace(['+', '-'], '', filter_var($phone_number, FILTER_SANITIZE_NUMBER_INT));
-        //Strip spaces and non-numeric characters:
-        $phone_number = preg_replace("/[^0-9]/", "", $phone_number);
-
+        $phone_number = $this->clear_phone_number($phone_number);
         //Strip out leading zeros:
         $phone_number = ltrim($phone_number, '0');
         if ($this->get_setting("cc", "INT") === "INT") {
@@ -43,19 +40,82 @@ class SendSMSFunctions
     }
 
     /**
+     * It clears a phone number of maliciouse characters
+     * 
+     * @since 1.0.0
+     */
+    public function clear_phone_number($phone_number)
+    {
+        $phone_number = str_replace(['+', '-'], '', filter_var($phone_number, FILTER_SANITIZE_NUMBER_INT));
+        //Strip spaces and non-numeric characters:
+        $phone_number = preg_replace("/[^0-9]/", "", $phone_number);
+        return $phone_number;
+    }
+
+    /**
      * Get an individual setting
+     * 
+     * @since 1.0.0
      */
     public function get_setting($setting, $default = "")
     {
         return isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default;
     }
 
-    //GENERAL FUNCTIONS
+    /**
+     * Get an individual setting escaped
+     * 
+     * @since 1.0.0
+     */
     public function get_setting_esc($setting, $default = "")
     {
         return esc_html(isset(get_option('sendsms_dashboard_plugin_settings')["$setting"]) ? get_option('sendsms_dashboard_plugin_settings')["$setting"] : $default);
     }
 
+    /**
+     * Add a user to the subscriber list
+     * 
+     * @since 1.0.0
+     */
+    public function add_subscriber($name, $phone_number)
+    {
+        global $wpdb;
+        $name = sanitize_text_field($name);
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $ip_address = $this->get_ip_address();
+        $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+        $wpdb->query(
+            $wpdb->prepare(
+                "
+                INSERT INTO $table_name
+                (`phone`, `name`, `date`, `ip_address`, `browser`)
+                VALUES ( %s, %s, %s, %s, %s)",
+                $phone_number,
+                $name,
+                date('Y-m-d H:i:s'),
+                $ip_address,
+                $browser
+            )
+        );
+    }
+
+    /**
+     * Get user ip address
+     * 
+     * @since 1.0.0
+     */
+    public function get_ip_address()
+    {
+        error_log(json_encode($_SERVER));
+        if (isset($_SERVER['HTTP_X_REAL_IP'])) {
+            return sanitize_text_field(wp_unslash($_SERVER['HTTP_X_REAL_IP']));
+        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return (string) rest_is_ip_address(trim(current(preg_split('/,/', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']))))));
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            return sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+        }
+        return '';
+    }
     public $country_codes = array(
         'AC' => '247',
         'AD' => '376',

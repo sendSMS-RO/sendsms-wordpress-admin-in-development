@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
             console.log(response.data);
             modal.open();
             jQuery('#button-send-a-test-message').html(sendsms_object.text_button_send);
-            jQuery('#button-send-a-test-message').removeAttr('disabled');;
+            jQuery('#button-send-a-test-message').removeAttr('disabled');
             if (undefined !== response.success && false === response.success) {
                 modal.setTitle("Error");
                 return;

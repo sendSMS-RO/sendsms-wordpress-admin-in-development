@@ -29,10 +29,12 @@ settings_errors('sendsms-dashboard_messages');
             settings_fields('sendsms_dashboard_plugin_settings');
             ?>
             <?php
-            $page = sanitize_text_field($_GET['tab']);
-            if (empty($page))
-                $page = 'general';
-            do_settings_sections("sendsms_dashboard_plugin_$page");
+            if (!isset($_GET['tab']))
+                $_GET['tab'] = 'general';
+            $_GET['tab'] = sanitize_text_field($_GET['tab']);
+            if (empty($_GET['tab']))
+                $_GET['tab'] = 'general';
+            do_settings_sections('sendsms_dashboard_plugin_' . $_GET['tab']);
             // output save settings button
             submit_button('Save Settings');
             ?>

@@ -77,6 +77,9 @@ class Sendsms_Dashboard_Public
 				'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
 				'text_dublicate_number' => __('The number is already in the database', 'sendsms-dashboard'),
 				'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
+				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
+				'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
+				'text_field_name' => __('Please enter a name', 'sendsms-dashboard'),
 			]
 		);
 	}
@@ -91,5 +94,25 @@ class Sendsms_Dashboard_Public
 	 */
 	public function subscribe_to_newsletter()
 	{
+		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
+			wp_send_json_error("invalid_security_nonce");
+			wp_die();
+		}
+		if ($_POST['gdpr'] == 'false') {
+			wp_send_json_error("nogdpr");
+			wp_die();
+		}
+		if (empty($_POST['name'])) {
+			wp_send_json_error("field_name");
+			wp_die();
+		}
+		$_POST['phone_number'] = $this->functions->clear_phone_number($_POST['phone_number']);
+		if (empty($_POST['phone_number'])) {
+			wp_send_json_error("field_phone_number");
+			wp_die();
+		}
+		$name = sanitize_text_field($_POST['name']);
+		$phone = sanitize_text_field($_POST['phone_number']);
+		$this->functions->add_subscriber($name, $phone);
 	}
 }

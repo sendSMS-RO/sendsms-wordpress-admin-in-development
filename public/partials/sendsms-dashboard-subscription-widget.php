@@ -5,6 +5,9 @@ if (!empty($instance['title'])) {
 }
 wp_nonce_field('sendsms-security-nonce');
 ?>
+<div id="sensms-widget-error-message" style="color:red"></div>
+<div id="sensms-widget-success-message" style="color:green"></div>
+<div id="sensms-widget-feedback-message"></div>
 <div class="sendsms-widget-name-field">
     <label id="sendsms_forName"><?= __('Name', 'sendsms-dashboard') ?></label>
     <input id="sendsms_widget_name" type="text" aria-label="<?= __('Name', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forName">
@@ -18,9 +21,9 @@ wp_nonce_field('sendsms-security-nonce');
     <label id="sendsms_forGdpr">
         <?php
         _e('I agree with the ', 'sendsms-dashboard');
-            ?>
-                <a href="<?= !empty($instance['gdpr_link']) ? esc_url($instance['gdpr_link']) : "" ?>"><?= _e('privacy policy', 'sendsms-dashboard')?></a>
-            <?php
+        ?>
+        <a href="<?= !empty($instance['gdpr_link']) ? esc_url($instance['gdpr_link']) : "" ?>"><?= _e('privacy policy', 'sendsms-dashboard') ?></a>
+        <?php
         ?>
     </label>
 </div>

@@ -200,6 +200,14 @@ class Sendsms_Dashboard_Admin
 		);
 
 		add_settings_field(
+			'sendsms_dashboard_subscribe_verification_message_field',
+			__('Verification message?', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_subscribe_verification_message_field_callback'),
+			'sendsms_dashboard_plugin_subscription',
+			'sendsms_dashboard_subscription'
+		);
+
+		add_settings_field(
 			'sendsms_dashboard_ip_limits_field',
 			__('IP limit', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_ip_limit_field_callback'),
@@ -360,10 +368,18 @@ class Sendsms_Dashboard_Admin
 	public function sendsms_dashboard_restricted_ips_field_callback($args)
 	{
 		$setting = $this->functions->get_setting_esc('restricted_ips', '');
-		error_log($setting);
 	?>
 		<textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[restricted_ips]"><?php echo isset($setting) ? esc_textarea($setting) : ''; ?></textarea>
 		<p class="sendsms-dashboard-subscript"><?= __("These ip addresses will not be able to register subscribe/unsubscribe. Put every IP address on a separed line.", 'sendsms-dashboard') ?></p>
+	<?php
+	}
+
+	public function sendsms_dashboard_subscribe_verification_message_field_callback($args)
+	{
+		$setting = $this->functions->get_setting_esc('subscribe_verification_message', '');
+	?>
+		<textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[subscribe_verification_message]"><?php echo isset($setting) ? esc_textarea($setting) : ''; ?></textarea>
+		<p class="sendsms-dashboard-subscript"><?= __("You must specify the {code} key message. The {code} key will be automatically replaced with the unique validation code. If the {code} key is not specified, the validation code will be placed at the end of the message", 'sendsms-dashboard') ?></p>
 	<?php
 	}
 
