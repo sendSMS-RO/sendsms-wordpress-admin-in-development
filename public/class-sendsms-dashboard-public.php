@@ -75,7 +75,7 @@ class Sendsms_Dashboard_Public
 				'text_nogdpr' => __('You need to accept the privacy policy', 'sendsms-dashboard'),
 				'text_internal_error' => __('Internal error', 'sendsms-dashboard'),
 				'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
-				'text_dublicate_number' => __('The number is already in the database', 'sendsms-dashboard'),
+				'text_dublicate_number' => __('The number is already subscribed', 'sendsms-dashboard'),
 				'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
 				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
 				'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
@@ -102,17 +102,33 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("nogdpr");
 			wp_die();
 		}
-		if (empty($_POST['name'])) {
+		$name = sanitize_text_field($_POST['name']);
+		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		if (empty($name)) {
 			wp_send_json_error("field_name");
 			wp_die();
 		}
-		$_POST['phone_number'] = $this->functions->clear_phone_number($_POST['phone_number']);
-		if (empty($_POST['phone_number'])) {
+		if (empty($phone)) {
 			wp_send_json_error("field_phone_number");
 			wp_die();
 		}
-		$name = sanitize_text_field($_POST['name']);
-		$phone = sanitize_text_field($_POST['phone_number']);
-		$this->functions->add_subscriber($name, $phone);
+		if ($this->functions->is_subscriber($phone)) {
+			wp_send_json_error("dublicate_number");
+			wp_die();
+		} else {
+			//doing ip checks
+			$ip_address = $this->functions->get_ip_address();
+			$restricted_ips = $this->functions->get_setting("restricted_ips", "");
+			foreach (preg_split("/((\r?\n)|(\r\n?))/", $restricted_ips) as $restricted_ip) {
+				if (rest_is_ip_address($restricted_ip)) {
+					if ($ip_address === $restricted_ip) {
+						wp_send_json_error("ip_restricted");
+						wp_die();
+					}
+				}
+			}
+			// error_log($restricted_ips);
+			// $this->functions->add_subscriber($name, $phone, $ip_address);
+		}
 	}
 }

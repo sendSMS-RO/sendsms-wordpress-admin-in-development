@@ -77,12 +77,11 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber($name, $phone_number)
+    public function add_subscriber($name, $phone_number, $ip_address)
     {
         global $wpdb;
         $name = sanitize_text_field($name);
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $ip_address = $this->get_ip_address();
         $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
         $wpdb->query(
             $wpdb->prepare(
@@ -99,6 +98,18 @@ class SendSMSFunctions
         );
     }
 
+    /**
+     * Check if the number is already subscribed
+     * 
+     * @since 1.0.0
+     */
+    public function is_subscriber($phone_number)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), OBJECT);
+        return count($results) != 0 ? true : false;
+    }
     /**
      * Get user ip address
      * 
