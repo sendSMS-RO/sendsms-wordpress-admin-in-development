@@ -54,12 +54,13 @@ class Sendsms_Dashboard_Activator
 				  `name` varchar(255) NOT NULL,
 				  `date` datetime NOT NULL,
 				  `ip_address` varchar(20) DEFAULT NULL,
-				  `browser` TEXT DEFAULT NULL, 
+				  `browser` text DEFAULT NULL, 
 				  PRIMARY KEY (`phone`)
 				) $charset_collate;";
 			$sql3 = "CREATE TABLE `$table_name_ip_address` (
 				  `ip_address` varchar(20) NOT NULL,
 				  `date_cycle_start` datetime DEFAULT NULL,
+				  `request_no` int DEFAULT NULL,
 				  PRIMARY KEY (`ip_address`)
 				) $charset_collate;";
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

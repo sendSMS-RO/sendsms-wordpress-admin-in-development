@@ -112,23 +112,23 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("field_phone_number");
 			wp_die();
 		}
-		if ($this->functions->is_subscriber($phone)) {
+		if ($this->functions->is_subscriber_db($phone)) {
 			wp_send_json_error("dublicate_number");
 			wp_die();
 		} else {
 			//doing ip checks
 			$ip_address = $this->functions->get_ip_address();
 			$restricted_ips = $this->functions->get_setting("restricted_ips", "");
-			foreach (preg_split("/((\r?\n)|(\r\n?))/", $restricted_ips) as $restricted_ip) {
-				if (rest_is_ip_address($restricted_ip)) {
-					if ($ip_address === $restricted_ip) {
-						wp_send_json_error("ip_restricted");
-						wp_die();
-					}
-				}
+			if ($this->functions->is_restricted_ip($ip_address, $restricted_ips)) {
+				wp_send_json_error("ip_restricted");
+				wp_die();
 			}
-			// error_log($restricted_ips);
-			// $this->functions->add_subscriber($name, $phone, $ip_address);
+			if ($this->functions->too_many_requests($ip_address))
+			{
+				wp_send_json_error("too_many_requests");
+				wp_die();
+			}
+			$this->functions->add_subscriber_db($name, $phone, $ip_address);
 		}
 	}
 }

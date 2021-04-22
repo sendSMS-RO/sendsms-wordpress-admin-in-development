@@ -77,7 +77,7 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber($name, $phone_number, $ip_address)
+    public function add_subscriber_db($name, $phone_number, $ip_address)
     {
         global $wpdb;
         $name = sanitize_text_field($name);
@@ -96,6 +96,9 @@ class SendSMSFunctions
                 $browser
             )
         );
+        if (!$this->registered_ip_address_db($ip_address)) {
+            $this->add_ip_address_db($ip_address);
+        }
     }
 
     /**
@@ -103,12 +106,57 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function is_subscriber($phone_number)
+    public function is_subscriber_db($phone_number)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), OBJECT);
+        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), ARRAY_A);
         return count($results) != 0 ? true : false;
+    }
+
+    /**
+     * Check if the ip address exists before adding it in db
+     * 
+     * @since 1.0.0
+     */
+    public function registered_ip_address_db($ip_address)
+    {
+        return count($this->get_ip_address_db($ip_address)) != 0 ? true : false;
+    }
+
+    /**
+     * Inser ip address in dba_close
+     * 
+     * @since 1.0.0
+     */
+    public function add_ip_address_db($ip_address)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $wpdb->query(
+            $wpdb->prepare(
+                "
+                INSERT INTO $table_name
+                (`ip_address`, `date_cycle_start`, `request_no`)
+                VALUES ( %s, %s, %s)",
+                $ip_address,
+                date('Y-m-d H:i:s'),
+                "1",
+            )
+        );
+    }
+
+    /**
+     * Get an ip address info from db
+     * 
+     * @since 1.0.0
+     */
+    public function get_ip_address_db($ip_address)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE ip_address	 = %s", $ip_address), ARRAY_A);
+        return $results;
     }
     /**
      * Get user ip address
@@ -127,6 +175,67 @@ class SendSMSFunctions
         }
         return '';
     }
+
+    /**
+     * Check if the ip is restricted
+     * 
+     * @since 1.0.0
+     */
+    public function is_restricted_ip($ip_address, $restricted_ips)
+    {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $restricted_ips) as $restricted_ip) {
+            if (rest_is_ip_address($restricted_ip)) {
+                if ($ip_address === $restricted_ip) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function too_many_requests($ip_address)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $ip_restrict = $this->get_setting('ip_limit', '');
+        $ip_restrict = explode("/", $ip_restrict);
+        if (count($ip_restrict) == 2 && is_numeric($ip_restrict[0]) && is_numeric($ip_restrict[1])) {
+            if ($ip_restrict[1] != -1 && $ip_restrict[0] >= 0) {
+                $details = $this->get_ip_address_db($ip_address);
+                $attempts = $details[0]['request_no'];
+                $timePassed = abs((new \DateTime($details[0]['date_cycle_start']))->getTimestamp() - (new \DateTime(date('Y-m-d H:i:s')))->getTimestamp()) / 60;
+                if ($timePassed < $ip_restrict[1]) {
+                    if ($attempts >= $ip_restrict[0]) {
+                        return true;
+                    } else {
+                        $wpdb->query(
+                            $wpdb->prepare(
+                                "
+                                UPDATE $table_name
+                                SET request_no = %s
+                                WHERE ip_address = %s",
+                                $attempts + 1,
+                                $ip_address
+                            )
+                        );
+                    }
+                } else {
+                    $wpdb->query(
+                        $wpdb->prepare(
+                            "
+                            UPDATE $table_name
+                            SET date_cycle_start = %s, request_no = 1
+                            WHERE ip_address = %s",
+                            date('Y-m-d H:i:s'),
+                            $ip_address
+                        )
+                    );
+                }
+            }
+        }
+        return false;
+    }
+
     public $country_codes = array(
         'AC' => '247',
         'AD' => '376',

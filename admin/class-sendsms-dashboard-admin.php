@@ -358,7 +358,7 @@ class Sendsms_Dashboard_Admin
 
 	public function sendsms_dashboard_ip_limit_field_callback($args)
 	{
-		$setting = $this->functions->get_setting_esc('ip_limit', '5/10');
+		$setting = $this->functions->get_setting_esc('ip_limit', '');
 	?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[ip_limit]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 		<p class="sendsms-dashboard-subscript"><?= __("The maximum number of subscriptions/unsubscriptions an IP address can make per minute. This is used as follows: maximum_ip_addresses/minutes (eg: 5/10 - 5 maximum registrations every 10 minutes). You can use -1 for no restrictions (eg: 5/-1 - 5 maximum registrations on that ip). No restriction will be applied if the field is empty or if it has invalid characters.", 'sendsms-dashboard') ?></p>
