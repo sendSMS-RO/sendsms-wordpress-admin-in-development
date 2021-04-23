@@ -144,4 +144,15 @@ class Sendsms_Dashboard_Public
 			}
 		}
 	}
+
+	/**
+	 * This will verify the code
+	 */
+	public function unsubscribe_verify_code()
+	{
+		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
+			wp_send_json_error("invalid_security_nonce");
+			wp_die();
+		}
+	}
 }

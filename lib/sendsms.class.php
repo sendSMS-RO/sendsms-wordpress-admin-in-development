@@ -29,12 +29,13 @@ class SendSMS
         ];
         $results = array();
         if (strtolower($type) === "code") {
-            if(!strpos($content, '{code}')) {
+            if (!strpos($content, '{code}')) {
                 $content .= '{code}';
             }
             $code = $this->functions->random_str(5);
             $newContent = str_replace('{code}', $code, $content);
-            error_log(json_encode($newContent));
+            $hashedCookie = wp_hash($code . $to);
+            wc_setcookie('sendsms_subscribe_check', $hashedCookie, time() + 60 * 60, is_ssl());
             //generate and send verification code
         } else {
             $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode($password) . '&from=' . urlencode($label) . '&to=' . urlencode($to) . '&text=' . urlencode($content) . '&short=' . ($short ? 'true' : 'false'), $args)), true);

@@ -179,6 +179,8 @@ class Sendsms_Dashboard
 		//ajax
 		$this->loader->add_action('wp_ajax_nopriv_subscribe_to_newsletter', $plugin_public, 'subscribe_to_newsletter');
 		$this->loader->add_action('wp_ajax_subscribe_to_newsletter', $plugin_public, 'subscribe_to_newsletter');
+		$this->loader->add_action('wp_ajax_nopriv_unsubscribe_verify_code', $plugin_public, 'unsubscribe_verify_code');
+		$this->loader->add_action('wp_ajax_unsubscribe_verify_code', $plugin_public, 'unsubscribe_verify_code');
 	}
 
 	/**
