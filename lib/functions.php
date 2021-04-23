@@ -165,7 +165,6 @@ class SendSMSFunctions
      */
     public function get_ip_address()
     {
-        error_log(json_encode($_SERVER));
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
             return sanitize_text_field(wp_unslash($_SERVER['HTTP_X_REAL_IP']));
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -193,6 +192,30 @@ class SendSMSFunctions
         return false;
     }
 
+    /**
+     * Generate a random string
+     * 
+     * @since 1.0.0
+     */
+    public function random_str(
+        int $length = 64,
+        string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    ): string {
+        if ($length < 1) {
+            throw new \RangeException("Length must be a positive integer");
+        }
+        $pieces = [];
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $pieces []= $keyspace[wp_rand(0, $max)];
+        }
+        return implode('', $pieces);
+    }
+    /**
+     * This will check if there are too many request made by this ip. If not, either add one to the request counter, or reset iterator_apply
+     * 
+     * @since 1.0.0
+     */
     public function too_many_requests($ip_address)
     {
         global $wpdb;

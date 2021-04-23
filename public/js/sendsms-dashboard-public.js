@@ -4,8 +4,8 @@ jQuery(document).ready(function() {
         jQuery.post(sendsms_object_public.ajax_url, {
             'action': 'subscribe_to_newsletter',
             'security': sendsms_object_public.security,
-			'phone_number': jQuery('#sendsms_widget_phone_number').val(),
-			'name': jQuery('#sendsms_widget_name').val(),
+            'phone_number': jQuery('#sendsms_widget_phone_number').val(),
+            'name': jQuery('#sendsms_widget_name').val(),
             'gdpr': jQuery('#sendsms_widget_gdpr').is(":checked"),
         }, function(response) {
             jQuery('#sensms-widget-error-message').html("");
@@ -15,7 +15,16 @@ jQuery(document).ready(function() {
                 jQuery('#sensms-widget-error-message').html(sendsms_object_public['text_' + response.data]);
                 return;
             }
-            // Parse your response here.	
+            if (response.success) {
+                jQuery('#sensms-widget-success-message').html(sendsms_object_public['text_' + response.data]);
+                return;
+            }
+            if (response == "waiting_validation") {
+                jQuery('#sensms-widget-feedback-message').html(sendsms_object_public['text_' + response]);
+                jQuery('#sendsms_subscribe').off('click');
+                jQuery('#sendsms-widget-add-form').css('display', 'none');
+                jQuery('#sendsms-widget-verify-form').css('display', 'block');
+            }
         });
     });
 });

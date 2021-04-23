@@ -1,7 +1,7 @@
 <?php
 require_once('functions.php');
 if (!defined('WPINC')) {
-	die;
+    die;
 }
 
 class SendSMS
@@ -27,7 +27,18 @@ class SendSMS
         $args['headers'] = [
             'url' => get_site_url()
         ];
-        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode($password) . '&from=' . urlencode($label) . '&to=' . urlencode($to) . '&text=' . urlencode($content) . '&short=' . ($short ? 'true' : 'false'), $args)), true);
+        $results = array();
+        if (strtolower($type) === "code") {
+            if(!strpos($content, '{code}')) {
+                $content .= '{code}';
+            }
+            $code = $this->functions->random_str(5);
+            $newContent = str_replace('{code}', $code, $content);
+            error_log(json_encode($newContent));
+            //generate and send verification code
+        } else {
+            $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode($password) . '&from=' . urlencode($label) . '&to=' . urlencode($to) . '&text=' . urlencode($content) . '&short=' . ($short ? 'true' : 'false'), $args)), true);
+        }
         $table_name = $wpdb->prefix . 'sendsms_dashboard_history';
         $wpdb->query(
             $wpdb->prepare(

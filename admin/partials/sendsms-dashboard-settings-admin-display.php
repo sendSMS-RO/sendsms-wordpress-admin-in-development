@@ -8,7 +8,11 @@ if (isset($_GET['settings-updated'])) {
     // add settings saved message with the class of "updated"
     add_settings_error('sendsms-dashboard_messages', 'sendsms-dashboard_messages', __('Settings Saved', 'sendsms-dashboard'), 'updated');
 }
-
+$tabs = array(
+    'general' => __('General', 'sendsms-dashboard'),
+    'user' => __('User', 'sendsms-dashboard'),
+    'subscription' => __('Subscription', 'sendsms-dashboard')
+);
 // show error/update messages
 settings_errors('sendsms-dashboard_messages');
 ?>
@@ -19,9 +23,13 @@ settings_errors('sendsms-dashboard_messages');
             <img class="sendsms-image-center-xs" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
             <p><?= __('If you don\'t have an account, you can register <a href="https://hub.sendsms.ro/register" target="_blank">here</a>', 'sendsms-dashboard') ?></p>
             <ul class="sendsms-setting-list">
-                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'general')); ?>>General</a></li>
-                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'user')); ?>>User</a></li>
-                <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => 'subscription')); ?>>Subscription</a></li>
+                <?php
+                foreach ($tabs as $key => $value) {
+                ?>
+                    <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => $key)); ?>><?= $value ?></a></li>
+                <?php
+                }
+                ?>
             </ul>
         </div>
         <form class="sendsms-item-input-1" action="options.php" method="post">
@@ -32,9 +40,16 @@ settings_errors('sendsms-dashboard_messages');
             if (!isset($_GET['tab']))
                 $_GET['tab'] = 'general';
             $_GET['tab'] = sanitize_text_field($_GET['tab']);
-            if (empty($_GET['tab']))
+            if (!array_key_exists($_GET['tab'], $tabs))
                 $_GET['tab'] = 'general';
-            do_settings_sections('sendsms_dashboard_plugin_' . $_GET['tab']);
+
+            foreach ($tabs as $key => $value) {
+            ?>
+                <div <?= $_GET['tab'] != $key ? "style='display:none'" : "" ?>>
+                    <?php do_settings_sections("sendsms_dashboard_plugin_$key"); ?>
+                </div>
+            <?php
+            }
             // output save settings button
             submit_button('Save Settings');
             ?>

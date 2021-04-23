@@ -1,6 +1,8 @@
 <?php
 require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
 require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
+require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -33,6 +35,7 @@ class Sendsms_Dashboard_Public
 	private $version;
 
 	private $functions;
+	private $api;
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -43,6 +46,7 @@ class Sendsms_Dashboard_Public
 	public function __construct($plugin_name, $version)
 	{
 		$this->functions = new SendSMSFunctions();
+		$this->api = new SendSMS();
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 	}
@@ -80,6 +84,7 @@ class Sendsms_Dashboard_Public
 				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
 				'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
 				'text_field_name' => __('Please enter a name', 'sendsms-dashboard'),
+				'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard')
 			]
 		);
 	}
@@ -123,12 +128,20 @@ class Sendsms_Dashboard_Public
 				wp_send_json_error("ip_restricted");
 				wp_die();
 			}
-			if ($this->functions->too_many_requests($ip_address))
-			{
+			if ($this->functions->too_many_requests($ip_address)) {
 				wp_send_json_error("too_many_requests");
 				wp_die();
 			}
-			$this->functions->add_subscriber_db($name, $phone, $ip_address);
+			if ($this->functions->get_setting('subscribe_phone_verification', false)) {
+				$content = $this->functions->get_setting("subscribe_verification_message", "");
+				$this->api->message_send(false, false, $phone, $content, "CODE");
+				wp_send_json("waiting_validation");
+				wp_die();
+			} else {
+				$this->functions->add_subscriber_db($name, $phone, $ip_address);
+				wp_send_json_success("success");
+				wp_die();
+			}
 		}
 	}
 }
