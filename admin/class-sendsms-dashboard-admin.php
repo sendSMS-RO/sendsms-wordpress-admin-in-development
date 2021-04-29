@@ -279,7 +279,7 @@ class Sendsms_Dashboard_Admin
 		if ($result['status'] > 0) {
 			wp_send_json_success(__('Message sent', 'sendsms-dashboard'));
 		} else {
-			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . $result['status'] . __("<br>Message: ", 'sendsms-dashboard') . $result['message'] . __("<br>Details: ", 'sendsms-dashboard') . $result['details']);
+			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . (isset($result['status']) ? $result['status'] : "") . __("<br>Message: ", 'sendsms-dashboard') . (isset($result['message']) ? $result['message'] : "") . __("<br>Details: ", 'sendsms-dashboard') . (isset($result['details']) ? $result['details'] : ""));
 		}
 	}
 	//EO TEST PAGE

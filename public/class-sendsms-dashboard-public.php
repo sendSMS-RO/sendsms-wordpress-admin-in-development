@@ -84,7 +84,8 @@ class Sendsms_Dashboard_Public
 				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
 				'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
 				'text_field_name' => __('Please enter a name', 'sendsms-dashboard'),
-				'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard')
+				'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard'),
+				'text_invalid_verification_code' => __('The verification field is empty or it is not valid', 'sendsms-dashboard'),
 			]
 		);
 	}
@@ -158,5 +159,21 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
+		$name = sanitize_text_field($_POST['name']);
+		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		$code = $this->functions->clearStringOfSpecialChars(sanitize_text_field($_POST['code']));
+		$isValidToken = hash_equals($_COOKIE['sendsms_subscribe_check'], wp_hash($code . $phone)) ? true : false;
+		if(!isset($_COOKIE['sendsms_subscribe_check'])) {
+			wp_send_json_error("internal_error");
+			wp_die();
+		}
+		if(empty($code) || empty($name) || empty($phone) || !$isValidToken) {
+			wp_send_json_error("invalid_verification_code");
+			wp_die();
+		}
+		$ip_address = $this->functions->get_ip_address();
+		$this->functions->add_subscriber_db($name, $phone, $ip_address);
+		wp_send_json_success("success");
+		wp_die();
 	}
 }

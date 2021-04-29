@@ -207,7 +207,7 @@ class SendSMSFunctions
         $pieces = [];
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < $length; ++$i) {
-            $pieces []= $keyspace[wp_rand(0, $max)];
+            $pieces[] = $keyspace[wp_rand(0, $max)];
         }
         return implode('', $pieces);
     }
@@ -259,6 +259,10 @@ class SendSMSFunctions
         return false;
     }
 
+    function clearStringOfSpecialChars($string)
+    {
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+    }
     public $country_codes = array(
         'AC' => '247',
         'AD' => '376',

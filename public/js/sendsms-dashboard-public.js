@@ -36,6 +36,11 @@ jQuery(document).ready(function() {
                             jQuery('#sensms-widget-error-message').html(sendsms_object_public['text_' + response.data]);
                             return;
                         }
+                        if (response.success) {
+                            jQuery('#sensms-widget-success-message').html(sendsms_object_public['text_' + response.data]);
+                            jQuery('#sendsms-widget-verify-form').css('display', 'none');
+                            return;
+                        }
                     });
                 });
             }
