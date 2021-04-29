@@ -134,8 +134,12 @@ class Sendsms_Dashboard_Public
 			}
 			if ($this->functions->get_setting('subscribe_phone_verification', false)) {
 				$content = $this->functions->get_setting("subscribe_verification_message", "");
-				$this->api->message_send(false, false, $phone, $content, "CODE");
-				wp_send_json("waiting_validation");
+				$result = $this->api->message_send(false, false, $phone, $content, "CODE");
+				if ($result['status'] > 0) {
+					wp_send_json("waiting_validation");
+				} else {
+					wp_send_json_error("internal_error");
+				}
 				wp_die();
 			} else {
 				$this->functions->add_subscriber_db($name, $phone, $ip_address);
@@ -154,6 +158,5 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
-		//ai ramas la verificarea codului!
 	}
 }
