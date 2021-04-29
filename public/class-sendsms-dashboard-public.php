@@ -154,5 +154,6 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
+		//ai ramas la verificarea codului!
 	}
 }
