@@ -201,7 +201,7 @@ class Sendsms_Dashboard_Admin
 
 		add_settings_field(
 			'sendsms_dashboard_subscribe_verification_message_field',
-			__('Verification message?', 'sendsms-dashboard'),
+			__('Verification message', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_subscribe_verification_message_field_callback'),
 			'sendsms_dashboard_plugin_subscription',
 			'sendsms_dashboard_subscription'

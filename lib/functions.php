@@ -259,6 +259,35 @@ class SendSMSFunctions
         return false;
     }
 
+    /**
+     * This will generate a verification code. The code will be saved inside collator_sort_with_sort_keys
+     * 
+     * @since 1.0.0
+     */
+    function generateVerificationCode($phone_number)
+    {
+        $code = $this->random_str(5);
+        $hashedCookie = wp_hash($code . $phone_number);
+        setcookie('sendsms_subscribe_check', $hashedCookie, time() + 60 * 60, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+        return $code;
+    }
+
+    /**
+     * This will verify the verification token and delete it if it succeed
+     */
+    function verifyVerificationCode($phone_number)
+    {
+        if (!isset($_POST['code'])) {
+            return false;
+        }
+        $code = $this->clearStringOfSpecialChars(sanitize_text_field($_POST['code']));
+        $isValidToken = hash_equals($_COOKIE['sendsms_subscribe_check'], wp_hash($code . $phone_number));
+        if ($isValidToken) {
+            setcookie('sendsms_subscribe_check', "", time() - 1, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+            return true;
+        }
+        return false;
+    }
     function clearStringOfSpecialChars($string)
     {
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.

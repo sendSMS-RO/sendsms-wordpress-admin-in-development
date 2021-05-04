@@ -1,7 +1,8 @@
 <?php
 require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
 require_once(plugin_dir_path(dirname(__FILE__)) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribe-widget.php');
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-unsubscribe-widget.php');
 
 /**
  * The public-facing functionality of the plugin.
@@ -90,9 +91,10 @@ class Sendsms_Dashboard_Public
 		);
 	}
 
-	public function subscribe_widget()
+	public function widget_initialization()
 	{
 		register_widget('SendSMSSubscriber');
+		register_widget('SendSMSUnsubscriber');
 	}
 
 	/**
@@ -151,23 +153,22 @@ class Sendsms_Dashboard_Public
 	}
 
 	/**
-	 * This will verify the code
+	 * This will verify the subscribe code
 	 */
-	public function unsubscribe_verify_code()
+	public function subscribe_verify_code()
 	{
+		$name = sanitize_text_field($_POST['name']);
+		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
-		$name = sanitize_text_field($_POST['name']);
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
-		$code = $this->functions->clearStringOfSpecialChars(sanitize_text_field($_POST['code']));
-		$isValidToken = hash_equals($_COOKIE['sendsms_subscribe_check'], wp_hash($code . $phone)) ? true : false;
-		if(!isset($_COOKIE['sendsms_subscribe_check'])) {
+		if (!isset($_COOKIE['sendsms_subscribe_check']) || empty($name)) {
 			wp_send_json_error("internal_error");
 			wp_die();
 		}
-		if(empty($code) || empty($name) || empty($phone) || !$isValidToken) {
+		$isValidToken = $this->functions->verifyVerificationCode($phone);
+		if (empty($phone) || !$isValidToken) {
 			wp_send_json_error("invalid_verification_code");
 			wp_die();
 		}

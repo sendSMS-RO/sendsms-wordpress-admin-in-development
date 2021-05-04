@@ -32,10 +32,8 @@ class SendSMS
             if (!strpos($content, '{code}')) {
                 $content .= '{code}';
             }
-            $code = $this->functions->random_str(5);
+            $code = $this->functions->generateVerificationCode($to);
             $newContent = str_replace('{code}', $code, $content);
-            $hashedCookie = wp_hash($code . $to);
-            setcookie('sendsms_subscribe_check', $hashedCookie, time() + 60 * 60, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
             $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=message_send&username=' . urlencode($username) . '&password=' . urlencode($password) . '&from=' . urlencode($label) . '&to=' . urlencode($to) . '&text=' . urlencode($newContent), $args)), true);
         } else {
             $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode($password) . '&from=' . urlencode($label) . '&to=' . urlencode($to) . '&text=' . urlencode($content) . '&short=' . ($short ? 'true' : 'false'), $args)), true);
