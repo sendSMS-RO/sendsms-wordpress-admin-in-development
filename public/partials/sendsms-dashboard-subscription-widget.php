@@ -29,7 +29,7 @@ wp_nonce_field('sendsms-security-nonce');
         </label>
     </div>
     <div class="sendsms-widget-subscribe-send-button">
-        <button class="button" id="sendsms_subscribe" type="button" aria-label="<?= __('Submit', 'sendsms-dashboard') ?>"><?= __('Submit', 'sendsms-dashboard') ?></button>
+        <button class="button" id="sendsms_widget_subscribe_submit" type="button" aria-label="<?= __('Submit', 'sendsms-dashboard') ?>"><?= __('Submit', 'sendsms-dashboard') ?></button>
     </div>
 </div>
 <div id="sendsms-widget-subscribe-verify-form">
@@ -38,7 +38,7 @@ wp_nonce_field('sendsms-security-nonce');
         <input id="sendsms_widget_subscribe_validation_field" type="text" aria-label="<?= __('Code', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forValidationField">
     </div>
     <div class="sendsms-widget-subscribe-validation-button">
-        <button class="button" id="sendsms_validate" type="button" aria-label="<?= __('Verify', 'sendsms-dashboard') ?>"><?= __('Verify', 'sendsms-dashboard') ?></button>
+        <button class="button" id="sendsms_widget_subscribe_validate" type="button" aria-label="<?= __('Verify', 'sendsms-dashboard') ?>"><?= __('Verify', 'sendsms-dashboard') ?></button>
     </div>
 </div>
 <?php echo $args['after_widget'];

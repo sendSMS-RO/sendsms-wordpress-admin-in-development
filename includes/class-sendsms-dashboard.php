@@ -173,14 +173,20 @@ class Sendsms_Dashboard
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
 
-		//widget
+		#widget
 		$this->loader->add_action('widgets_init', $plugin_public, 'widget_initialization');
 
-		//ajax
+		#ajax
+		//subscribe to newsletter
 		$this->loader->add_action('wp_ajax_nopriv_subscribe_to_newsletter', $plugin_public, 'subscribe_to_newsletter');
 		$this->loader->add_action('wp_ajax_subscribe_to_newsletter', $plugin_public, 'subscribe_to_newsletter');
 		$this->loader->add_action('wp_ajax_nopriv_subscribe_verify_code', $plugin_public, 'subscribe_verify_code');
 		$this->loader->add_action('wp_ajax_subscribe_verify_code', $plugin_public, 'subscribe_verify_code');
+		//unsubscribe from newsletter
+		$this->loader->add_action('wp_ajax_nopriv_unsubscribe_from_newsletter', $plugin_public, 'unsubscribe_from_newsletter');
+		$this->loader->add_action('wp_ajax_unsubscribe_from_newsletter', $plugin_public, 'unsubscribe_from_newsletter');
+		$this->loader->add_action('wp_ajax_nopriv_unsubscribe_verify_code', $plugin_public, 'unsubscribe_verify_code');
+		$this->loader->add_action('wp_ajax_unsubscribe_verify_code', $plugin_public, 'unsubscribe_verify_code');
 	}
 
 	/**

@@ -115,6 +115,14 @@ class Sendsms_Dashboard_Admin
 			$this->plugin_name . '_history',
 			array($this, 'page_history')
 		);
+		add_submenu_page(
+			$this->plugin_name,
+			__("Subscribers", 'sendsms-dashboard'),
+			__("Subscribers", 'sendsms-dashboard'),
+			"manage_options",
+			$this->plugin_name . '_subscribers',
+			array($this, 'page_subscribers')
+		);
 	}
 
 	/**
@@ -248,7 +256,12 @@ class Sendsms_Dashboard_Admin
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-history-admin-display.php');
 	}
 	//EO HISTORY PAGE
-
+	//SUBSCRIBERS PAGE
+	public function page_subscribers()
+	{
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-subscribers-admin-display.php');
+	}
+	//EO SUBSCRIBERS PAGE
 	//TEST PAGE
 	public function page_test()
 	{

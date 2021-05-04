@@ -22,6 +22,9 @@ class Sendsms_Dashboard_Activator
 	 */
 	public static function activate()
 	{
+		if( ! class_exists( 'WP_List_Table' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+		}
 		global $wpdb;
 		if (!current_user_can('activate_plugins'))
 			return;

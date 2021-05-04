@@ -80,7 +80,6 @@ class SendSMSFunctions
     public function add_subscriber_db($name, $phone_number, $ip_address)
     {
         global $wpdb;
-        $name = sanitize_text_field($name);
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
         $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
         $wpdb->query(
@@ -94,6 +93,29 @@ class SendSMSFunctions
                 date('Y-m-d H:i:s'),
                 $ip_address,
                 $browser
+            )
+        );
+        if (!$this->registered_ip_address_db($ip_address)) {
+            $this->add_ip_address_db($ip_address);
+        }
+    }
+
+    /**
+     * Remove a subscriber based on his phone number
+     * 
+     * @since 1.0.0
+     */
+    public function remove_subscriber_db($phone_number, $ip_address)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+        $wpdb->query(
+            $wpdb->prepare(
+                "
+                DELETE FROM $table_name
+                WHERE phone = %s",
+                $phone_number
             )
         );
         if (!$this->registered_ip_address_db($ip_address)) {
