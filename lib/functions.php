@@ -105,12 +105,11 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function remove_subscriber_db($phone_number, $ip_address)
+    public function remove_subscriber_db($phone_number, $ip_address = null)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
-        $wpdb->query(
+        $result = $wpdb->query(
             $wpdb->prepare(
                 "
                 DELETE FROM $table_name
@@ -118,6 +117,9 @@ class SendSMSFunctions
                 $phone_number
             )
         );
+        if ($ip_address == null) {
+            return;
+        }
         if (!$this->registered_ip_address_db($ip_address)) {
             $this->add_ip_address_db($ip_address);
         }

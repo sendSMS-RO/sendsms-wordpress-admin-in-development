@@ -1,6 +1,24 @@
 <?php
+require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
+
 class Sendsms_Dashboard_Subscribers extends WP_List_Table
 {
+    var $table_name;
+    var $wpdb;
+    var $functions;
+    function __construct()
+    {
+        global $wpdb;
+        $this->wpdb = $wpdb;
+        $this->table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $this->functions = new SendSMSFunctions();
+        //Set parent defaults
+        parent::__construct(array(
+            'singular'  => 'subscriber',     //singular name of the listed records
+            'plural'    => 'subscribers',    //plural name of the listed records
+            'ajax'      => false        //does this table support ajax?
+        ));
+    }
     /**
      * Get list columns.
      *
@@ -9,6 +27,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
     public function get_columns()
     {
         return array(
+            'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
             'phone'            => __('Phone', 'sendsms-dashboard'),
             'name'         => __('Name', 'sendsms-dashboard'),
             'date'         => __('Date', 'sendsms-dashboard'),
@@ -17,12 +36,38 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         );
     }
 
+    function get_bulk_actions()
+    {
+        $actions = array(
+            'delete'    => 'Delete'
+        );
+        return $actions;
+    }
+
+    function process_bulk_action()
+    {
+        //Detect when a bulk action is being triggered...
+        if ('delete' === $this->current_action()) {
+            if (!wp_verify_nonce($_GET['nonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+                die();
+            }
+            $phone = $this->functions->clear_phone_number($_GET['phone']);
+            $this->functions->remove_subscriber_db($phone);
+        }
+    }
+
     /**
      * Column cb.
      */
-    public function column_cb($issue)
+    function column_cb($issue)
     {
-        return '<input type="checkbox" name="sendsms-dashboard_subscribers[]"/>';
+        return sprintf(
+            '<input type="checkbox" name="%1$s[]" value="%2$s" />',
+            /*$1%s*/
+            $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
+            /*$2%s*/
+            $issue['phone']                //The value of the checkbox should be the record's id
+        );
     }
 
     /**
@@ -30,8 +75,9 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
      */
     public function column_phone($issue)
     {
+        $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
         $actions = array(
-            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone']),
+            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&nonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
         );
 
         return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
@@ -86,16 +132,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         return $issue['sent_on'];
     }
 
-    /**
-     * Get bulk actions.
-     *
-     * @return array
-     */
-    protected function get_bulk_actions()
-    {
-        return array();
-    }
-
     public function get_sortable_columns()
     {
         return array(
@@ -116,13 +152,12 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
      */
     public function prepare_items()
     {
-        global $wpdb;
-
         $per_page = 10;
         $columns  = $this->get_columns();
         $hidden   = $this->get_hiden_columns();
         $sortable = $this->get_sortable_columns();
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+
+        $this->process_bulk_action();
 
         // Column headers
         $this->_column_headers = array($columns, $hidden, $sortable);
@@ -138,18 +173,18 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
 
         //die();
         if (!empty($_REQUEST['s'])) {
-            $search = "AND phone LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";
-            $search .= "OR name LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";
-            $search .= "OR date LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";
-            $search .= "OR ip_address LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";
-            $search .= "OR browser LIKE '%" . esc_sql($wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search = "AND phone LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR date LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR ip_address LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR browser LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
         }
 
 
-        if (isset($_GET['orderby']) && isset($columns[$_GET['orderby']])) {
-            $orderBy = sanitize_text_field($_GET['orderby']);
-            if (isset($_GET['order']) && in_array(strtolower($_GET['order']), array('asc', 'desc'))) {
-                $order = sanitize_text_field($_GET['order']);
+        if (isset($_POST['orderby']) && isset($columns[$_POST['orderby']])) {
+            $orderBy = sanitize_text_field($_POST['orderby']);
+            if (isset($_POST['order']) && in_array(strtolower($_POST['order']), array('asc', 'desc'))) {
+                $order = sanitize_text_field($_POST['order']);
             } else {
                 $order = 'ASC';
             }
@@ -158,13 +193,13 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
             $order = 'DESC';
         }
 
-        $items = $wpdb->get_results(
-            "SELECT phone, name, date, ip_address, browser FROM $table_name WHERE 1 = 1 {$search}" .
-                $wpdb->prepare("ORDER BY `$orderBy` $order LIMIT %d OFFSET %d;", $per_page, $offset),
+        $items = $this->wpdb->get_results(
+            "SELECT phone, name, date, ip_address, browser FROM $this->table_name WHERE 1 = 1 {$search}" .
+                $this->wpdb->prepare("ORDER BY `$orderBy` $order LIMIT %d OFFSET %d;", $per_page, $offset),
             ARRAY_A
         );
 
-        $count = $wpdb->get_var("SELECT COUNT(date) FROM $table_name WHERE 1 = 1 {$search};");
+        $count = $this->wpdb->get_var("SELECT COUNT(date) FROM $this->table_name WHERE 1 = 1 {$search};");
 
         $this->items = $items;
 
