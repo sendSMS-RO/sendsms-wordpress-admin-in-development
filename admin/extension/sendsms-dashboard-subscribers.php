@@ -46,14 +46,16 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
 
     function process_bulk_action()
     {
+        error_log(json_encode($_GET));
         //Detect when a bulk action is being triggered...
-        if ('delete' === $this->current_action()) {
-            if (!wp_verify_nonce($_GET['nonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
-                die();
-            }
-            $phone = $this->functions->clear_phone_number($_GET['phone']);
-            $this->functions->remove_subscriber_db($phone);
-        }
+        // if ('delete' === $this->current_action()) {
+        //     if (!wp_verify_nonce($_GET['nonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+        //         die();
+        //     }
+        //     error_log("SETERGE");
+        //     $phone = $this->functions->clear_phone_number($_GET['phone']);
+        //     $this->functions->remove_subscriber_db($phone);
+        // }
     }
 
     /**
@@ -64,9 +66,9 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
             /*$1%s*/
-            $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
+            $this->_args['singular'],  
             /*$2%s*/
-            $issue['phone']                //The value of the checkbox should be the record's id
+            $issue['phone']                
         );
     }
 
@@ -81,7 +83,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         );
 
         return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
-        return $issue['phone'];
     }
 
     /**
