@@ -24,7 +24,7 @@ define('SENDSMS_DASHBOARD_VERSION', '1.0.0');
 /**
  * Currently DB version
  */
-define('SENDSMS_DB_VERSION', '1.4');
+define('SENDSMS_DB_VERSION', '1.7');
 
 /**
  * The code that runs during plugin activation.

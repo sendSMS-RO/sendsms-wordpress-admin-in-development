@@ -36,6 +36,43 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         );
     }
 
+    /**
+     * Column cb.
+     */
+    public function column_cb($issue)
+    {
+        return sprintf(
+            '<input type="checkbox" name="sendsms_dashboard_%1$s[]" value="%2$s" />',
+            /*$1%s*/
+            $this->_args['singular'],
+            /*$2%s*/
+            $issue['phone']
+        );
+    }
+
+    /**
+     * Return phone column
+     */
+    function column_phone($issue)
+    {
+        $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
+        $actions = array(
+            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&nonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
+        );
+
+        return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
+    }
+
+    function column_default($item, $column_name)
+    {
+        return $item[$column_name];
+    }
+
+    /**
+     * Get bulk actions.
+     *
+     * @return array
+     */
     function get_bulk_actions()
     {
         $actions = array(
@@ -44,6 +81,16 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         return $actions;
     }
 
+    public function get_sortable_columns()
+    {
+        return array(
+            'phone' => array('phone', false),
+            'name' => array('name', false),
+            'date' => array('date', false),
+            'ip_address' => array('ip_address', false),
+            'browser' => array('browser', false)
+        );
+    }
     function process_bulk_action()
     {
         error_log(json_encode($_GET));
@@ -57,93 +104,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         //     $this->functions->remove_subscriber_db($phone);
         // }
     }
-
-    /**
-     * Column cb.
-     */
-    function column_cb($issue)
-    {
-        return sprintf(
-            '<input type="checkbox" name="%1$s[]" value="%2$s" />',
-            /*$1%s*/
-            $this->_args['singular'],  
-            /*$2%s*/
-            $issue['phone']                
-        );
-    }
-
-    /**
-     * Return phone column
-     */
-    public function column_phone($issue)
-    {
-        $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
-        $actions = array(
-            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&nonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
-        );
-
-        return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
-    }
-
-    /**
-     * Return message column
-     */
-    public function column_name($issue)
-    {
-        return $issue['name'];
-    }
-
-    /**
-     * Return status column
-     */
-    public function column_date($issue)
-    {
-        return $issue['date'];
-    }
-
-    /**
-     * Return details column
-     */
-    public function column_ip_address($issue)
-    {
-        return $issue['ip_address'];
-    }
-
-    /**
-     * Return content column
-     */
-    public function column_browser($issue)
-    {
-        return $issue['browser'];
-    }
-
-    /**
-     * Return type column
-     */
-    public function column_type($issue)
-    {
-        return $issue['type'];
-    }
-
-    /**
-     * Return sent_on column
-     */
-    public function column_sent_on($issue)
-    {
-        return $issue['sent_on'];
-    }
-
-    public function get_sortable_columns()
-    {
-        return array(
-            'phone' => array('phone', true),
-            'name' => array('name', true),
-            'date' => array('date', true),
-            'ip_address' => array('ip_address', true),
-            'browser' => array('browser', true)
-        );
-    }
-
     public function get_hiden_columns()
     {
         return array();
@@ -157,11 +117,11 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         $columns  = $this->get_columns();
         $hidden   = $this->get_hiden_columns();
         $sortable = $this->get_sortable_columns();
-
-        $this->process_bulk_action();
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
 
         // Column headers
-        $this->_column_headers = array($columns, $hidden, $sortable);
+        $this->_column_headers = array($columns, $hidden, $sortable, 'phone');
+        $this->process_bulk_action();
 
         $current_page = $this->get_pagenum();
         if (1 < $current_page) {
@@ -182,10 +142,10 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         }
 
 
-        if (isset($_POST['orderby']) && isset($columns[$_POST['orderby']])) {
-            $orderBy = sanitize_text_field($_POST['orderby']);
-            if (isset($_POST['order']) && in_array(strtolower($_POST['order']), array('asc', 'desc'))) {
-                $order = sanitize_text_field($_POST['order']);
+        if (isset($_GET['orderby']) && isset($columns[$_GET['orderby']])) {
+            $orderBy = sanitize_text_field($_GET['orderby']);
+            if (isset($_GET['order']) && in_array(strtolower($_GET['order']), array('asc', 'desc'))) {
+                $order = sanitize_text_field($_GET['order']);
             } else {
                 $order = 'ASC';
             }
@@ -195,12 +155,12 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         }
 
         $items = $this->wpdb->get_results(
-            "SELECT phone, name, date, ip_address, browser FROM $this->table_name WHERE 1 = 1 {$search}" .
+            "SELECT phone, name, date, ip_address, browser FROM $table_name WHERE 1 = 1 {$search}" .
                 $this->wpdb->prepare("ORDER BY `$orderBy` $order LIMIT %d OFFSET %d;", $per_page, $offset),
             ARRAY_A
         );
 
-        $count = $this->wpdb->get_var("SELECT COUNT(date) FROM $this->table_name WHERE 1 = 1 {$search};");
+        $count = $this->wpdb->get_var("SELECT COUNT(date) FROM $table_name WHERE 1 = 1 {$search};");
 
         $this->items = $items;
 
