@@ -270,6 +270,26 @@ class Sendsms_Dashboard_Admin
 
 	//Ajax handler
 	/**
+	 * This will handle the editing of a subscriber
+	 * 
+	 * @since 1.0.0
+	 */
+	public function edit_a_subscriber()
+	{
+		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
+			wp_send_json_error(__('Invalid security token sent.', 'sendsms-dashboard'));
+			wp_die();
+		}
+		$data = array(
+			'phone_number' => sanitize_text_field($_POST['phone_number']),
+            'name'=> sanitize_text_field($_POST['name']),
+            'date'=> sanitize_text_field($_POST['date']),
+            'ip_address'=> sanitize_text_field($_POST['ip_address']),
+            'browser'=> sanitize_text_field($_POST['browser'])
+		);
+		wp_send_json_success($data);
+	}
+	/**
 	 * This will send a test message when an ajax event is called
 	 */
 	public function send_a_test_sms()

@@ -86,6 +86,14 @@
     color:rgba(0, 0, 0, 0.52);
 }
 
+.sendsms-dashboard-edit-form {
+    display: none;
+}
+
+.sendsms-dashboard-edit-form input,textarea{
+    margin-left: 0px !important;
+    width: 100%;
+}
 @media (min-width: 576px) {
     .sendsms-container {
         max-width: 540px;

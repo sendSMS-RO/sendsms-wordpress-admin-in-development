@@ -26,17 +26,19 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
 
     function column_default($item, $column_name)
     {
-        return $item[$column_name];
+        return '<p>' . $item[$column_name] . '</p>';
     }
 
     function column_phone($issue)
     {
+        //for edition we are using a button to which we append a ajax request
         $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
         $actions = array(
+            'inline'    => sprintf('<button type="button" data-sendsms-dashboard-phone="%s" class="button-link editinline sendsms-dashboard-subscribers-edit">Edit</button>', $issue['phone']),
             'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&_wpnonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
         );
 
-        return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
+        return sprintf('<p>%1$s</p> %2$s', $issue['phone'], $this->row_actions($actions));
     }
 
     function column_cb($item)
@@ -63,21 +65,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         return $columns;
     }
 
-
-    /** ************************************************************************
-     * Optional. If you want one or more columns to be sortable (ASC/DESC toggle), 
-     * you will need to register it here. This should return an array where the 
-     * key is the column that needs to be sortable, and the value is db column to 
-     * sort by. Often, the key and value will be the same, but this is not always
-     * the case (as the value is a column name from the database, not the list table).
-     * 
-     * This method merely defines which columns should be sortable and makes them
-     * clickable - it does not handle the actual sorting. You still need to detect
-     * the ORDERBY and ORDER querystring variables within prepare_items() and sort
-     * your data accordingly (usually by modifying your query).
-     * 
-     * @return array An associative array containing all the columns that should be sortable: 'slugs'=>array('data_values',bool)
-     **************************************************************************/
     function get_sortable_columns()
     {
         $sortable_columns = array(
@@ -107,6 +94,11 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
                 }
                 $phone = $this->functions->clear_phone_number($_GET['phone']);
                 $this->functions->remove_subscriber_db($phone);
+                break;
+            case 'edit':
+                if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+                    die();
+                }
                 break;
             case 'delete-bulk':
                 if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
@@ -144,6 +136,9 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         $search = '';
 
         if (!empty($_REQUEST['s'])) {
+            if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
+                die();
+            }
             $search = "AND phone LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR date LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
@@ -152,9 +147,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         }
 
         if (isset($_GET['orderby']) && isset($columns[$_GET['orderby']])) {
-            if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
-                die();
-            }
             $orderBy = sanitize_text_field($_GET['orderby']);
             if (isset($_GET['order'])) {
                 if (in_array(strtolower($_GET['order']), array('asc', 'desc'))) {
