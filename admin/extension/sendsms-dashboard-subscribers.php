@@ -1,8 +1,12 @@
 <?php
 require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
+if (!class_exists('WP_List_Table')) {
+    require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
+}
 
 class Sendsms_Dashboard_Subscribers extends WP_List_Table
 {
+
     var $table_name;
     var $wpdb;
     var $functions;
@@ -19,14 +23,36 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
             'ajax'      => false        //does this table support ajax?
         ));
     }
-    /**
-     * Get list columns.
-     *
-     * @return array
-     */
-    public function get_columns()
+
+    function column_default($item, $column_name)
     {
-        return array(
+        return $item[$column_name];
+    }
+
+    function column_phone($issue)
+    {
+        $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
+        $actions = array(
+            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&_wpnonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
+        );
+
+        return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
+    }
+
+    function column_cb($item)
+    {
+        return sprintf(
+            '<input type="checkbox" name="sendsms_dashboard_%1$s[]" value="%2$s" />',
+            /*$1%s*/
+            $this->_args['singular'],
+            /*$2%s*/
+            $item['phone']
+        );
+    }
+
+    function get_columns()
+    {
+        $columns = array(
             'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
             'phone'            => __('Phone', 'sendsms-dashboard'),
             'name'         => __('Name', 'sendsms-dashboard'),
@@ -34,88 +60,73 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
             'ip_address'         => __('IP Address', 'sendsms-dashboard'),
             'browser'         => __('Browser', 'sendsms-dashboard')
         );
+        return $columns;
     }
 
-    /**
-     * Column cb.
-     */
-    public function column_cb($issue)
-    {
-        return sprintf(
-            '<input type="checkbox" name="sendsms_dashboard_%1$s[]" value="%2$s" />',
-            /*$1%s*/
-            $this->_args['singular'],
-            /*$2%s*/
-            $issue['phone']
-        );
-    }
 
-    /**
-     * Return phone column
-     */
-    function column_phone($issue)
+    /** ************************************************************************
+     * Optional. If you want one or more columns to be sortable (ASC/DESC toggle), 
+     * you will need to register it here. This should return an array where the 
+     * key is the column that needs to be sortable, and the value is db column to 
+     * sort by. Often, the key and value will be the same, but this is not always
+     * the case (as the value is a column name from the database, not the list table).
+     * 
+     * This method merely defines which columns should be sortable and makes them
+     * clickable - it does not handle the actual sorting. You still need to detect
+     * the ORDERBY and ORDER querystring variables within prepare_items() and sort
+     * your data accordingly (usually by modifying your query).
+     * 
+     * @return array An associative array containing all the columns that should be sortable: 'slugs'=>array('data_values',bool)
+     **************************************************************************/
+    function get_sortable_columns()
     {
-        $nonce = wp_create_nonce('sendsms-dashboard-subscribers-bulk-actions');
-        $actions = array(
-            'delete'    => sprintf('<a href="?page=%s&action=%s&phone=%s&nonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce),
-        );
-
-        return sprintf('%1$s %2$s', $issue['phone'], $this->row_actions($actions));
-    }
-
-    function column_default($item, $column_name)
-    {
-        return $item[$column_name];
-    }
-
-    /**
-     * Get bulk actions.
-     *
-     * @return array
-     */
-    function get_bulk_actions()
-    {
-        $actions = array(
-            'delete'    => 'Delete'
-        );
-        return $actions;
-    }
-
-    public function get_sortable_columns()
-    {
-        return array(
+        $sortable_columns = array(
             'phone' => array('phone', false),
             'name' => array('name', false),
             'date' => array('date', false),
             'ip_address' => array('ip_address', false),
             'browser' => array('browser', false)
         );
+        return $sortable_columns;
     }
+
+    function get_bulk_actions()
+    {
+        $actions = array(
+            'delete-bulk'    => 'Delete'
+        );
+        return $actions;
+    }
+
     function process_bulk_action()
     {
-        error_log(json_encode($_GET));
-        //Detect when a bulk action is being triggered...
-        // if ('delete' === $this->current_action()) {
-        //     if (!wp_verify_nonce($_GET['nonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
-        //         die();
-        //     }
-        //     error_log("SETERGE");
-        //     $phone = $this->functions->clear_phone_number($_GET['phone']);
-        //     $this->functions->remove_subscriber_db($phone);
-        // }
+        switch ($this->current_action()) {
+            case 'delete':
+                if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+                    die();
+                }
+                $phone = $this->functions->clear_phone_number($_GET['phone']);
+                $this->functions->remove_subscriber_db($phone);
+                break;
+            case 'delete-bulk':
+                if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
+                    die();
+                }
+                foreach ($_POST['sendsms_dashboard_subscriber'] as $phone) {
+                    $phone = $this->functions->clear_phone_number($phone);
+                    $this->functions->remove_subscriber_db($phone);
+                }
+                break;
+            default:
+                break;
+        }
     }
-    public function get_hiden_columns()
-    {
-        return array();
-    }
-    /**
-     * Prepare table list items.
-     */
-    public function prepare_items()
+
+    function prepare_items()
     {
         $per_page = 10;
         $columns  = $this->get_columns();
-        $hidden   = $this->get_hiden_columns();
+        $hidden   = array();
         $sortable = $this->get_sortable_columns();
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
 
@@ -132,7 +143,6 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
 
         $search = '';
 
-        //die();
         if (!empty($_REQUEST['s'])) {
             $search = "AND phone LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
@@ -141,11 +151,15 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
             $search .= "OR browser LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
         }
 
-
         if (isset($_GET['orderby']) && isset($columns[$_GET['orderby']])) {
+            if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
+                die();
+            }
             $orderBy = sanitize_text_field($_GET['orderby']);
-            if (isset($_GET['order']) && in_array(strtolower($_GET['order']), array('asc', 'desc'))) {
-                $order = sanitize_text_field($_GET['order']);
+            if (isset($_GET['order'])) {
+                if (in_array(strtolower($_GET['order']), array('asc', 'desc'))) {
+                    $order = sanitize_text_field($_GET['order']);
+                }
             } else {
                 $order = 'ASC';
             }

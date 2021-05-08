@@ -7,9 +7,7 @@ $table->prepare_items();
 <div class="wrap">
     <h2><?= __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h2>
     <form id="sendsms-form" method="POST">
-        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
         <?php
-        //$table->views();
         $table->search_box(__('Search', 'sendsms-dashboard'), 'key');
         $table->display();
         ?>
