@@ -8,7 +8,6 @@ $table = new Sendsms_Dashboard_History();
     <form method="get">
         <?php
         $table->prepare_items();
-        echo '<input type="hidden" name="page" value="sendsms-dashboard_history" />';
         $table->views();
         $table->search_box(__('Search', 'sendsms-dashboard'), 'key');
         $table->display();

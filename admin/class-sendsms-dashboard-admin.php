@@ -285,7 +285,8 @@ class Sendsms_Dashboard_Admin
             'name'=> sanitize_text_field($_POST['name']),
             'date'=> sanitize_text_field($_POST['date']),
             'ip_address'=> sanitize_text_field($_POST['ip_address']),
-            'browser'=> sanitize_text_field($_POST['browser'])
+            'browser'=> sanitize_text_field($_POST['browser']),
+			'token' => wp_hash(sanitize_text_field($_POST['phone_number']))
 		);
 		wp_send_json_success($data);
 	}

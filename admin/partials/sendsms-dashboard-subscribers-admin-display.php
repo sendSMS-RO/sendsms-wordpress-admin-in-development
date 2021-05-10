@@ -18,15 +18,37 @@ $table->prepare_items();
     This will be taken as a copy and then inserted in the
     place of subscriber's data -->
 <table>
-    <tr class="sendsms-dashboard-edit-form">
-        <td>
-            <!-- TODO: Add a token to check if the phone number is corect -->
-            <input type="hidden" id="sendsms_dashboard_edit_old_phone">
-            <th><input id="sendsms_dashboard_edit_phone_number" type="tel"></th>
-            <th><input id="sendsms_dashboard_edit_name" type="text"></th>
-            <th><input id="sendsms_dashboard_edit_date" type="datetime-local"></th>
-            <th><input id="sendsms_dashboard_edit_ip_address" type="text"></th>
-            <th><textarea id="sendsms_dashboard_edit_browser" type="text"></th> 
+    <tr class="sendsms-dashboard-edit-form"></tr>
+    <tr class="sendsms-dashboard-edit-form sendsms-container">
+        <td colspan="6">
+            <div class="sendsms-edit-container">
+                <p class="sendsms-edit-title"><?= __("Edit", "sendsms-dashboard") ?></p>
+                <input type="hidden" id="sendsms_dashboard_edit_old_phone" data-sendsms-token="">
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("Phone number", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_phone_number" type="tel">
+                </fieldset>
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("Name", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_name" type="text">
+                </fieldset>
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("Subscription date", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_date" type="datetime-local" step="1">
+                </fieldset>
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("IP Adress", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_ip_address" type="text">
+                </fieldset>
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("Browser", "sendsms-dashboard") ?></label>
+                    <textarea id="sendsms_dashboard_edit_browser" type="text"></textarea>
+                </fieldset>
+                <div class="submit inline-save">
+                    <button type="button" class="button button-primary alignleft"><?= __("Submit", "sendsms-dashboard") ?></button>
+                    <button type="button" class="button alignright" onclick="cancelEdit()"><?= __("Cancel", "sendsms-dashboard") ?></button>
+                </div>
+            </div>
         </td>
     </tr>
 </table>
