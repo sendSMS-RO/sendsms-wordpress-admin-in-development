@@ -149,7 +149,7 @@ class Sendsms_Dashboard
 		$this->loader->add_action('admin_init', $plugin_admin, 'load_settings');
 		//ajax
 		$this->loader->add_action('wp_ajax_send_a_test_sms', $plugin_admin, 'send_a_test_sms');
-		$this->loader->add_action('wp_ajax_edit_a_subscriber', $plugin_admin, 'edit_a_subscriber');
+		$this->loader->add_action('wp_ajax_update_a_subscriber', $plugin_admin, 'update_a_subscriber');	//this will update a subscriber
 		//load phone fields
 		if ($this->get_setting('add_phone_field', false)) {
 			$this->loader->add_action('user_new_form', $plugin_admin, 'add_new_user_field');

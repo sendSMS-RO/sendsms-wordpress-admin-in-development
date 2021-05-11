@@ -78,7 +78,14 @@ class Sendsms_Dashboard_Admin
 				'text_message_contains_something' => __('The approximate number of messages: ', 'sendsms-dashboard'),
 				'text_message_is_empty' => __('The field is empty', 'sendsms-dashboard'),
 				'text_button_sending' => __('It\'s being sent...', 'sendsms-dashboard'),
-				'text_button_send' => __('Send Message', 'sendsms-dashboard')
+				'text_button_send' => __('Send Message', 'sendsms-dashboard'),
+				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
+				'text_internal_error' => __('Internal error.', 'sendsms-dashboard'),
+				'text_invalid_phone_number' => __('Please enter a valid phone number.', 'sendsms-dashboard'),
+				'text_invalid_name' => __('Please enter a valid name.', 'sendsms-dashboard'),
+				'text_invalid_date' => __('Please enter a valid date.', 'sendsms-dashboard'),
+				'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
+				'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard')
 			]
 		);
 	}
@@ -270,25 +277,57 @@ class Sendsms_Dashboard_Admin
 
 	//Ajax handler
 	/**
-	 * This will handle the editing of a subscriber
+	 * This will update the subscriber
 	 * 
 	 * @since 1.0.0
 	 */
-	public function edit_a_subscriber()
+	public function update_a_subscriber()
 	{
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
-			wp_send_json_error(__('Invalid security token sent.', 'sendsms-dashboard'));
+			wp_send_json_error('invalid_security_nonce');
 			wp_die();
 		}
-		$data = array(
-			'phone_number' => sanitize_text_field($_POST['phone_number']),
-            'name'=> sanitize_text_field($_POST['name']),
-            'date'=> sanitize_text_field($_POST['date']),
-            'ip_address'=> sanitize_text_field($_POST['ip_address']),
-            'browser'=> sanitize_text_field($_POST['browser']),
-			'token' => wp_hash(sanitize_text_field($_POST['phone_number']))
-		);
-		wp_send_json_success($data);
+		$old_phone = $this->functions->clear_phone_number($_POST['old_phone']);
+		if (!isset($old_phone) || is_null($old_phone) || !$this->functions->is_subscriber_db($old_phone)) {
+			wp_send_json_error('internal_error');
+			wp_die();
+		}
+		$phone = $this->functions->clear_phone_number($_POST['phone']);
+		$name = sanitize_text_field($_POST['name']);
+		$validDate = $this->functions->validate_date(str_replace("T", " ", $_POST['date']), 'Y-m-d H:i:s');
+		if(empty($phone) || !isset($phone))
+		{
+			wp_send_json_error('invalid_phone_number');
+			wp_die();
+		}
+		if(empty($name) || !isset($name))
+		{
+			wp_send_json_error('invalid_name');
+			wp_die();
+		}
+		if(!$validDate) {
+			wp_send_json_error('invalid_date');
+			wp_die();
+		}
+		$date = str_replace("T", " ", $_POST['date']);
+		$ip_address = rest_is_ip_address($_POST['ip_address']);
+		if(!$ip_address) {
+			wp_send_json_error('invalid_ip_address');
+			wp_die();
+		}
+		$browser = sanitize_textarea_field($_POST['browser']);
+		$this->functions->update_subscriber_db($old_phone, $phone, $name, $date, $ip_address, $browser);
+		wp_send_json_success(
+			array(
+				'info' => 'update_subscriber_success',
+				'new_data' => array(
+					'phone' => $phone,
+					'name' => $name,
+					'date' => $date,
+					'ip_address' => $ip_address,
+					'browser' => $browser
+				)
+		));
 	}
 	/**
 	 * This will send a test message when an ajax event is called

@@ -32,21 +32,51 @@ jQuery(document).ready(function() {
     //AJAX to edit a subscriber
     jQuery('.sendsms-dashboard-subscribers-edit').on('click', function($) {
         var parentTr = jQuery($.target).parent().closest('tr');
-        jQuery.post(sendsms_object.ajax_url, {
-            'action': 'edit_a_subscriber',
-            'security': sendsms_object.security,
-            'phone_number': jQuery(parentTr).children(".phone").eq(0).children('p').text(),
-            'name': jQuery(parentTr).children(".name").eq(0).children('p').text(),
-            'date': jQuery(parentTr).children(".date").eq(0).children('p').text(),
-            'ip_address': jQuery(parentTr).children(".ip_address").eq(0).children('p').text(),
-            'browser': jQuery(parentTr).children(".browser").eq(0).children('p').text()
-        }, function(response) {
-            if (undefined !== response.success && false === response.success) {
-                return;
-            }
-            activateEditForm($.target, ".sendsms-dashboard-subscribers-edit", response.data.phone_number, response.data.name, response.data.date, response.data.ip_address, response.data.browser, response.data.token);
-            //add a new event to save the new entered data. 
-        });
+        activateEditForm(
+            $.target,
+            ".sendsms-dashboard-subscribers-edit",
+            jQuery(parentTr).children(".phone").eq(0).children('p').text(),
+            jQuery(parentTr).children(".name").eq(0).children('p').text(),
+            jQuery(parentTr).children(".date").eq(0).children('p').text(),
+            jQuery(parentTr).children(".ip_address").eq(0).children('p').text(),
+            jQuery(parentTr).children(".browser").eq(0).children('p').text());
+        jQuery('.sendsms-dashboard-subscribers-update').on('click', function() {
+            jQuery.post(sendsms_object.ajax_url, {
+                'action': 'update_a_subscriber',
+                'security': sendsms_object.security,
+                'old_phone': jQuery("#sendsms_dashboard_edit_old_phone").val(),
+                'phone': jQuery("#sendsms_dashboard_edit_phone_number").val(),
+                'name': jQuery("#sendsms_dashboard_edit_name").val(),
+                'date': jQuery("#sendsms_dashboard_edit_date").val(),
+                'ip_address': jQuery("#sendsms_dashboard_edit_ip_address").val(),
+                'browser': jQuery("#sendsms_dashboard_edit_browser").val()
+            }, function(response) {
+                let modal = new jBox('Modal', {
+                    repositionOnContent: true,
+                    width: 250
+                });
+                if (undefined !== response.success && false === response.success) {
+                    modal.setTitle("Error");
+                    modal.setContent(sendsms_object['text_' + response.data]);
+                    modal.open();
+                    return;
+                }
+                if (response.success) {
+                    cancelEdit();
+                    var parentTr = jQuery($.target).parent().closest('tr');
+                    modal.setTitle("Success")
+                    modal.setContent(sendsms_object['text_' + response.data.info]);
+                    modal.open();
+                    jQuery('.sendsms-dashboard-subscribers-update').off('click');
+                    jQuery(parentTr).children(".phone").eq(0).children('p').text(response.data.new_data.phone);
+                    jQuery(parentTr).children(".name").eq(0).children('p').text(response.data.new_data.name);
+                    jQuery(parentTr).children(".date").eq(0).children('p').text(response.data.new_data.date);
+                    jQuery(parentTr).children(".ip_address").eq(0).children('p').text(response.data.new_data.ip_address);
+                    jQuery(parentTr).children(".browser").eq(0).children('p').text(response.data.new_data.browser);
+                    return;
+                }
+            })
+        })
     });
 });
 
@@ -76,25 +106,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
 });
 
-function activateEditForm(currentObject, selector, phone, name, date, ip_address, browser, token) {
+function activateEditForm(currentObject, selector, phone, name, date, ip_address, browser) {
     //reactivate all elements
     jQuery(selector).parent().closest('tr').show();
     var workingTr = jQuery(currentObject).parent().closest('tr');
     jQuery(workingTr).hide();
     jQuery(workingTr).after(jQuery(".sendsms-dashboard-edit-form").show());
     jQuery("#sendsms_dashboard_edit_old_phone,#sendsms_dashboard_edit_phone_number").val(phone);
-    jQuery('#sendsms_dashboard_edit_old_phone').attr('data-sendsms-token', token);
     jQuery("#sendsms_dashboard_edit_name").val(name);
     jQuery("#sendsms_dashboard_edit_date").val(date.replace(" ", "T"));
     jQuery("#sendsms_dashboard_edit_ip_address").val(ip_address);
     jQuery("#sendsms_dashboard_edit_browser").val(browser);
 }
 
-function cancelEdit(){
-    jQuery(".sendsms-dashboard-subscribers-edit").parent().closest('tr').show();
+function cancelEdit() {
+    jQuery(".sendsms-dashboard-subscribers-edit").parent().closest('tr').fadeIn(400);
     jQuery(".sendsms-dashboard-edit-form").hide();
     jQuery("#sendsms_dashboard_edit_old_phone,#sendsms_dashboard_edit_phone_number").val("");
-    jQuery('#sendsms_dashboard_edit_old_phone').data('sendsms-token', '');
     jQuery("#sendsms_dashboard_edit_name").val("");
     jQuery("#sendsms_dashboard_edit_date").val("");
     jQuery("#sendsms_dashboard_edit_ip_address").val("");

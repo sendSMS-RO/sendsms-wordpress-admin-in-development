@@ -109,7 +109,7 @@ class SendSMSFunctions
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $result = $wpdb->query(
+        $wpdb->query(
             $wpdb->prepare(
                 "
                 DELETE FROM $table_name
@@ -125,6 +125,30 @@ class SendSMSFunctions
         }
     }
 
+    /**
+     * Update a subscriber
+     * 
+     * @since 1.0.0
+     */
+    public function update_subscriber_db($old_phone, $phone_number, $name, $date, $ip_address, $browser)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $wpdb->query(
+            $wpdb->prepare(
+                "
+                UPDATE $table_name
+                SET phone = %s, name = %s, date = %s, ip_address = %s, browser = %s
+                WHERE phone = %s",
+                $phone_number,
+                $name,
+                $date,
+                $ip_address,
+                $browser,
+                $old_phone
+            )
+        );
+    }
     /**
      * Check if the number is already subscribed
      * 
@@ -311,6 +335,19 @@ class SendSMSFunctions
             return true;
         }
         return false;
+    }
+
+    /**
+     * This will check if the date is in the right format
+     * 
+     * @since 1.0.0
+     */
+    function validate_date($date, $format = 'Y-m-d') {
+        // Create the format date
+        $d = DateTime::createFromFormat($format, $date);
+    
+        // Return the comparison    
+        return $d && $d->format($format) === $date;
     }
     function clearStringOfSpecialChars($string)
     {

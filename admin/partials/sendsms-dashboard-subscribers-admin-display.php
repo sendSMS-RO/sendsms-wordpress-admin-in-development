@@ -23,7 +23,7 @@ $table->prepare_items();
         <td colspan="6">
             <div class="sendsms-edit-container">
                 <p class="sendsms-edit-title"><?= __("Edit", "sendsms-dashboard") ?></p>
-                <input type="hidden" id="sendsms_dashboard_edit_old_phone" data-sendsms-token="">
+                <input type="hidden" id="sendsms_dashboard_edit_old_phone">
                 <fieldset class="sendsms-edit-fieldset">
                     <label><?= __("Phone number", "sendsms-dashboard") ?></label>
                     <input id="sendsms_dashboard_edit_phone_number" type="tel">
@@ -45,7 +45,7 @@ $table->prepare_items();
                     <textarea id="sendsms_dashboard_edit_browser" type="text"></textarea>
                 </fieldset>
                 <div class="submit inline-save">
-                    <button type="button" class="button button-primary alignleft"><?= __("Submit", "sendsms-dashboard") ?></button>
+                    <button type="button" class="button button-primary alignleft sendsms-dashboard-subscribers-update"><?= __("Submit", "sendsms-dashboard") ?></button>
                     <button type="button" class="button alignright" onclick="cancelEdit()"><?= __("Cancel", "sendsms-dashboard") ?></button>
                 </div>
             </div>

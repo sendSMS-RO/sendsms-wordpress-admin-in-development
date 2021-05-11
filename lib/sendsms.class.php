@@ -23,7 +23,6 @@ class SendSMS
         $content = sanitize_textarea_field($content);
         $this->functions->get_auth($username, $password, $label);
         $to = $this->functions->validate_phone($to);
-        $content = sanitize_textarea_field($content);
         $args['headers'] = [
             'url' => get_site_url()
         ];
