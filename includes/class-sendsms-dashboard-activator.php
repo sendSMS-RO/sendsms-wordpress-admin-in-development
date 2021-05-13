@@ -58,6 +58,7 @@ class Sendsms_Dashboard_Activator
 				  `date` datetime NOT NULL,
 				  `ip_address` varchar(20) DEFAULT NULL,
 				  `browser` text DEFAULT NULL, 
+				  `contact_id_synced` varchar(8) DEFAULT NULL
 				  PRIMARY KEY (`phone`)
 				) $charset_collate;";
 			$sql3 = "CREATE TABLE `$table_name_ip_address` (

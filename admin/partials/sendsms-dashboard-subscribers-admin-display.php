@@ -5,6 +5,9 @@ $table->prepare_items();
 
 ?>
 <div class="wrap">
+    <form mathod="POST" id="sendsms-subscriber-custom-actions">
+    </form>
+
     <h2><?= __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h2>
     <form id="sendsms-form" method="POST">
         <?php

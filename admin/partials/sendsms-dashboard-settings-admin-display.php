@@ -2,6 +2,7 @@
 if (!current_user_can('manage_options')) {
     return;
 }
+require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
 
 // add error/update messages
 if (isset($_GET['settings-updated'])) {
@@ -13,6 +14,7 @@ $tabs = array(
     'user' => __('User', 'sendsms-dashboard'),
     'subscription' => __('Subscription', 'sendsms-dashboard')
 );
+$api = new SendSMS();
 // show error/update messages
 settings_errors('sendsms-dashboard_messages');
 ?>
@@ -22,6 +24,14 @@ settings_errors('sendsms-dashboard_messages');
         <div class="sendsms-item-input-1 sendsms-left-panel-settings">
             <img class="sendsms-image-center-xs" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
             <p><?= __('If you don\'t have an account, you can register <a href="https://hub.sendsms.ro/register" target="_blank">here</a>', 'sendsms-dashboard') ?></p>
+            <p><?php
+            $response = $api->get_user_balance();
+            if($response['status'] >= 0) {
+                echo __('Your current sendsms.ro balance is: €', 'sendsms-dashboard') . $response['details'];
+            } else {
+                echo __('Please configure your account first', 'sendsms-dashboard');
+            }
+            ?></p>
             <ul class="sendsms-setting-list">
                 <?php
                 foreach ($tabs as $key => $value) {

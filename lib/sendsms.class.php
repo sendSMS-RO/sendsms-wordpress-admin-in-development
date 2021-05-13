@@ -55,4 +55,16 @@ class SendSMS
         );
         return $results;
     }
+
+    /**
+     * Get user balance
+     * 
+     * @since 1.0.0
+     */
+    function get_user_balance()
+    {
+        $this->functions->get_auth($username, $password, $label);
+        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('http://api.sendsms.ro/json?action=user_get_balance&username=' . urlencode($username) . '&password=' . urlencode($password))), true);
+        return $results;
+    }
 }
