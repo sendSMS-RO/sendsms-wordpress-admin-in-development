@@ -5,10 +5,9 @@ $table->prepare_items();
 
 ?>
 <div class="wrap">
-    <form mathod="POST" id="sendsms-subscriber-custom-actions">
-    </form>
+    <h1 class="wp-heading-inline"><?= __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h1>
+    <button type="submit" class="" id="sendsms-dashboard-subscribers-synchronize">Synchronize subscribers</button>
 
-    <h2><?= __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h2>
     <form id="sendsms-form" method="POST">
         <?php
         $table->search_box(__('Search', 'sendsms-dashboard'), 'key');

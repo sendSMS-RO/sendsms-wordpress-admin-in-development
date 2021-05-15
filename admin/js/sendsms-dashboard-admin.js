@@ -78,6 +78,31 @@ jQuery(document).ready(function() {
             })
         })
     });
+    jQuery('#sendsms-dashboard-subscribers-synchronize').on('click', function($) {
+        jQuery('#sendsms-dashboard-subscribers-synchronize').html('<i class="sendsms-dashboard-fa-spinner fas fa-spinner"></i>');
+        jQuery.post(sendsms_object.ajax_url, {
+            'action': 'synchronize_contacts',
+            'security': sendsms_object.security
+        }, function(response) {
+            let modal = new jBox('Modal', {
+                repositionOnContent: true,
+                width: 250
+            });
+            if (undefined !== response.success && false === response.success) {
+                modal.setTitle("Error");
+                modal.setContent(sendsms_object['text_' + response.data]);
+                modal.open();
+                return;
+            }
+            if (response.success) {
+                cancelEdit();
+                modal.setTitle("Success")
+                modal.setContent(sendsms_object['text_' + response.data.info]);
+                modal.open();
+                return;
+            }
+        })
+    })
 });
 
 //count the number of characters

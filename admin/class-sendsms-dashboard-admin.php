@@ -33,6 +33,7 @@ class Sendsms_Dashboard_Admin
 	private $version;
 
 	private $functions;
+	private $api;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -46,6 +47,7 @@ class Sendsms_Dashboard_Admin
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->functions = new SendSMSFunctions();
+		$this->api = new SendSMS();
 	}
 
 	/**
@@ -277,6 +279,24 @@ class Sendsms_Dashboard_Admin
 
 	//Ajax handler
 	/**
+	 * This will synchronize all the subscribers to sendsms.ro
+	 * 
+	 * @since 1.0.0
+	 */
+	public function synchronize_contacts()
+	{
+		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
+			wp_send_json_error('invalid_security_nonce');
+			wp_die();
+		}
+		if (get_option('sendsms-dashboard-sync-group')) {
+			$result = $this->api->delete_group(get_option('sendsms-dashboard-sync-group'));
+			error_log(json_encode($result));
+		}
+		$id = $this->api->create_group()['details'];
+		update_option('sendsms-dashboard-sync-group', $id);
+	}
+	/**
 	 * This will update the subscriber
 	 * 
 	 * @since 1.0.0
@@ -295,23 +315,21 @@ class Sendsms_Dashboard_Admin
 		$phone = $this->functions->clear_phone_number($_POST['phone']);
 		$name = sanitize_text_field($_POST['name']);
 		$validDate = $this->functions->validate_date(str_replace("T", " ", $_POST['date']), 'Y-m-d H:i:s');
-		if(empty($phone) || !isset($phone))
-		{
+		if (empty($phone) || !isset($phone)) {
 			wp_send_json_error('invalid_phone_number');
 			wp_die();
 		}
-		if(empty($name) || !isset($name))
-		{
+		if (empty($name) || !isset($name)) {
 			wp_send_json_error('invalid_name');
 			wp_die();
 		}
-		if(!$validDate) {
+		if (!$validDate) {
 			wp_send_json_error('invalid_date');
 			wp_die();
 		}
 		$date = str_replace("T", " ", $_POST['date']);
 		$ip_address = rest_is_ip_address($_POST['ip_address']);
-		if(!$ip_address) {
+		if (!$ip_address) {
 			wp_send_json_error('invalid_ip_address');
 			wp_die();
 		}
@@ -327,7 +345,8 @@ class Sendsms_Dashboard_Admin
 					'ip_address' => $ip_address,
 					'browser' => $browser
 				)
-		));
+			)
+		);
 	}
 	/**
 	 * This will send a test message when an ajax event is called
@@ -341,8 +360,7 @@ class Sendsms_Dashboard_Admin
 		if (empty($_POST['message'])) {
 			wp_send_json_error(__('The message box is empty', 'sendsms-dashboard'));
 		}
-		$api = new SendSMS();
-		$result = $api->message_send(
+		$result = $this->api->message_send(
 			$_POST['short'] == 'true' ? true : false,
 			$_POST['gdpr'] == 'true' ? true : false,
 			isset($_POST['phone_number']) ? $_POST['phone_number'] : "",
