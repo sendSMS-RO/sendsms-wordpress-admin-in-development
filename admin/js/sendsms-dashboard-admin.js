@@ -101,8 +101,9 @@ jQuery(document).ready(function() {
             if (response.success) {
                 cancelEdit();
                 modal.setTitle("Success")
-                modal.setContent(sendsms_object['text_' + response.data.info]);
+                modal.setContent(sendsms_object['text_' + response.data]);
                 modal.open();
+                jQuery('#sendsms-dashboard-subscribers-synchronize').html('Synchronize subscribers');
                 return;
             }
         })

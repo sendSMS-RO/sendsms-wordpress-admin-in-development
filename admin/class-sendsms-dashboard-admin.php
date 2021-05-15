@@ -88,7 +88,8 @@ class Sendsms_Dashboard_Admin
 				'text_invalid_last_name' => __('Please enter a valid last name.', 'sendsms-dashboard'),
 				'text_invalid_date' => __('Please enter a valid date.', 'sendsms-dashboard'),
 				'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
-				'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard')
+				'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard'),
+				'text_constacts_synced' => __('Contacts synchronized succesfully', 'sendsms-dashboard'),
 			]
 		);
 	}
@@ -291,11 +292,19 @@ class Sendsms_Dashboard_Admin
 			wp_die();
 		}
 		if (get_option('sendsms-dashboard-sync-group')) {
-			$result = $this->api->delete_group(get_option('sendsms-dashboard-sync-group'));
-			error_log(json_encode($result));
+			$this->api->delete_group(get_option('sendsms-dashboard-sync-group'));
 		}
 		$id = $this->api->create_group()['details'];
 		update_option('sendsms-dashboard-sync-group', $id);
+		$subscribers = $this->functions->get_subscribers_db();
+		foreach ($subscribers as $subscriber) {
+			$result = $this->api->add_contact($id, $subscriber['last_name'], $subscriber['first_name'], $subscriber['phone']);
+			if ($result['status'] < 0) {
+				wp_send_json_error('internal_error');
+				wp_die();
+			}
+		}
+		wp_send_json_success('constacts_synced');
 	}
 	/**
 	 * This will update the subscriber

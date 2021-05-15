@@ -5,6 +5,13 @@ if (!defined('WPINC')) {
 
 class SendSMSFunctions
 {
+    var $wpdb;
+
+    function __construct()
+    {
+        global $wpdb;
+        $this->wpdb = $wpdb;
+    }
     /**
      * Get Plugin settings auth settings
      * 
@@ -81,10 +88,10 @@ class SendSMSFunctions
     public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
-        $wpdb->query(
-            $wpdb->prepare(
+        $this->wpdb->query(
+            $this->wpdb->prepare(
                 "
                 INSERT INTO $table_name
                 (`phone`, `first_name`, `last_name`, `date`, `ip_address`, `browser`)
@@ -110,9 +117,9 @@ class SendSMSFunctions
     public function remove_subscriber_db($phone_number, $ip_address = null)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $wpdb->query(
-            $wpdb->prepare(
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $this->wpdb->query(
+            $this->wpdb->prepare(
                 "
                 DELETE FROM $table_name
                 WHERE phone = %s",
@@ -135,9 +142,9 @@ class SendSMSFunctions
     public function update_subscriber_db($old_phone, $phone_number, $first_name, $last_name, $date, $ip_address, $browser)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $wpdb->query(
-            $wpdb->prepare(
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $this->wpdb->query(
+            $this->wpdb->prepare(
                 "
                 UPDATE $table_name
                 SET phone = %s, first_name = %s, last_name = %s, date = %s, ip_address = %s, browser = %s
@@ -152,6 +159,7 @@ class SendSMSFunctions
             )
         );
     }
+
     /**
      * Check if the number is already subscribed
      * 
@@ -160,9 +168,21 @@ class SendSMSFunctions
     public function is_subscriber_db($phone_number)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), ARRAY_A);
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $results = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), ARRAY_A);
         return count($results) != 0 ? true : false;
+    }
+
+    /**
+     * Get all subscribers
+     * 
+     * @since 1.0.0
+     */
+    public function get_subscribers_db()
+    {
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $results = $this->wpdb->get_results("SELECT * FROM " . $table_name, ARRAY_A);
+        return $results;
     }
 
     /**
@@ -183,9 +203,9 @@ class SendSMSFunctions
     public function add_ip_address_db($ip_address)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
-        $wpdb->query(
-            $wpdb->prepare(
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $this->wpdb->query(
+            $this->wpdb->prepare(
                 "
                 INSERT INTO $table_name
                 (`ip_address`, `date_cycle_start`, `request_no`)
@@ -205,8 +225,8 @@ class SendSMSFunctions
     public function get_ip_address_db($ip_address)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
-        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $table_name . " WHERE ip_address	 = %s", $ip_address), ARRAY_A);
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $results = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM " . $table_name . " WHERE ip_address	 = %s", $ip_address), ARRAY_A);
         return $results;
     }
     /**
@@ -270,7 +290,7 @@ class SendSMSFunctions
     public function too_many_requests($ip_address)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'sendsms_dashboard_ip_address';
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_ip_address';
         $ip_restrict = $this->get_setting('ip_limit', '');
         $ip_restrict = explode("/", $ip_restrict);
         if (count($ip_restrict) == 2 && is_numeric($ip_restrict[0]) && is_numeric($ip_restrict[1])) {
@@ -282,8 +302,8 @@ class SendSMSFunctions
                     if ($attempts >= $ip_restrict[0]) {
                         return true;
                     } else {
-                        $wpdb->query(
-                            $wpdb->prepare(
+                        $this->wpdb->query(
+                            $this->wpdb->prepare(
                                 "
                                 UPDATE $table_name
                                 SET request_no = %s
@@ -294,8 +314,8 @@ class SendSMSFunctions
                         );
                     }
                 } else {
-                    $wpdb->query(
-                        $wpdb->prepare(
+                    $this->wpdb->query(
+                        $this->wpdb->prepare(
                             "
                             UPDATE $table_name
                             SET date_cycle_start = %s, request_no = 1

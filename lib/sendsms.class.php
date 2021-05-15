@@ -100,6 +100,8 @@ class SendSMS
      */
     function add_contact($group_id, $first_name, $last_name, $phone_number)
     {
-        //TODO
+        $this->functions->get_auth($username, $password, $label);
+        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_contact_add&username=' . urlencode($username) . '&password=' . urlencode($password) . '&group_id=' . urlencode($group_id) . '&phone_number=' . urlencode($phone_number) . '&first_name=' . urlencode($first_name) . '&last_name=' . urlencode($last_name))), true);
+        return $results;
     }
 }
