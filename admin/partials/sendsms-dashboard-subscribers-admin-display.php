@@ -22,7 +22,7 @@ $table->prepare_items();
 <table>
     <tr class="sendsms-dashboard-edit-form"></tr>
     <tr class="sendsms-dashboard-edit-form sendsms-container">
-        <td colspan="6">
+        <td colspan="7">
             <div class="sendsms-edit-container">
                 <p class="sendsms-edit-title"><?= __("Edit", "sendsms-dashboard") ?></p>
                 <input type="hidden" id="sendsms_dashboard_edit_old_phone">
@@ -31,8 +31,12 @@ $table->prepare_items();
                     <input id="sendsms_dashboard_edit_phone_number" type="tel">
                 </fieldset>
                 <fieldset class="sendsms-edit-fieldset">
-                    <label><?= __("Name", "sendsms-dashboard") ?></label>
-                    <input id="sendsms_dashboard_edit_name" type="text">
+                    <label><?= __("First Name", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_first_name" type="text">
+                </fieldset>
+                <fieldset class="sendsms-edit-fieldset">
+                    <label><?= __("Last Name", "sendsms-dashboard") ?></label>
+                    <input id="sendsms_dashboard_edit_last_name" type="text">
                 </fieldset>
                 <fieldset class="sendsms-edit-fieldset">
                     <label><?= __("Subscription date", "sendsms-dashboard") ?></label>

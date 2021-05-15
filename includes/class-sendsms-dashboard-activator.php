@@ -54,10 +54,12 @@ class Sendsms_Dashboard_Activator
 				) $charset_collate;";
 			$sql2 = "CREATE TABLE `$table_name_subscribers` (
 				  `phone` varchar(50) NOT NULL,
-				  `name` varchar(255) NOT NULL,
+				  `first_name` varchar(255) NOT NULL,
+				  `last_name` varchar(255) NOT NULL,
 				  `date` datetime NOT NULL,
 				  `ip_address` varchar(20) DEFAULT NULL,
 				  `browser` text DEFAULT NULL,
+				  `synced` int(8) DEFAULT NULL,
 				  PRIMARY KEY (`phone`)
 				) $charset_collate;";
 			$sql3 = "CREATE TABLE `$table_name_ip_address` (

@@ -57,7 +57,8 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         $columns = array(
             'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
             'phone'            => __('Phone', 'sendsms-dashboard'),
-            'name'         => __('Name', 'sendsms-dashboard'),
+            'first_name'         => __('First Name', 'sendsms-dashboard'),
+            'last_name'         => __('Last Name', 'sendsms-dashboard'),
             'date'         => __('Date', 'sendsms-dashboard'),
             'ip_address'         => __('IP Address', 'sendsms-dashboard'),
             'browser'         => __('Browser', 'sendsms-dashboard')
@@ -69,7 +70,8 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
     {
         $sortable_columns = array(
             'phone' => array('phone', false),
-            'name' => array('name', false),
+            'first_name' => array('first_name', false),
+            'last_name' => array('last_name', false),
             'date' => array('date', false),
             'ip_address' => array('ip_address', false),
             'browser' => array('browser', false)
@@ -140,7 +142,8 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
                 die();
             }
             $search = "AND phone LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
-            $search .= "OR name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR first_name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
+            $search .= "OR last_name LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR date LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR ip_address LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
             $search .= "OR browser LIKE '%" . esc_sql($this->wpdb->esc_like($_REQUEST['s'])) . "%' ";
@@ -161,7 +164,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         }
 
         $items = $this->wpdb->get_results(
-            "SELECT phone, name, date, ip_address, browser FROM $table_name WHERE 1 = 1 {$search}" .
+            "SELECT phone, first_name, last_name, date, ip_address, browser FROM $table_name WHERE 1 = 1 {$search}" .
                 $this->wpdb->prepare("ORDER BY `$orderBy` $order LIMIT %d OFFSET %d;", $per_page, $offset),
             ARRAY_A
         );

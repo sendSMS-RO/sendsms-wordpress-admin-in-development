@@ -5,7 +5,8 @@ jQuery(document).ready(function() {
             'action': 'subscribe_to_newsletter',
             'security': sendsms_object_public.security,
             'phone_number': jQuery('#sendsms_widget_subscribe_phone_number').val(),
-            'name': jQuery('#sendsms_widget_subscribe_name').val(),
+            'first_name': jQuery('#sendsms_widget_subscribe_first_name').val(),
+            'last_name': jQuery('#sendsms_widget_subscribe_last_name').val(),
             'gdpr': jQuery('#sendsms_widget_subscribe_gdpr').is(":checked"),
         }, function(response) {
             clearOutputToUser("subscribe");
@@ -28,7 +29,8 @@ jQuery(document).ready(function() {
                         'action': 'subscribe_verify_code',
                         'security': sendsms_object_public.security,
                         'phone_number': jQuery('#sendsms_widget_subscribe_phone_number').val(),
-                        'name': jQuery('#sendsms_widget_subscribe_name').val(),
+                        'first_name': jQuery('#sendsms_widget_subscribe_first_name').val(),
+                        'last_name': jQuery('#sendsms_widget_subscribe_last_name').val(),
                         'code': jQuery('#sendsms_widget_subscribe_validation_field').val()
                     }, function(response) {
                         clearOutputToUser("subscribe");

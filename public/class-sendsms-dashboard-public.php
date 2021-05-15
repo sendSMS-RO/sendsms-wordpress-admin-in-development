@@ -85,7 +85,8 @@ class Sendsms_Dashboard_Public
 				'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
 				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
 				'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
-				'text_field_name' => __('Please enter a name', 'sendsms-dashboard'),
+				'text_field_first_name' => __('Please enter a first name', 'sendsms-dashboard'),
+				'text_field_last_name' => __('Please enter a last name', 'sendsms-dashboard'),
 				'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard'),
 				'text_invalid_verification_code' => __('The verification field is empty or it is not valid', 'sendsms-dashboard'),
 				'text_phone_not_found' => __('We were unable to find this phone number inside our database', 'sendsms-dashboard'),
@@ -112,12 +113,18 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("nogdpr");
 			wp_die();
 		}
-		$name = sanitize_text_field($_POST['name']);
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
-		if (empty($name)) {
-			wp_send_json_error("field_name");
+		error_log(json_encode($_POST));
+		$first_name = sanitize_text_field($_POST['first_name']);
+		if (empty($first_name)) {
+			wp_send_json_error("field_first_name");
 			wp_die();
 		}
+		$last_name = sanitize_text_field($_POST['last_name']);
+		if (empty($last_name)) {
+			wp_send_json_error("field_last_name");
+			wp_die();
+		}
+		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
 		if (empty($phone)) {
 			wp_send_json_error("field_phone_number");
 			wp_die();
@@ -147,7 +154,7 @@ class Sendsms_Dashboard_Public
 				}
 				wp_die();
 			} else {
-				$this->functions->add_subscriber_db($name, $phone, $ip_address);
+				$this->functions->add_subscriber_db($first_name, $last_name, $phone, $ip_address);
 				wp_send_json_success("subscription_success");
 				wp_die();
 			}
@@ -207,13 +214,14 @@ class Sendsms_Dashboard_Public
 	 */
 	public function subscribe_verify_code()
 	{
-		$name = sanitize_text_field($_POST['name']);
+		$first_name = sanitize_text_field($_POST['first_name']);
+		$last_name = sanitize_text_field($_POST['last_name']);
 		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
-		if (!isset($_COOKIE['sendsms_subscribe_check']) || empty($name)) {
+		if (!isset($_COOKIE['sendsms_subscribe_check']) || empty($first_name) || empty($last_name)) {
 			wp_send_json_error("internal_error");
 			wp_die();
 		}
@@ -223,7 +231,7 @@ class Sendsms_Dashboard_Public
 			wp_die();
 		}
 		$ip_address = $this->functions->get_ip_address();
-		$this->functions->add_subscriber_db($name, $phone, $ip_address);
+		$this->functions->add_subscriber_db($first_name, $last_name, $phone, $ip_address);
 		wp_send_json_success("subscription_success");
 		wp_die();
 	}

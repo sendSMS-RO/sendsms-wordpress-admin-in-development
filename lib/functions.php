@@ -27,6 +27,7 @@ class SendSMSFunctions
         $phone_number = $this->clear_phone_number($phone_number);
         //Strip out leading zeros:
         $phone_number = ltrim($phone_number, '0');
+        //this will check the country code and apply it if needed
         if ($this->get_setting("cc", "INT") === "INT") {
             return $phone_number;
         }
@@ -77,7 +78,7 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber_db($name, $phone_number, $ip_address)
+    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
@@ -86,10 +87,11 @@ class SendSMSFunctions
             $wpdb->prepare(
                 "
                 INSERT INTO $table_name
-                (`phone`, `name`, `date`, `ip_address`, `browser`)
-                VALUES ( %s, %s, %s, %s, %s)",
+                (`phone`, `first_name`, `last_name`, `date`, `ip_address`, `browser`)
+                VALUES ( %s, %s, %s, %s, %s, %s)",
                 $phone_number,
-                $name,
+                $fisrt_name,
+                $last_name,
                 date('Y-m-d H:i:s'),
                 $ip_address,
                 $browser
@@ -130,7 +132,7 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function update_subscriber_db($old_phone, $phone_number, $name, $date, $ip_address, $browser)
+    public function update_subscriber_db($old_phone, $phone_number, $first_name, $last_name, $date, $ip_address, $browser)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'sendsms_dashboard_subscribers';
@@ -138,10 +140,11 @@ class SendSMSFunctions
             $wpdb->prepare(
                 "
                 UPDATE $table_name
-                SET phone = %s, name = %s, date = %s, ip_address = %s, browser = %s
+                SET phone = %s, first_name = %s, last_name = %s, date = %s, ip_address = %s, browser = %s
                 WHERE phone = %s",
                 $phone_number,
-                $name,
+                $first_name,
+                $last_name,
                 $date,
                 $ip_address,
                 $browser,
@@ -342,10 +345,11 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    function validate_date($date, $format = 'Y-m-d') {
+    function validate_date($date, $format = 'Y-m-d')
+    {
         // Create the format date
         $d = DateTime::createFromFormat($format, $date);
-    
+
         // Return the comparison    
         return $d && $d->format($format) === $date;
     }

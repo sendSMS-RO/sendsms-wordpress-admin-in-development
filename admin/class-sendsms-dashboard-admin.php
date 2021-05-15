@@ -84,7 +84,8 @@ class Sendsms_Dashboard_Admin
 				'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
 				'text_internal_error' => __('Internal error.', 'sendsms-dashboard'),
 				'text_invalid_phone_number' => __('Please enter a valid phone number.', 'sendsms-dashboard'),
-				'text_invalid_name' => __('Please enter a valid name.', 'sendsms-dashboard'),
+				'text_invalid_first_name' => __('Please enter a valid first name.', 'sendsms-dashboard'),
+				'text_invalid_last_name' => __('Please enter a valid last name.', 'sendsms-dashboard'),
 				'text_invalid_date' => __('Please enter a valid date.', 'sendsms-dashboard'),
 				'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
 				'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard')
@@ -313,14 +314,19 @@ class Sendsms_Dashboard_Admin
 			wp_die();
 		}
 		$phone = $this->functions->clear_phone_number($_POST['phone']);
-		$name = sanitize_text_field($_POST['name']);
 		$validDate = $this->functions->validate_date(str_replace("T", " ", $_POST['date']), 'Y-m-d H:i:s');
-		if (empty($phone) || !isset($phone)) {
+		if (empty($phone)) {
 			wp_send_json_error('invalid_phone_number');
 			wp_die();
 		}
-		if (empty($name) || !isset($name)) {
-			wp_send_json_error('invalid_name');
+		$first_name = sanitize_text_field($_POST['first_name']);
+		if (empty($first_name)) {
+			wp_send_json_error('invalid_first_name');
+			wp_die();
+		}
+		$last_name = sanitize_text_field($_POST['last_name']);
+		if (empty($last_name)) {
+			wp_send_json_error('invalid_last_name');
 			wp_die();
 		}
 		if (!$validDate) {
@@ -334,13 +340,14 @@ class Sendsms_Dashboard_Admin
 			wp_die();
 		}
 		$browser = sanitize_textarea_field($_POST['browser']);
-		$this->functions->update_subscriber_db($old_phone, $phone, $name, $date, $ip_address, $browser);
+		$this->functions->update_subscriber_db($old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser);
 		wp_send_json_success(
 			array(
 				'info' => 'update_subscriber_success',
 				'new_data' => array(
 					'phone' => $phone,
-					'name' => $name,
+					'first_name' => $first_name,
+					'last_name' => $last_name,
 					'date' => $date,
 					'ip_address' => $ip_address,
 					'browser' => $browser

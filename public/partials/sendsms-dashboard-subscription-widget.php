@@ -9,9 +9,13 @@ wp_nonce_field('sendsms-security-nonce');
 <div id="sendsms-widget-subscribe-success-message" style="color:green"></div>
 <div id="sendsms-widget-subscribe-feedback-message"></div>
 <div id="sendsms-widget-subscribe-add-form">
-    <div class="sendsms-widget-subscribe-name-field">
-        <label id="sendsms_forName"><?= __('Name', 'sendsms-dashboard') ?></label>
-        <input id="sendsms_widget_subscribe_name" type="text" aria-label="<?= __('Name', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forName">
+    <div class="sendsms-widget-subscribe-first-name-field">
+        <label id="sendsms_forFirstName"><?= __('First Name', 'sendsms-dashboard') ?></label>
+        <input id="sendsms_widget_subscribe_first_name" type="text" aria-label="<?= __('First Name', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forFirstName">
+    </div>
+    <div class="sendsms-widget-subscribe-last-name-field">
+        <label id="sendsms_forLastName"><?= __('Last Name', 'sendsms-dashboard') ?></label>
+        <input id="sendsms_widget_subscribe_last_name" type="text" aria-label="<?= __('Last Name', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forLastName">
     </div>
     <div class="sendsms-widget-subscribe-phone-field">
         <label id="sendsms_forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></label>

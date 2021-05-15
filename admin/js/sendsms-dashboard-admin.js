@@ -36,7 +36,8 @@ jQuery(document).ready(function() {
             $.target,
             ".sendsms-dashboard-subscribers-edit",
             jQuery(parentTr).children(".phone").eq(0).children('p').text(),
-            jQuery(parentTr).children(".name").eq(0).children('p').text(),
+            jQuery(parentTr).children(".first_name").eq(0).children('p').text(),
+            jQuery(parentTr).children(".last_name").eq(0).children('p').text(),
             jQuery(parentTr).children(".date").eq(0).children('p').text(),
             jQuery(parentTr).children(".ip_address").eq(0).children('p').text(),
             jQuery(parentTr).children(".browser").eq(0).children('p').text());
@@ -46,7 +47,8 @@ jQuery(document).ready(function() {
                 'security': sendsms_object.security,
                 'old_phone': jQuery("#sendsms_dashboard_edit_old_phone").val(),
                 'phone': jQuery("#sendsms_dashboard_edit_phone_number").val(),
-                'name': jQuery("#sendsms_dashboard_edit_name").val(),
+                'first_name': jQuery("#sendsms_dashboard_edit_first_name").val(),
+                'last_name': jQuery("#sendsms_dashboard_edit_last_name").val(),
                 'date': jQuery("#sendsms_dashboard_edit_date").val(),
                 'ip_address': jQuery("#sendsms_dashboard_edit_ip_address").val(),
                 'browser': jQuery("#sendsms_dashboard_edit_browser").val()
@@ -69,7 +71,8 @@ jQuery(document).ready(function() {
                     modal.open();
                     jQuery('.sendsms-dashboard-subscribers-update').off('click');
                     jQuery(parentTr).children(".phone").eq(0).children('p').text(response.data.new_data.phone);
-                    jQuery(parentTr).children(".name").eq(0).children('p').text(response.data.new_data.name);
+                    jQuery(parentTr).children(".first_name").eq(0).children('p').text(response.data.new_data.first_name);
+                    jQuery(parentTr).children(".last_name").eq(0).children('p').text(response.data.new_data.last_name);
                     jQuery(parentTr).children(".date").eq(0).children('p').text(response.data.new_data.date);
                     jQuery(parentTr).children(".ip_address").eq(0).children('p').text(response.data.new_data.ip_address);
                     jQuery(parentTr).children(".browser").eq(0).children('p').text(response.data.new_data.browser);
@@ -78,6 +81,7 @@ jQuery(document).ready(function() {
             })
         })
     });
+    //ajax to sync subscribers
     jQuery('#sendsms-dashboard-subscribers-synchronize').on('click', function($) {
         jQuery('#sendsms-dashboard-subscribers-synchronize').html('<i class="sendsms-dashboard-fa-spinner fas fa-spinner"></i>');
         jQuery.post(sendsms_object.ajax_url, {
@@ -131,24 +135,28 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
 });
 
-function activateEditForm(currentObject, selector, phone, name, date, ip_address, browser) {
+//this will adctivate the edit form of a subscriber
+function activateEditForm(currentObject, selector, phone, first_name, last_name, date, ip_address, browser) {
     //reactivate all elements
     jQuery(selector).parent().closest('tr').show();
     var workingTr = jQuery(currentObject).parent().closest('tr');
     jQuery(workingTr).hide();
     jQuery(workingTr).after(jQuery(".sendsms-dashboard-edit-form").show());
     jQuery("#sendsms_dashboard_edit_old_phone,#sendsms_dashboard_edit_phone_number").val(phone);
-    jQuery("#sendsms_dashboard_edit_name").val(name);
+    jQuery("#sendsms_dashboard_edit_first_name").val(first_name);
+    jQuery("#sendsms_dashboard_edit_last_name").val(last_name);
     jQuery("#sendsms_dashboard_edit_date").val(date.replace(" ", "T"));
     jQuery("#sendsms_dashboard_edit_ip_address").val(ip_address);
     jQuery("#sendsms_dashboard_edit_browser").val(browser);
 }
 
+//just the cance edit button
 function cancelEdit() {
     jQuery(".sendsms-dashboard-subscribers-edit").parent().closest('tr').fadeIn(400);
     jQuery(".sendsms-dashboard-edit-form").hide();
     jQuery("#sendsms_dashboard_edit_old_phone,#sendsms_dashboard_edit_phone_number").val("");
-    jQuery("#sendsms_dashboard_edit_name").val("");
+    jQuery("#sendsms_dashboard_edit_first_name").val("");
+    jQuery("#sendsms_dashboard_edit_last_name").val("");
     jQuery("#sendsms_dashboard_edit_date").val("");
     jQuery("#sendsms_dashboard_edit_ip_address").val("");
     jQuery("#sendsms_dashboard_edit_browser").val("");
