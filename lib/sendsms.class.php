@@ -104,4 +104,16 @@ class SendSMS
         $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_contact_add&username=' . urlencode($username) . '&password=' . urlencode($password) . '&group_id=' . urlencode($group_id) . '&phone_number=' . urlencode($phone_number) . '&first_name=' . urlencode($first_name) . '&last_name=' . urlencode($last_name))), true);
         return $results;
     }
+
+    /**
+     * Get all groups from sensms.ro
+     * 
+     * @since 1.0.0
+     */
+    function get_groups()
+    {
+        $this->functions->get_auth($username, $password, $label);
+        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_groups_get_list&username=' . urlencode($username) . '&password=' . urlencode($password))), true);
+        return $results;
+    }
 }

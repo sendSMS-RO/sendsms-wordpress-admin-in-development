@@ -92,6 +92,10 @@
     border-bottom: 1px solid #b7b3b3;
 }
 
+.sendsms-dashboard-disabled {
+    cursor: not-allowed !important;
+}
+
 @-webkit-keyframes rotating
 /* Safari and Chrome */
 
@@ -147,7 +151,8 @@ textarea {
     width: 100%;
 }
 
-#sendsms-dashboard-subscribers-synchronize {
+#sendsms-dashboard-subscribers-synchronize,
+#sendsms-dashboard-subscribers-add-new {
     margin-left: 4px;
     padding: 4px 8px;
     position: relative;
@@ -162,6 +167,27 @@ textarea {
     color: #2271b1;
     background: #f6f7f7;
     cursor: pointer;
+}
+
+.sendsms-dashboard-overlay {
+    position: fixed;
+    /* Sit on top of the page content */
+    display: none;
+    /* Hidden by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black background with opacity */
+    z-index: 2;
+    /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;
+    /* Add a pointer on hover */
 }
 
 @media (min-width: 576px) {

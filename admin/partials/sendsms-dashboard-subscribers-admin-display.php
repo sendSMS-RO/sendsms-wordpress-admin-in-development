@@ -6,6 +6,7 @@ $table->prepare_items();
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline"><?= __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h1>
+    <button type="submit" class="" id="sendsms-dashboard-subscribers-add-new">Add new</button>
     <button type="submit" class="" id="sendsms-dashboard-subscribers-synchronize">Synchronize subscribers</button>
 
     <form id="sendsms-form" method="POST">
@@ -58,3 +59,8 @@ $table->prepare_items();
         </td>
     </tr>
 </table>
+
+<!-- This is the add new form -->
+<!-- <div class="sendsms-dashboard-overlay">
+
+</div> -->

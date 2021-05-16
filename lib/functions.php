@@ -141,7 +141,6 @@ class SendSMSFunctions
      */
     public function update_subscriber_db($old_phone, $phone_number, $first_name, $last_name, $date, $ip_address, $browser)
     {
-        global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $this->wpdb->query(
             $this->wpdb->prepare(
@@ -156,6 +155,26 @@ class SendSMSFunctions
                 $ip_address,
                 $browser,
                 $old_phone
+            )
+        );
+    }
+
+    /**
+     * Update the synced field
+     * 
+     * @since 1.0.0
+     */
+    public function update_subscriber_sync_db($phone, $sync)
+    {
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $this->wpdb->query(
+            $this->wpdb->prepare(
+                "
+                UPDATE $table_name
+                SET synced = %s
+                WHERE phone = %s",
+                $sync,
+                $phone
             )
         );
     }

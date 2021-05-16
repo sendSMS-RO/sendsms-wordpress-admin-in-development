@@ -84,6 +84,7 @@ jQuery(document).ready(function() {
     //ajax to sync subscribers
     jQuery('#sendsms-dashboard-subscribers-synchronize').on('click', function($) {
         jQuery('#sendsms-dashboard-subscribers-synchronize').html('<i class="sendsms-dashboard-fa-spinner fas fa-spinner"></i>');
+        jQuery('#sendsms-dashboard-subscribers-synchronize').addClass("sendsms-dashboard-disabled");
         jQuery.post(sendsms_object.ajax_url, {
             'action': 'synchronize_contacts',
             'security': sendsms_object.security
@@ -94,18 +95,14 @@ jQuery(document).ready(function() {
             });
             if (undefined !== response.success && false === response.success) {
                 modal.setTitle("Error");
-                modal.setContent(sendsms_object['text_' + response.data]);
-                modal.open();
-                return;
             }
             if (response.success) {
-                cancelEdit();
-                modal.setTitle("Success")
-                modal.setContent(sendsms_object['text_' + response.data]);
-                modal.open();
-                jQuery('#sendsms-dashboard-subscribers-synchronize').html('Synchronize subscribers');
-                return;
+                modal.setTitle("Success");
             }
+            jQuery('#sendsms-dashboard-subscribers-synchronize').removeClass("sendsms-dashboard-disabled");
+            modal.setContent(sendsms_object['text_' + response.data]);
+            modal.open();
+            jQuery('#sendsms-dashboard-subscribers-synchronize').html('Synchronize subscribers');
         })
     })
 });

@@ -291,19 +291,46 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error('invalid_security_nonce');
 			wp_die();
 		}
-		if (get_option('sendsms-dashboard-sync-group')) {
-			$this->api->delete_group(get_option('sendsms-dashboard-sync-group'));
-		}
-		$id = $this->api->create_group()['details'];
-		update_option('sendsms-dashboard-sync-group', $id);
-		$subscribers = $this->functions->get_subscribers_db();
-		foreach ($subscribers as $subscriber) {
-			$result = $this->api->add_contact($id, $subscriber['last_name'], $subscriber['first_name'], $subscriber['phone']);
+		//if there is no assigned group
+		$id = get_option('sendsms-dashboard-sync-group');
+		if (!$id) {
+			$result = $this->api->create_group();
 			if ($result['status'] < 0) {
-				wp_send_json_error('internal_error');
+				wp_send_json_error("internal_error");
 				wp_die();
 			}
+			$id = $result['details'];
 		}
+		//if there is an assigned group, check if it exists
+		if ($id) {
+			$group_list = $this->api->get_groups();
+			if ($group_list['status'] < 0) {
+				wp_send_json_error("internal_error");
+				wp_die();
+			}
+			$group_list = $group_list['details'];
+			$found = false;
+			foreach ($group_list as $group) {
+				if ($group['id'] == $id) {
+					$found = true;
+				}
+			}
+			if (!$found) {
+				$id = $this->api->create_group()['details'];
+			}
+		}
+		$subscribers = $this->functions->get_subscribers_db();
+		foreach ($subscribers as $subscriber) {
+			if (!$found || ($found && is_null($subscriber['synced']))) {
+				$result = $this->api->add_contact($id, $subscriber['last_name'], $subscriber['first_name'], $subscriber['phone']);
+				if ($result['status'] < 0) {
+					wp_send_json_error('internal_error');
+					wp_die();
+				}
+				$this->functions->update_subscriber_sync_db($subscriber['phone'], $result['details']);
+			}
+		}
+		update_option('sendsms-dashboard-sync-group', $id);
 		wp_send_json_success('constacts_synced');
 	}
 	/**
