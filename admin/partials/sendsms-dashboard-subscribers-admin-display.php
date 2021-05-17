@@ -1,4 +1,18 @@
 <?php
+//here we will handle custom forms
+if (isset($_POST['add-new-subscriber'])) {
+    if (!check_ajax_referer('sendsms-dashboard-add-new-subscriber', 'security', false)) {
+        wp_die();
+    }
+    $phone = $this->functions->validate_phone($_POST['phone_number']);
+    $first_name = wp_unslash($_POST['first_name']);
+    $last_name = wp_unslash($_POST['last_name']);
+    $date = str_replace("T", " ", $_POST['date']);
+    $ip_address = $_POST['ip_address'];
+    $browser = wp_unslash($_POST['browser']);
+    $this->functions->add_subscriber_db($first_name, $last_name, $phone, $ip_address, $browser, $date);
+}
+
 require_once(plugin_dir_path(dirname(__FILE__)) . 'extension' . DIRECTORY_SEPARATOR . 'sendsms-dashboard-subscribers.php');
 $table = new Sendsms_Dashboard_Subscribers();
 $table->prepare_items();
@@ -66,29 +80,30 @@ $table->prepare_items();
     <form id="sendsms-dashboard-add-new-subscriber-form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="POST" style="margin: 10px;">
         <h2 class="sendsms-add-new-title"><?= __("Add a new subscriber", "sendsms-dashboard") ?></h2>
         <div id="sendsms-widget-unsubscribe-error-message" style="color:red"></div>
+        <?=wp_nonce_field("sendsms-dashboard-add-new-subscriber")?>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("Phone number*", "sendsms-dashboard") ?></label>
-            <input id="sendsms_dashboard_add_new_phone_number" type="number">
+            <input id="sendsms_dashboard_add_new_phone_number" type="number" name="phone_number">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("First Name*", "sendsms-dashboard") ?></label>
-            <input id="sendsms_dashboard_add_new_first_name" type="text">
+            <input id="sendsms_dashboard_add_new_first_name" type="text" name="first_name">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("Last Name*", "sendsms-dashboard") ?></label>
-            <input id="sendsms_dashboard_add_new_last_name" type="text">
+            <input id="sendsms_dashboard_add_new_last_name" type="text" name="last_name">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("Subscription date*", "sendsms-dashboard") ?></label>
-            <input id="sendsms_dashboard_add_new_date" type="datetime-local" step="1">
+            <input id="sendsms_dashboard_add_new_date" type="datetime-local" step="1" name="date">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("IP Adress", "sendsms-dashboard") ?></label>
-            <input id="sendsms_dashboard_add_new_ip_address" type="text">
+            <input id="sendsms_dashboard_add_new_ip_address" type="text" name="ip_address">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?= __("Browser", "sendsms-dashboard") ?></label>
-            <textarea id="sendsms_dashboard_add_new_browser" type="text"></textarea>
+            <textarea id="sendsms_dashboard_add_new_browser" type="text" name="browser"></textarea>
         </fieldset>
         <div class="submit inline-save">
             <input type="submit" name="add-new-subscriber" onclick="return validateAddNewForm()" class="button button-primary alignleft sendsms-dashboard-subscribers-update">
@@ -98,7 +113,4 @@ $table->prepare_items();
 </div>
 
 <?php
-//here we will handle custom forms
-if (isset($_POST['add-new-subscriber'])) {
-    error_log(json_encode($_POST));
-}
+

@@ -85,11 +85,12 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null)
+    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null, $browser = null, $date = null)
     {
         global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $browser = $_SERVER['HTTP_USER_AGENT'];
+        $browser = is_null($browser) ? $_SERVER['HTTP_USER_AGENT'] : $browser;
+        $date = is_null($date) ? date('Y-m-d H:i:s') : $date;
         $this->wpdb->query(
             $this->wpdb->prepare(
                 "
@@ -99,7 +100,7 @@ class SendSMSFunctions
                 $phone_number,
                 $fisrt_name,
                 $last_name,
-                date('Y-m-d H:i:s'),
+                $date,
                 $ip_address,
                 $browser
             )
@@ -224,7 +225,6 @@ class SendSMSFunctions
      */
     public function add_ip_address_db($ip_address)
     {
-        global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_ip_address';
         $this->wpdb->query(
             $this->wpdb->prepare(

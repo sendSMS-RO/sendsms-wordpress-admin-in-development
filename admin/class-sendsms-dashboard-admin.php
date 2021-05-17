@@ -374,7 +374,7 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error('invalid_ip_address');
 			wp_die();
 		}
-		$browser = $_POST['browser'];
+		$browser = wp_unslash($_POST['browser']);
 		$this->functions->update_subscriber_db($old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser);
 		wp_send_json_success(
 			array(
