@@ -114,17 +114,17 @@ class Sendsms_Dashboard_Public
 			wp_die();
 		}
 		error_log(json_encode($_POST));
-		$first_name = sanitize_text_field($_POST['first_name']);
+		$first_name = wp_unslash($_POST['first_name']);
 		if (empty($first_name)) {
 			wp_send_json_error("field_first_name");
 			wp_die();
 		}
-		$last_name = sanitize_text_field($_POST['last_name']);
+		$last_name = wp_unslash($_POST['last_name']);
 		if (empty($last_name)) {
 			wp_send_json_error("field_last_name");
 			wp_die();
 		}
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		$phone = $this->functions->clear_phone_number($_POST['phone_number']);
 		if (empty($phone)) {
 			wp_send_json_error("field_phone_number");
 			wp_die();
@@ -172,7 +172,7 @@ class Sendsms_Dashboard_Public
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
 		}
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		$phone = $this->functions->clear_phone_number($_POST['phone_number']);
 		if (empty($phone)) {
 			wp_send_json_error("field_phone_number");
 			wp_die();
@@ -214,9 +214,9 @@ class Sendsms_Dashboard_Public
 	 */
 	public function subscribe_verify_code()
 	{
-		$first_name = sanitize_text_field($_POST['first_name']);
-		$last_name = sanitize_text_field($_POST['last_name']);
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		$first_name = wp_unslash($_POST['first_name']);
+		$last_name = wp_unslash($_POST['last_name']);
+		$phone = $this->functions->clear_phone_number($_POST['phone_number']);
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();
@@ -241,7 +241,7 @@ class Sendsms_Dashboard_Public
 	 */
 	public function unsubscribe_verify_code()
 	{
-		$phone = sanitize_text_field($this->functions->clear_phone_number($_POST['phone_number']));
+		$phone = $this->functions->clear_phone_number($_POST['phone_number']);
 		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
 			wp_send_json_error("invalid_security_nonce");
 			wp_die();

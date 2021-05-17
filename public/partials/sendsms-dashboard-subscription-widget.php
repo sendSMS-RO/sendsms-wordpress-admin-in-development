@@ -19,7 +19,7 @@ wp_nonce_field('sendsms-security-nonce');
     </div>
     <div class="sendsms-widget-subscribe-phone-field">
         <label id="sendsms_forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></label>
-        <input id="sendsms_widget_subscribe_phone_number" type="tel" aria-label="<?= __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
+        <input id="sendsms_widget_subscribe_phone_number" type="number" aria-label="<?= __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
     </div>
     <div class="sendsms-widget-subscribe-gdpr-field">
         <input id="sendsms_widget_subscribe_gdpr" type="checkbox" aria-label="<?= __('I agree with the privacy policy', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forGdpr">

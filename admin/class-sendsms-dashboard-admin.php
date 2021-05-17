@@ -90,6 +90,7 @@ class Sendsms_Dashboard_Admin
 				'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
 				'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard'),
 				'text_constacts_synced' => __('Contacts synchronized succesfully', 'sendsms-dashboard'),
+				'text_empty_fields' => __('Some fields are empty', 'sendsms-dashboard'),
 			]
 		);
 	}
@@ -261,19 +262,17 @@ class Sendsms_Dashboard_Admin
 		return $args;
 	}
 
-	//HISTORY PAGE
+
 	public function page_history()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-history-admin-display.php');
 	}
-	//EO HISTORY PAGE
-	//SUBSCRIBERS PAGE
+
 	public function page_subscribers()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-subscribers-admin-display.php');
 	}
-	//EO SUBSCRIBERS PAGE
-	//TEST PAGE
+
 	public function page_test()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-test-admin-display.php');
@@ -355,12 +354,12 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error('invalid_phone_number');
 			wp_die();
 		}
-		$first_name = sanitize_text_field($_POST['first_name']);
+		$first_name = wp_unslash($_POST['first_name']);
 		if (empty($first_name)) {
 			wp_send_json_error('invalid_first_name');
 			wp_die();
 		}
-		$last_name = sanitize_text_field($_POST['last_name']);
+		$last_name = wp_unslash($_POST['last_name']);
 		if (empty($last_name)) {
 			wp_send_json_error('invalid_last_name');
 			wp_die();
@@ -375,18 +374,18 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error('invalid_ip_address');
 			wp_die();
 		}
-		$browser = sanitize_textarea_field($_POST['browser']);
+		$browser = $_POST['browser'];
 		$this->functions->update_subscriber_db($old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser);
 		wp_send_json_success(
 			array(
 				'info' => 'update_subscriber_success',
 				'new_data' => array(
-					'phone' => $phone,
-					'first_name' => $first_name,
-					'last_name' => $last_name,
-					'date' => $date,
-					'ip_address' => $ip_address,
-					'browser' => $browser
+					'phone' => esc_html($phone),
+					'first_name' => esc_html($first_name),
+					'last_name' => esc_html($last_name),
+					'date' => esc_html($date),
+					'ip_address' => esc_html($ip_address),
+					'browser' => esc_html($browser)
 				)
 			)
 		);
@@ -406,8 +405,8 @@ class Sendsms_Dashboard_Admin
 		$result = $this->api->message_send(
 			$_POST['short'] == 'true' ? true : false,
 			$_POST['gdpr'] == 'true' ? true : false,
-			isset($_POST['phone_number']) ? $_POST['phone_number'] : "",
-			isset($_POST['message']) ? $_POST['message'] : "",
+			isset($_POST['phone_number']) ? wp_unslash($_POST['phone_number']) : "",
+			isset($_POST['message']) ? wp_unslash($_POST['message']) : "",
 			'TEST'
 		);
 		if ($result['status'] > 0) {
@@ -416,9 +415,20 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . (isset($result['status']) ? $result['status'] : "") . __("<br>Message: ", 'sendsms-dashboard') . (isset($result['message']) ? $result['message'] : "") . __("<br>Details: ", 'sendsms-dashboard') . (isset($result['details']) ? $result['details'] : ""));
 		}
 	}
-	//EO TEST PAGE
+ 
+	/**
+	 * Add a new contact from admin view interface
+	 * 
+	 * @since 1.0.0
+	 */
+	public function add_new_subscriber()
+	{
+		if (!check_ajax_referer('sendsms-security-nonce', 'security', false)) {
+			wp_send_json_error(__('Invalid security token sent.', 'sendsms-dashboard'));
+			wp_die();
+		}
+	}
 
-	//SETINGS PAGE
 	public function page_settings()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-settings-admin-display.php');

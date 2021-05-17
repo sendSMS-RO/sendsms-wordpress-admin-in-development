@@ -20,7 +20,7 @@ class SendSMS
     function message_send($short, $gdpr, $to, $content, $type)
     {
         global $wpdb;
-        $content = sanitize_textarea_field($content);
+        $content = $content;
         $this->functions->get_auth($username, $password, $label);
         $to = $this->functions->validate_phone($to);
         $args['headers'] = [

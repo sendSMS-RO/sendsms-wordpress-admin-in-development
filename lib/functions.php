@@ -85,11 +85,11 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address)
+    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null)
     {
         global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $browser = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+        $browser = $_SERVER['HTTP_USER_AGENT'];
         $this->wpdb->query(
             $this->wpdb->prepare(
                 "
@@ -104,6 +104,9 @@ class SendSMSFunctions
                 $browser
             )
         );
+        if ($ip_address == null) {
+            return;
+        }
         if (!$this->registered_ip_address_db($ip_address)) {
             $this->add_ip_address_db($ip_address);
         }
@@ -370,7 +373,7 @@ class SendSMSFunctions
         if (!isset($_POST['code'])) {
             return false;
         }
-        $code = $this->clearStringOfSpecialChars(sanitize_text_field($_POST['code']));
+        $code = $this->clearStringOfSpecialChars(wp_unslash($_POST['code']));
         $isValidToken = hash_equals($_COOKIE['sendsms_subscribe_check'], wp_hash($code . $phone_number));
         if ($isValidToken) {
             setcookie('sendsms_subscribe_check', "", time() - 1, COOKIEPATH, COOKIE_DOMAIN, is_ssl());

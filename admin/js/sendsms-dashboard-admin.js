@@ -105,6 +105,10 @@ jQuery(document).ready(function() {
             jQuery('#sendsms-dashboard-subscribers-synchronize').html('Synchronize subscribers');
         })
     })
+    jQuery('#sendsms-dashboard-subscribers-add-new').on('click', function($) {
+        jQuery('#sendsms-dashboard-overlay').show();
+        jQuery('#sendsms-dashboard-add-new-form').show();
+    })
 });
 
 //count the number of characters
@@ -158,4 +162,23 @@ function cancelEdit() {
     jQuery("#sendsms_dashboard_edit_date").val("");
     jQuery("#sendsms_dashboard_edit_ip_address").val("");
     jQuery("#sendsms_dashboard_edit_browser").val("");
+}
+
+function closeAddNewForm() {
+    jQuery('#sendsms-dashboard-overlay').hide();
+    jQuery('#sendsms-dashboard-add-new-form').hide();
+    jQuery("#sendsms-widget-unsubscribe-error-message").text("");
+}
+
+function validateAddNewForm() {
+    phone = jQuery("#sendsms_dashboard_add_new_phone_number").val();
+    first_name = jQuery("#sendsms_dashboard_add_new_first_name").val();
+    last_name = jQuery("#sendsms_dashboard_add_new_last_name").val();
+    date = jQuery("#sendsms_dashboard_add_new_date").val();
+
+    if (phone === "" || first_name === "" || last_name === "" || date === "") {
+        jQuery("#sendsms-widget-unsubscribe-error-message").text(sendsms_object.text_empty_fields);
+        return false;
+    }
+    return true;
 }

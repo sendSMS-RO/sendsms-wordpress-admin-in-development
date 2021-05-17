@@ -11,7 +11,7 @@ wp_nonce_field('sendsms-security-nonce');
 <div id="sendsms-widget-unsubscribe-add-form">
     <div class="sendsms-widget-unsubscribe-phone-field">
         <label id="sendsms_forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></label>
-        <input id="sendsms_widget_unsubscribe_phone_number" type="tel" aria-label="<?= __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
+        <input id="sendsms_widget_unsubscribe_phone_number" type="number" aria-label="<?= __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
     </div>
     <div class="sendsms-widget-unsubscribe-send-button">
         <button class="button" id="sendsms_widget_unsubscribe_submit" type="button" aria-label="<?= __('Submit', 'sendsms-dashboard') ?>"><?= __('Submit', 'sendsms-dashboard') ?></button>

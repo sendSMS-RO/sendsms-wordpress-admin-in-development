@@ -26,7 +26,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
 
     function column_default($item, $column_name)
     {
-        return '<p>' . $item[$column_name] . '</p>';
+        return '<p>' . esc_html($item[$column_name]) . '</p>';
     }
 
     function column_phone($issue)

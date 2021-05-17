@@ -61,6 +61,44 @@ $table->prepare_items();
 </table>
 
 <!-- This is the add new form -->
-<!-- <div class="sendsms-dashboard-overlay">
+<div id="sendsms-dashboard-overlay" onclick="closeAddNewForm()"></div>
+<div id="sendsms-dashboard-add-new-form">
+    <form id="sendsms-dashboard-add-new-subscriber-form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="POST" style="margin: 10px;">
+        <h2 class="sendsms-add-new-title"><?= __("Add a new subscriber", "sendsms-dashboard") ?></h2>
+        <div id="sendsms-widget-unsubscribe-error-message" style="color:red"></div>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("Phone number*", "sendsms-dashboard") ?></label>
+            <input id="sendsms_dashboard_add_new_phone_number" type="number">
+        </fieldset>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("First Name*", "sendsms-dashboard") ?></label>
+            <input id="sendsms_dashboard_add_new_first_name" type="text">
+        </fieldset>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("Last Name*", "sendsms-dashboard") ?></label>
+            <input id="sendsms_dashboard_add_new_last_name" type="text">
+        </fieldset>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("Subscription date*", "sendsms-dashboard") ?></label>
+            <input id="sendsms_dashboard_add_new_date" type="datetime-local" step="1">
+        </fieldset>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("IP Adress", "sendsms-dashboard") ?></label>
+            <input id="sendsms_dashboard_add_new_ip_address" type="text">
+        </fieldset>
+        <fieldset class="sendsms-add-new-fieldset">
+            <label><?= __("Browser", "sendsms-dashboard") ?></label>
+            <textarea id="sendsms_dashboard_add_new_browser" type="text"></textarea>
+        </fieldset>
+        <div class="submit inline-save">
+            <input type="submit" name="add-new-subscriber" onclick="return validateAddNewForm()" class="button button-primary alignleft sendsms-dashboard-subscribers-update">
+            <button type="button" class="button alignright" onclick="closeAddNewForm()"><?= __("Cancel", "sendsms-dashboard") ?></button>
+        </div>
+    </form>
+</div>
 
-</div> -->
+<?php
+//here we will handle custom forms
+if (isset($_POST['add-new-subscriber'])) {
+    error_log(json_encode($_POST));
+}
