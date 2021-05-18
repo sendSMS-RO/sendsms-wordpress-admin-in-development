@@ -15,3 +15,12 @@
 #sendsms_widget_subscribe_phone_number {
   -moz-appearance: textfield;
 }
+
+#sendsms_widget_unsubscribe_phone_number::-webkit-inner-spin-button, 
+#sendsms_widget_unsubscribe_phone_number::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+}
+
+#sendsms_widget_unsubscribe_phone_number {
+  -moz-appearance: textfield;
+}

@@ -2,6 +2,7 @@
 if (!defined('WPINC')) {
     die;
 }
+require_once('sendsms.class.php');
 
 class SendSMSFunctions
 {
@@ -87,7 +88,6 @@ class SendSMSFunctions
      */
     public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null, $browser = null, $date = null)
     {
-        global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $browser = is_null($browser) ? $_SERVER['HTTP_USER_AGENT'] : $browser;
         $date = is_null($date) ? date('Y-m-d H:i:s') : $date;
@@ -120,7 +120,6 @@ class SendSMSFunctions
      */
     public function remove_subscriber_db($phone_number, $ip_address = null)
     {
-        global $wpdb;
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $this->wpdb->query(
             $this->wpdb->prepare(
@@ -190,9 +189,7 @@ class SendSMSFunctions
      */
     public function is_subscriber_db($phone_number)
     {
-        global $wpdb;
-        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
-        $results = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), ARRAY_A);
+        $results = $this->get_subscriber_db($phone_number);
         return count($results) != 0 ? true : false;
     }
 
@@ -205,6 +202,18 @@ class SendSMSFunctions
     {
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $results = $this->wpdb->get_results("SELECT * FROM " . $table_name, ARRAY_A);
+        return $results;
+    }
+
+    /**
+     * Get one subscriber 
+     * 
+     * @since 1.0.0
+     */
+    public function get_subscriber_db($phone_number)
+    {
+        $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
+        $results = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM " . $table_name . " WHERE phone = %s", $phone_number), ARRAY_A);
         return $results;
     }
 

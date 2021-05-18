@@ -199,6 +199,10 @@ class Sendsms_Dashboard_Public
 				}
 				wp_die();
 			} else {
+				$synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
+				if (!is_null($synced)) {
+					$this->api->delete_contact($synced);
+				}
 				$this->functions->remove_subscriber_db($phone, $ip_address);
 				wp_send_json_success("unsubscription_success");
 				wp_die();
@@ -256,7 +260,13 @@ class Sendsms_Dashboard_Public
 			wp_die();
 		}
 		$ip_address = $this->functions->get_ip_address();
-		$this->functions->remove_subscriber_db($phone, $ip_address);
+		if ($this->functions->is_subscriber_db($phone)) {
+			$synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
+			if (!is_null($synced)) {
+				$this->api->delete_contact($synced);
+			}
+			$this->functions->remove_subscriber_db($phone, $ip_address);
+		}
 		wp_send_json_success("unsubscription_success");
 		wp_die();
 	}

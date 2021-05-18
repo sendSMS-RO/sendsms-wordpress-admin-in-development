@@ -1,5 +1,6 @@
 <?php
 require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
+require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
 if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
@@ -10,12 +11,14 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
     var $table_name;
     var $wpdb;
     var $functions;
+    var $api;
     function __construct()
     {
         global $wpdb;
         $this->wpdb = $wpdb;
         $this->table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $this->functions = new SendSMSFunctions();
+        $this->api = new SendSMS();
         //Set parent defaults
         parent::__construct(array(
             'singular'  => 'subscriber',     //singular name of the listed records
@@ -95,7 +98,13 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
                     die();
                 }
                 $phone = $this->functions->clear_phone_number($_GET['phone']);
-                $this->functions->remove_subscriber_db($phone);
+                if ($this->functions->is_subscriber_db($phone)) {
+                    $synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
+                    if (!is_null($synced)) {
+                        $this->api->delete_contact($synced);
+                    }
+                    $this->functions->remove_subscriber_db($phone);
+                }
                 break;
             case 'edit':
                 if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
@@ -108,7 +117,13 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
                 }
                 foreach ($_POST['sendsms_dashboard_subscriber'] as $phone) {
                     $phone = $this->functions->clear_phone_number($phone);
-                    $this->functions->remove_subscriber_db($phone);
+                    if ($this->functions->is_subscriber_db($phone)) {
+                        $synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
+                        if (!is_null($synced)) {
+                            $this->api->delete_contact($synced);
+                        }
+                        $this->functions->remove_subscriber_db($phone);
+                    }
                 }
                 break;
             default:

@@ -94,6 +94,18 @@ class SendSMS
     }
 
     /**
+     * Get all groups from sensms.ro
+     * 
+     * @since 1.0.0
+     */
+    function get_groups()
+    {
+        $this->functions->get_auth($username, $password, $label);
+        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_groups_get_list&username=' . urlencode($username) . '&password=' . urlencode($password))), true);
+        return $results;
+    }
+
+    /**
      * Add a contact to a group
      * 
      * @since 1.0.0
@@ -106,14 +118,14 @@ class SendSMS
     }
 
     /**
-     * Get all groups from sensms.ro
+     * Delete a contact from sendsms
      * 
      * @since 1.0.0
      */
-    function get_groups()
+    function delete_contact($id)
     {
         $this->functions->get_auth($username, $password, $label);
-        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_groups_get_list&username=' . urlencode($username) . '&password=' . urlencode($password))), true);
+        $results = json_decode(wp_remote_retrieve_body(wp_remote_get('https://api.sendsms.ro/json?action=address_book_contact_delete&username=' . urlencode($username) . '&password=' . urlencode($password) . '&contact_id=' . urlencode($id))), true);
         return $results;
     }
 }
