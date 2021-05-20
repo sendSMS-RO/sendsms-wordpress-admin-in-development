@@ -88,6 +88,9 @@ class SendSMSFunctions
      */
     public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null, $browser = null, $date = null)
     {
+        if ($this->is_subscriber_db($phone_number)) {
+            return;
+        }
         $table_name = $this->wpdb->prefix . 'sendsms_dashboard_subscribers';
         $browser = is_null($browser) ? $_SERVER['HTTP_USER_AGENT'] : $browser;
         $date = is_null($date) ? date('Y-m-d H:i:s') : $date;
@@ -404,10 +407,58 @@ class SendSMSFunctions
         // Return the comparison    
         return $d && $d->format($format) === $date;
     }
+
     function clearStringOfSpecialChars($string)
     {
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
     }
+
+    /**
+     * Check if user has 2fa activated
+     * 
+     * @since 1.0.0
+     */
+    function have_2fa_activated($userID)
+    {
+        if (empty($userID) || !is_numeric($userID)) {
+            $userID = get_current_user_id();
+        }
+        $uss_roles = get_userdata($userID)->roles;
+        $roles = $this->get_setting('2fa_roles', array());
+        foreach ($roles as $key => $value) {
+            if (in_array($key, $uss_roles)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function destroy_current_session_for_user($user, $tokens)
+    {
+        $session_manager = WP_Session_Tokens::get_instance($user->ID);
+
+        foreach ($tokens as $auth_token) {
+            $session_manager->destroy($auth_token);
+        }
+
+        // Also clear the cookies which are no longer valid.
+        wp_clear_auth_cookie();
+    }
+
+    public static function create_login_nonce($user_id)
+    {
+        $login_nonce = array();
+
+        $login_nonce['key'] = wp_hash($user_id . wp_rand() . microtime(), 'nonce');
+        $login_nonce['expiration'] = time() + HOUR_IN_SECONDS;
+
+        if (!update_user_meta($user_id, "sendsms-dashboard-2fa-nonce", $login_nonce)) {
+            return false;
+        }
+
+        return $login_nonce;
+    }
+
     public $country_codes = array(
         'AC' => '247',
         'AD' => '376',

@@ -34,6 +34,8 @@ class Sendsms_Dashboard_Admin
 
 	private $functions;
 	private $api;
+	//this will keep all auth cookies we will need de invalidate
+	private $password_auth_tokens = array();
 
 	/**
 	 * Initialize the class and set its properties.
@@ -198,8 +200,16 @@ class Sendsms_Dashboard_Admin
 
 		add_settings_field(
 			'sendsms_dashboard_user_add_phone_field',
-			__('Add phone number field?', 'sendsms-dashboard'),
+			__('Add phone number field / Enable 2fa?', 'sendsms-dashboard'),
 			array($this, 'sendsms_dashboard_user_add_phone_field_callback'),
+			'sendsms_dashboard_plugin_user',
+			'sendsms_dashboard_user'
+		);
+
+		add_settings_field(
+			'sendsms_dashboard_user_2fa_roles',
+			__('Enable 2fa for the following roles', 'sendsms-dashboard'),
+			array($this, 'sendsms_dashboard_user_2fa_roles_callback'),
 			'sendsms_dashboard_plugin_user',
 			'sendsms_dashboard_user'
 		);
@@ -415,7 +425,7 @@ class Sendsms_Dashboard_Admin
 			wp_send_json_error(__('Status: ', 'sendsms-dashboard') . (isset($result['status']) ? $result['status'] : "") . __("<br>Message: ", 'sendsms-dashboard') . (isset($result['message']) ? $result['message'] : "") . __("<br>Details: ", 'sendsms-dashboard') . (isset($result['details']) ? $result['details'] : ""));
 		}
 	}
- 
+
 	/**
 	 * Add a new contact from admin view interface
 	 * 
@@ -496,14 +506,30 @@ class Sendsms_Dashboard_Admin
 		$setting = $this->functions->get_setting_esc('add_phone_field', false);
 	?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?= $setting ? "checked" : "" ?>>
-		<p class="sendsms-dashboard-subscript"><?= __("Add a phone number field in the user editing and user registration form", "sendsms-dashboard") ?></p>
-	<?php
+		<p class="sendsms-dashboard-subscript"><?= __("Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting.", "sendsms-dashboard") ?></p>
+		<?php
+	}
+
+	public function sendsms_dashboard_user_2fa_roles_callback($args)
+	{
+		$setting = $this->functions->get_setting('2fa_roles', array());
+		$roles = get_editable_roles();
+		foreach ($roles as $key => $value) {
+		?>
+			<div style="display: block;">
+				<label>
+					<input style="margin-top: 0px; margin-right: 5px;" type="checkbox" name="sendsms_dashboard_plugin_settings[2fa_roles][<?= $key ?>]" value="1" <?= (array_key_exists($key, $setting) && $setting[$key]) == "1" ? "checked" : "" ?>>
+					<?= $value['name'] ?>
+				</label>
+			</div>
+		<?php
+		}
 	}
 
 	public function sendsms_dashboard_ip_limit_field_callback($args)
 	{
 		$setting = $this->functions->get_setting_esc('ip_limit', '');
-	?>
+		?>
 		<input type="text" name="sendsms_dashboard_plugin_settings[ip_limit]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
 		<p class="sendsms-dashboard-subscript"><?= __("The maximum number of subscriptions/unsubscriptions an IP address can make per minute. This is used as follows: maximum_ip_addresses/minutes (eg: 5/10 - 5 maximum registrations every 10 minutes). You can use -1 for no restrictions (eg: 5/-1 - 5 maximum registrations on that ip). No restriction will be applied if the field is empty or if it has invalid characters.", 'sendsms-dashboard') ?></p>
 	<?php
@@ -567,7 +593,9 @@ class Sendsms_Dashboard_Admin
 	 */
 	public function add_new_user_field_to_edit_form($args)
 	{
-		$fields['sendsms_phone_number'] = __('Phone number', 'sendsms-dashboard');
+		if (current_user_can('edit_user')) {
+			$fields['sendsms_phone_number'] = __('Phone number', 'sendsms-dashboard');
+		}
 
 		return $fields;
 	}
@@ -578,5 +606,53 @@ class Sendsms_Dashboard_Admin
 	public function add_register_field()
 	{
 		include(plugin_dir_path(__FILE__) . 'partials/user/sendsms-dashboard-mobile-field-register.php');
+	}
+
+	/**
+	 * This function will copy all auth tokens we will later invalidate
+	 * 
+	 * @since 1.0.0
+	 */
+	public function collect_auth_cookie_tokens($cookie)
+	{
+		$parsed = wp_parse_auth_cookie($cookie);
+
+		if (!empty($parsed['token'])) {
+			$this->password_auth_tokens[] = $parsed['token'];
+		}
+	}
+
+	/**
+	 * This function will invalidate all cookies and show the 2fa form if need
+	 * 
+	 * @since 1.0.0
+	 */
+	public function twofa_processing($user_login, $user)
+	{
+		if (!$this->functions->have_2fa_activated($user->ID)) {
+			return;
+		}
+		//destroy the session
+		$this->functions->destroy_current_session_for_user($user, $this->password_auth_tokens);
+
+		$this->get_2fa_login_form($user);
+	}
+
+	function get_2fa_login_form($user)
+	{
+		if (!$user) {
+			$user = wp_get_current_user();
+		}
+
+		$login_nonce = $this->functions->create_login_nonce($user->ID);
+		if (!$login_nonce) {
+			wp_die(esc_html__('Failed to create a login nonce.', 'sendsms-dashboard'));
+		}
+
+		$redirect_to = isset($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : admin_url();
+
+		include(plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-2fa-form.php');
+		printHTML2fa($user, $login_nonce['key'], $redirect_to);
+		exit;
 	}
 }

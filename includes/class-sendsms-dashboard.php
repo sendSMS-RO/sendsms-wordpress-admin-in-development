@@ -139,7 +139,6 @@ class Sendsms_Dashboard
 	 */
 	private function define_admin_hooks()
 	{
-
 		$plugin_admin = new Sendsms_Dashboard_Admin($this->get_plugin_name(), $this->get_version());
 
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
@@ -156,6 +155,11 @@ class Sendsms_Dashboard
 			$this->loader->add_action('user_new_form', $plugin_admin, 'add_new_user_field');
 			$this->loader->add_action('user_register', $plugin_admin, 'user_register_metadata');
 			$this->loader->add_filter('user_contactmethods', $plugin_admin, 'add_new_user_field_to_edit_form');
+			//this is for 2fa. We keep a list of all cookies we need to invalidate before second auth step
+			$this->loader->add_action('set_auth_cookie', $plugin_admin, 'collect_auth_cookie_tokens');
+			$this->loader->add_action('set_logged_in_cookie', $plugin_admin, 'collect_auth_cookie_tokens');
+			//this invalidates the cookies and show the corect verification form if needed
+			$this->loader->add_action('wp_login', $plugin_admin, 'twofa_processing', 10, 2);
 			// $this->loader->add_action('register_form', $plugin_admin, 'add_register_field');
 		}
 	}
@@ -169,7 +173,6 @@ class Sendsms_Dashboard
 	 */
 	private function define_public_hooks()
 	{
-
 		$plugin_public = new Sendsms_Dashboard_Public($this->get_plugin_name(), $this->get_version());
 
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
