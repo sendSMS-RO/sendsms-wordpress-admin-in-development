@@ -12,7 +12,7 @@
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
-	die;
+    die;
 }
 
 /**
@@ -32,8 +32,8 @@ define('SENDSMS_DB_VERSION', '1.16');
  */
 function activate_sendsms_dashboard()
 {
-	require_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-activator.php';
-	Sendsms_Dashboard_Activator::activate();
+    include_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-activator.php';
+    Sendsms_Dashboard_Activator::activate();
 }
 
 /**
@@ -42,8 +42,8 @@ function activate_sendsms_dashboard()
  */
 function deactivate_sendsms_dashboard()
 {
-	require_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-deactivator.php';
-	Sendsms_Dashboard_Deactivator::deactivate();
+    include_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-deactivator.php';
+    Sendsms_Dashboard_Deactivator::deactivate();
 }
 
 register_activation_hook(__FILE__, 'activate_sendsms_dashboard');
@@ -62,12 +62,12 @@ require plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard.php';
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since 1.0.0
  */
 function run_sendsms_dashboard()
 {
 
-	$plugin = new Sendsms_Dashboard();
-	$plugin->run();
+    $plugin = new Sendsms_Dashboard();
+    $plugin->run();
 }
 run_sendsms_dashboard();

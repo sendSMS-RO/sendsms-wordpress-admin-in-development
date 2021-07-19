@@ -1,8 +1,8 @@
 <?php
-require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php');
-require_once(plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php');
+require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'functions.php';
+require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'lib' . DIRECTORY_SEPARATOR . 'sendsms.class.php';
 if (!class_exists('WP_List_Table')) {
-    require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
+    include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 class Sendsms_Dashboard_Subscribers extends WP_List_Table
@@ -20,11 +20,13 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         $this->functions = new SendSMSFunctions();
         $this->api = new SendSMS();
         //Set parent defaults
-        parent::__construct(array(
+        parent::__construct(
+            array(
             'singular'  => 'subscriber',     //singular name of the listed records
             'plural'    => 'subscribers',    //plural name of the listed records
             'ajax'      => false        //does this table support ajax?
-        ));
+            )
+        );
     }
 
     function column_default($item, $column_name)
@@ -93,11 +95,30 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
     function process_bulk_action()
     {
         switch ($this->current_action()) {
-            case 'delete':
-                if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
-                    die();
+        case 'delete':
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+                die();
+            }
+            $phone = $this->functions->clear_phone_number($_GET['phone']);
+            if ($this->functions->is_subscriber_db($phone)) {
+                $synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
+                if (!is_null($synced)) {
+                    $this->api->delete_contact($synced);
                 }
-                $phone = $this->functions->clear_phone_number($_GET['phone']);
+                $this->functions->remove_subscriber_db($phone);
+            }
+            break;
+        case 'edit':
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
+                die();
+            }
+            break;
+        case 'delete-bulk':
+            if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
+                die();
+            }
+            foreach ($_POST['sendsms_dashboard_subscriber'] as $phone) {
+                $phone = $this->functions->clear_phone_number($phone);
                 if ($this->functions->is_subscriber_db($phone)) {
                     $synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
                     if (!is_null($synced)) {
@@ -105,29 +126,10 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
                     }
                     $this->functions->remove_subscriber_db($phone);
                 }
-                break;
-            case 'edit':
-                if (!wp_verify_nonce($_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions')) {
-                    die();
-                }
-                break;
-            case 'delete-bulk':
-                if (!wp_verify_nonce($_POST['_wpnonce'], 'bulk-' . $this->_args['plural'])) {
-                    die();
-                }
-                foreach ($_POST['sendsms_dashboard_subscriber'] as $phone) {
-                    $phone = $this->functions->clear_phone_number($phone);
-                    if ($this->functions->is_subscriber_db($phone)) {
-                        $synced = $this->functions->get_subscriber_db($phone)[0]['synced'];
-                        if (!is_null($synced)) {
-                            $this->api->delete_contact($synced);
-                        }
-                        $this->functions->remove_subscriber_db($phone);
-                    }
-                }
-                break;
-            default:
-                break;
+            }
+            break;
+        default:
+            break;
         }
     }
 
@@ -189,10 +191,12 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table
         $this->items = $items;
 
         // Set the pagination
-        $this->set_pagination_args(array(
+        $this->set_pagination_args(
+            array(
             'total_items' => $count,
             'per_page'    => $per_page,
             'total_pages' => ceil($count / $per_page)
-        ));
+            )
+        );
     }
 }

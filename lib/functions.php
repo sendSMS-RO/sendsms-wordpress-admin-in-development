@@ -2,7 +2,7 @@
 if (!defined('WPINC')) {
     die;
 }
-require_once('sendsms.class.php');
+require_once 'sendsms.class.php';
 
 class SendSMSFunctions
 {
@@ -246,7 +246,7 @@ class SendSMSFunctions
                 VALUES ( %s, %s, %s)",
                 $ip_address,
                 date('Y-m-d H:i:s'),
-                "1",
+                "1"
             )
         );
     }
@@ -418,7 +418,7 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    function have_2fa_activated($userID)
+    function have_2fa_activated($userID) //TODO check if it has a phone number in the first place
     {
         if (empty($userID) || !is_numeric($userID)) {
             $userID = get_current_user_id();

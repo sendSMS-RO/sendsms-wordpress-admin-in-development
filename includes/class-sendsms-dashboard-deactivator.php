@@ -13,19 +13,20 @@
 class Sendsms_Dashboard_Deactivator
 {
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function deactivate()
-	{
-		if (!current_user_can('activate_plugins'))
-			return;
-		$plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
-		check_admin_referer("deactivate-plugin_{$plugin}");
-		//TODO: add a definde variable for db deletion, options and settings
-	}
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since 1.0.0
+     */
+    public static function deactivate()
+    {
+        if (!current_user_can('activate_plugins')) {
+            return;
+        }
+        $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
+        check_admin_referer("deactivate-plugin_{$plugin}");
+        //TODO: add a definde variable for db deletion, options and settings
+    }
 }

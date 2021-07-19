@@ -175,10 +175,12 @@ class Sendsms_Dashboard_History extends WP_List_Table
         $this->items = $items;
 
         // Set the pagination
-        $this->set_pagination_args(array(
+        $this->set_pagination_args(
+            array(
             'total_items' => $count,
             'per_page'    => $per_page,
             'total_pages' => ceil($count / $per_page)
-        ));
+            )
+        );
     }
 }

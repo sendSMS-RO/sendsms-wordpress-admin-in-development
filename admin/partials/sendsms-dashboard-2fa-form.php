@@ -5,13 +5,13 @@
  * 
  * @since 1.0.0
  */
-function printHTML2fa($user, $nonce, $regirect)
+function printHTML2fa($user, $nonce, $regirect, $error)
 {
     $interim_login = isset($_REQUEST['interim-login']);
     $rememberme = false;
     if (!empty($_REQUEST['rememberme'])) {
         $rememberme = true;
     }
-?>
-<?php
+    ?>
+    <?php
 }

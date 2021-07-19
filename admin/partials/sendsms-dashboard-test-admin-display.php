@@ -1,33 +1,33 @@
 <div class="wrap">
     <div class="sendsms-container">
         <img class="sendsms-image-center" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
-        <h1 class="sendsms-text-center"><?= __('Send a test SMS', 'sendsms-dashboard') ?></h1>
+        <h1 class="sendsms-text-center"><?php echo __('Send a test SMS', 'sendsms-dashboard') ?></h1>
         <?php wp_nonce_field('sendsms-security-nonce'); ?>
         <div class="sendsms-containter-grid-test">
             <div class="sendsms-item-input-1">
-                <span id="forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('We recommend a phone number in E.164 Format but without the + sign', 'sendsms-dashboard') ?>"></i>
+                <span id="forPhoneNumber"><?php echo __('Phone number', 'sendsms-dashboard') ?></span>
+                <i class="fas fa-question-circle tooltip" data-title="<?php echo __('We recommend a phone number in E.164 Format but without the + sign', 'sendsms-dashboard') ?>"></i>
             </div>
             <input id="phone_number" type="tel" class="sendsms-item-input-1" placeholder="40727363767" aria-label="Phone number" aria-describedby="forPhoneNumber">
             <div class="sendsms-item-input-1">
-                <span id="forGdpor"><?= __('Add unsubscribe link?', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('You must specify {gdpr} key message. {gdpr} key will be replaced automaticaly with confirmation unique confirmation link. If {gdpr} key is not specified confirmation link will be placed at the end of message.', 'sendsms-dashboard') ?>"></i>
+                <span id="forGdpor"><?php echo __('Add unsubscribe link?', 'sendsms-dashboard') ?></span>
+                <i class="fas fa-question-circle tooltip" data-title="<?php echo __('You must specify {gdpr} key message. {gdpr} key will be replaced automaticaly with confirmation unique confirmation link. If {gdpr} key is not specified confirmation link will be placed at the end of message.', 'sendsms-dashboard') ?>"></i>
             </div>
             <input id="gdpr" class="sendsms-item-input-1" type="checkbox" value="gdrp" aria-label="Unsubscribe Link" aria-describedby="forGdpr">
             <div class="sendsms-item-input-1">
-                <span id="forShort"><?= __('Shrink urls?', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('Searches long url and replaces them with coresponding short url. Please use only urls that start with https:// or http://', 'sendsms-dashboard') ?>"></i>
+                <span id="forShort"><?php echo __('Shrink urls?', 'sendsms-dashboard') ?></span>
+                <i class="fas fa-question-circle tooltip" data-title="<?php echo __('Searches long url and replaces them with coresponding short url. Please use only urls that start with https:// or http://', 'sendsms-dashboard') ?>"></i>
             </div>
             <input id="short" class="sendsms-item-input-1" type="checkbox" value="short" aria-label="Shrink urls?" aria-describedby="forShort">
 
             <div class="sendsms-item-input-1">
-                <span id="forMessage"><?= __('Message', 'sendsms-dashboard') ?></span>
-                <i class="fas fa-question-circle tooltip" data-title="<?= __('The message you want to send', 'sendsms-dashboard') ?>"></i>
+                <span id="forMessage"><?php echo __('Message', 'sendsms-dashboard') ?></span>
+                <i class="fas fa-question-circle tooltip" data-title="<?php echo __('The message you want to send', 'sendsms-dashboard') ?>"></i>
             </div>
             <textarea rows="4" id="message" class="sendsms-item-input-1 sendsms_dashboard_content" aria-label="Message" aria-describedby="forMessage" data-sendsms-counter="counterMessage"></textarea>
-            <p id="counterMessage" class="sendsms-item-input-2"><?= __("The field is empty", 'wc_sendsms') ?></p>
+            <p id="counterMessage" class="sendsms-item-input-2"><?php echo __("The field is empty", 'wc_sendsms') ?></p>
             <div class="sendsms-item-input-1-3">
-                <button id="button-send-a-test-message" type="button" class="sendsms-button-center button button-primary"><?= __('Send Message', 'sendsms-dashboard') ?></button>
+                <button id="button-send-a-test-message" type="button" class="sendsms-button-center button button-primary"><?php echo __('Send Message', 'sendsms-dashboard') ?></button>
             </div>
         </div>
     </div>

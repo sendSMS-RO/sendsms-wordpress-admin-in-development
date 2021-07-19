@@ -10,20 +10,20 @@ wp_nonce_field('sendsms-security-nonce');
 <div id="sendsms-widget-unsubscribe-feedback-message"></div>
 <div id="sendsms-widget-unsubscribe-add-form">
     <div class="sendsms-widget-unsubscribe-phone-field">
-        <label id="sendsms_forPhoneNumber"><?= __('Phone number', 'sendsms-dashboard') ?></label>
-        <input id="sendsms_widget_unsubscribe_phone_number" type="number" aria-label="<?= __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
+        <label id="sendsms_forPhoneNumber"><?php echo __('Phone number', 'sendsms-dashboard') ?></label>
+        <input id="sendsms_widget_unsubscribe_phone_number" type="number" aria-label="<?php echo __('Phone number', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forPhoneNumber">
     </div>
     <div class="sendsms-widget-unsubscribe-send-button">
-        <button class="button" id="sendsms_widget_unsubscribe_submit" type="button" aria-label="<?= __('Submit', 'sendsms-dashboard') ?>"><?= __('Submit', 'sendsms-dashboard') ?></button>
+        <button class="button" id="sendsms_widget_unsubscribe_submit" type="button" aria-label="<?php echo __('Submit', 'sendsms-dashboard') ?>"><?php echo __('Submit', 'sendsms-dashboard') ?></button>
     </div>
 </div>
 <div id="sendsms-widget-unsubscribe-verify-form">
     <div id="sendsms-widget-unsubscribe-code-field">
-        <label id="sendsms_forValidationField"><?= __('Code', 'sendsms-dashboard') ?></label>
-        <input id="sendsms_widget_unsubscribe_validation_field" type="text" aria-label="<?= __('Code', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forValidationField">
+        <label id="sendsms_forValidationField"><?php echo __('Code', 'sendsms-dashboard') ?></label>
+        <input id="sendsms_widget_unsubscribe_validation_field" type="text" aria-label="<?php echo __('Code', 'sendsms-dashboard') ?>" aria-describedby="sendsms_forValidationField">
     </div>
     <div class="sendsms-widget-unsubscribe-validation-button">
-        <button class="button" id="sendsms_widget_unsubscribe_validate" type="button" aria-label="<?= __('Verify', 'sendsms-dashboard') ?>"><?= __('Verify', 'sendsms-dashboard') ?></button>
+        <button class="button" id="sendsms_widget_unsubscribe_validate" type="button" aria-label="<?php echo __('Verify', 'sendsms-dashboard') ?>"><?php echo __('Verify', 'sendsms-dashboard') ?></button>
     </div>
 </div>
 <?php echo $args['after_widget'];

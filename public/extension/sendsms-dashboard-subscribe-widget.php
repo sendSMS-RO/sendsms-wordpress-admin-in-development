@@ -22,7 +22,7 @@ class SendSMSSubscriber extends WP_Widget
      */
     public function widget($args, $instance)
     {
-        include(plugin_dir_path(dirname(__FILE__)) . 'partials/sendsms-dashboard-subscription-widget.php');
+        include plugin_dir_path(dirname(__FILE__)) . 'partials/sendsms-dashboard-subscription-widget.php';
     }
 
     /**
@@ -32,7 +32,7 @@ class SendSMSSubscriber extends WP_Widget
      */
     public function form($instance)
     {
-        include(plugin_dir_path(dirname(__FILE__)) . 'partials/sendsms-dashboard-subscription-widget-admin-form.php');
+        include plugin_dir_path(dirname(__FILE__)) . 'partials/sendsms-dashboard-subscription-widget-admin-form.php';
     }
 
 
