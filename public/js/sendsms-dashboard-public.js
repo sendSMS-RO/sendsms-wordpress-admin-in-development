@@ -1,6 +1,6 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     //AJAX for send a test
-    jQuery('#sendsms_widget_subscribe_submit').on('click', function($) {
+    jQuery('#sendsms_widget_subscribe_submit').on('click', function ($) {
         jQuery.post(sendsms_object_public.ajax_url, {
             'action': 'subscribe_to_newsletter',
             'security': sendsms_object_public.security,
@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
             'first_name': jQuery('#sendsms_widget_subscribe_first_name').val(),
             'last_name': jQuery('#sendsms_widget_subscribe_last_name').val(),
             'gdpr': jQuery('#sendsms_widget_subscribe_gdpr').is(":checked"),
-        }, function(response) {
+        }, function (response) {
             clearOutputToUser("subscribe");
             if (undefined !== response.success && false === response.success) {
                 jQuery('#sendsms-widget-subscribe-error-message').html(sendsms_object_public['text_' + response.data]);
@@ -24,7 +24,7 @@ jQuery(document).ready(function() {
                 jQuery('#sendsms-widget-subscribe-add-form').css('display', 'none');
                 jQuery('#sendsms-widget-subscribe-verify-form').css('display', 'block');
                 //this will validate the code sent to the sms
-                jQuery('#sendsms_widget_subscribe_validate').on('click', function($) {
+                jQuery('#sendsms_widget_subscribe_validate').on('click', function ($) {
                     jQuery.post(sendsms_object_public.ajax_url, {
                         'action': 'subscribe_verify_code',
                         'security': sendsms_object_public.security,
@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
                         'first_name': jQuery('#sendsms_widget_subscribe_first_name').val(),
                         'last_name': jQuery('#sendsms_widget_subscribe_last_name').val(),
                         'code': jQuery('#sendsms_widget_subscribe_validation_field').val()
-                    }, function(response) {
+                    }, function (response) {
                         clearOutputToUser("subscribe");
                         if (undefined !== response.success && false === response.success) {
                             jQuery('#sendsms-widget-subscribe-error-message').html(sendsms_object_public['text_' + response.data]);
@@ -49,12 +49,12 @@ jQuery(document).ready(function() {
         });
     });
 
-    jQuery('#sendsms_widget_unsubscribe_submit').on('click', function($) {
+    jQuery('#sendsms_widget_unsubscribe_submit').on('click', function ($) {
         jQuery.post(sendsms_object_public.ajax_url, {
             'action': 'unsubscribe_from_newsletter',
             'security': sendsms_object_public.security,
             'phone_number': jQuery('#sendsms_widget_unsubscribe_phone_number').val()
-        }, function(response) {
+        }, function (response) {
             clearOutputToUser("unsubscribe");
             if (undefined !== response.success && false === response.success) {
                 jQuery('#sendsms-widget-unsubscribe-error-message').html(sendsms_object_public['text_' + response.data]);
@@ -70,13 +70,13 @@ jQuery(document).ready(function() {
                 jQuery('#sendsms-widget-unsubscribe-add-form').css('display', 'none');
                 jQuery('#sendsms-widget-unsubscribe-verify-form').css('display', 'block');
                 //this will validate the code sent to the sms
-                jQuery('#sendsms_widget_unsubscribe_validate').on('click', function($) {
+                jQuery('#sendsms_widget_unsubscribe_validate').on('click', function ($) {
                     jQuery.post(sendsms_object_public.ajax_url, {
                         'action': 'unsubscribe_verify_code',
                         'security': sendsms_object_public.security,
                         'phone_number': jQuery('#sendsms_widget_unsubscribe_phone_number').val(),
                         'code': jQuery('#sendsms_widget_unsubscribe_validation_field').val()
-                    }, function(response) {
+                    }, function (response) {
                         clearOutputToUser("unsubscribe");
                         if (undefined !== response.success && false === response.success) {
                             jQuery('#sendsms-widget-unsubscribe-error-message').html(sendsms_object_public['text_' + response.data]);

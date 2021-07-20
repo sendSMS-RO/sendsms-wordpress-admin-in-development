@@ -158,8 +158,9 @@ class Sendsms_Dashboard
             //this is for 2fa. We keep a list of all cookies we need to invalidate before second auth step
             $this->loader->add_action('set_auth_cookie', $plugin_admin, 'collect_auth_cookie_tokens');
             $this->loader->add_action('set_logged_in_cookie', $plugin_admin, 'collect_auth_cookie_tokens');
-            //this invalidates the cookies and show the corect verification form if needed
+            //this invalidates the cookies and show the correct verification form if needed
             $this->loader->add_action('wp_login', $plugin_admin, 'twofa_processing', 10, 2); //comment this to deactivate 2fa
+            $this->loader->add_action('login_form_sendsms_validate', $plugin_admin, 'login_form_sendsms_validate');
             $this->loader->add_action('register_form', $plugin_admin, 'add_register_field');
         }
     }

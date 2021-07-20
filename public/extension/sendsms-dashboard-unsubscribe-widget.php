@@ -1,5 +1,5 @@
 <?php
-class SendSMSUnsubscriber extends WP_Widget
+class SendSMSUnsubscribe extends WP_Widget
 {
     /**
      * Sets up the widgets name etc
@@ -7,11 +7,11 @@ class SendSMSUnsubscriber extends WP_Widget
     public function __construct()
     {
         $widget_ops = array(
-            'classname' => 'sendssms_dashboard_unsubscriber',
+            'classname' => 'sendsms_dashboard_unsubscribe',
             'description' => __('Use this widget so anyone can unsubscribe from your newsletter.', 'sendsms-dashboard'),
             'customize_selective_refresh' => true,
         );
-        parent::__construct('sendssms_dashboard_unsubscriber', 'SendSMS Unsubscribe', $widget_ops);
+        parent::__construct('sendsms_dashboard_unsubscribe', 'SendSMS Unsubscribe', $widget_ops);
     }
 
     /**

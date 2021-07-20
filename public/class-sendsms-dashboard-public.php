@@ -74,30 +74,30 @@ class Sendsms_Dashboard_Public
             $this->plugin_name,
             'sendsms_object_public',
             [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'security' => wp_create_nonce('sendsms-security-nonce'),
-            'text_subscription_success' => __('Subscribed succesfuly', 'sendsms-dashboard'),
-            'text_unsubscription_success' => __('Unsubscribed succesfuly', 'sendsms-dashboard'),
-            'text_nogdpr' => __('You need to accept the privacy policy', 'sendsms-dashboard'),
-            'text_internal_error' => __('Internal error', 'sendsms-dashboard'),
-            'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
-            'text_dublicate_number' => __('The number is already subscribed', 'sendsms-dashboard'),
-            'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
-            'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
-            'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
-            'text_field_first_name' => __('Please enter a first name', 'sendsms-dashboard'),
-            'text_field_last_name' => __('Please enter a last name', 'sendsms-dashboard'),
-            'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard'),
-            'text_invalid_verification_code' => __('The verification field is empty or it is not valid', 'sendsms-dashboard'),
-            'text_phone_not_found' => __('We were unable to find this phone number inside our database', 'sendsms-dashboard'),
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'security' => wp_create_nonce('sendsms-security-nonce'),
+                'text_subscription_success' => __('Subscribed successfully', 'sendsms-dashboard'),
+                'text_unsubscription_success' => __('Unsubscribed successfully', 'sendsms-dashboard'),
+                'text_nogdpr' => __('You need to accept the privacy policy', 'sendsms-dashboard'),
+                'text_internal_error' => __('Internal error', 'sendsms-dashboard'),
+                'text_too_many_requests' => __('Too many requests', 'sendsms-dashboard'),
+                'text_duplicate_number' => __('The number is already subscribed', 'sendsms-dashboard'),
+                'text_ip_restricted' => __('You are unable to make a request from this ip', 'sendsms-dashboard'),
+                'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
+                'text_field_phone_number' => __('The phone number field is either empty or it could not be converted to a valid phone number', 'sendsms-dashboard'),
+                'text_field_first_name' => __('Please enter a first name', 'sendsms-dashboard'),
+                'text_field_last_name' => __('Please enter a last name', 'sendsms-dashboard'),
+                'text_waiting_validation' => __('Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard'),
+                'text_invalid_verification_code' => __('The verification field is empty or it is not valid', 'sendsms-dashboard'),
+                'text_phone_not_found' => __('We were unable to find this phone number inside our database', 'sendsms-dashboard'),
             ]
         );
     }
 
     public function widget_initialization()
     {
-        register_widget('SendSMSSubscriber');
-        register_widget('SendSMSUnsubscriber');
+        register_widget('SendSMSSubscribe');
+        register_widget('SendSMSUnsubscribe');
     }
 
     /**
@@ -113,7 +113,6 @@ class Sendsms_Dashboard_Public
             wp_send_json_error("nogdpr");
             wp_die();
         }
-        error_log(json_encode($_POST));
         $first_name = wp_unslash($_POST['first_name']);
         if (empty($first_name)) {
             wp_send_json_error("field_first_name");
@@ -130,7 +129,7 @@ class Sendsms_Dashboard_Public
             wp_die();
         }
         if ($this->functions->is_subscriber_db($phone)) {
-            wp_send_json_error("dublicate_number");
+            wp_send_json_error("duplicate_number");
             wp_die();
         } else {
             //doing ip checks

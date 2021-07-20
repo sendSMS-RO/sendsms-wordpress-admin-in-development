@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: SendSMS Dashboard
- * Description: Use this plugin to comunicate with everyone on your site
+ * Description: Use this plugin to communicate with everyone on your site
  * Version: 1.0.0
  * Author: sendSMS
  * Author URI: https://www.sendsms.ro/en/

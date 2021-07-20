@@ -16,7 +16,7 @@ class Sendsms_Dashboard_Activator
     /**
      * Make all the preparations for the plugin
      *
-     * Create the necesary databases. We will delete the database only when 
+     * Create the necessary databases. We will delete the database only when 
      *
      * @since 1.0.0
      */

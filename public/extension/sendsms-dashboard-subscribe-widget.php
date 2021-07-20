@@ -1,5 +1,5 @@
 <?php
-class SendSMSSubscriber extends WP_Widget
+class SendSMSSubscribe extends WP_Widget
 {
     /**
      * Sets up the widgets name etc
@@ -7,11 +7,11 @@ class SendSMSSubscriber extends WP_Widget
     public function __construct()
     {
         $widget_ops = array(
-            'classname' => 'sendssms_dashboard_subscriber',
+            'classname' => 'sendsms_dashboard_subscriber',
             'description' => __('Use this widget so anyone can subscribe to your SMS newsletter. This widget complies with gdpr standards', 'sendsms-dashboard'),
             'customize_selective_refresh' => true,
         );
-        parent::__construct('sendssms_dashboard_subscriber', 'SendSMS Subscription', $widget_ops);
+        parent::__construct('sendsms_dashboard_subscriber', 'SendSMS Subscription', $widget_ops);
     }
 
     /**

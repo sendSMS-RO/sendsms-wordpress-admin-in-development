@@ -20,24 +20,24 @@ settings_errors('sendsms-dashboard_messages');
 ?>
 <div class="wrap">
     <h1 class="sendsms-text-center"><?php echo esc_html(get_admin_page_title()); ?></h1>
-    <div class="sendsms-containter-grid-settings">
+    <div class="sendsms-container-grid-settings">
         <div class="sendsms-item-input-1 sendsms-left-panel-settings">
             <img class="sendsms-image-center-xs" src=<?php echo plugin_dir_url(dirname(__FILE__)) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
             <p><?php echo __('If you don\'t have an account, you can register <a href="https://hub.sendsms.ro/register" target="_blank">here</a>', 'sendsms-dashboard') ?></p>
             <p><?php
-            $response = $api->get_user_balance();
-            if($response['status'] >= 0) {
-                echo __('Your current sendsms.ro balance is: €', 'sendsms-dashboard') . $response['details'];
-            } else {
-                echo __('Please configure your account first', 'sendsms-dashboard');
-            }
-            ?></p>
+                $response = $api->get_user_balance();
+                if ($response['status'] >= 0) {
+                    echo __('Your current sendsms.ro balance is: €', 'sendsms-dashboard') . $response['details'];
+                } else {
+                    echo __('Please configure your account first', 'sendsms-dashboard');
+                }
+                ?></p>
             <ul class="sendsms-setting-list">
                 <?php
                 foreach ($tabs as $key => $value) {
-                    ?>
+                ?>
                     <li class="sendsms-setting-section-title"><a href=<?php echo add_query_arg(array('settings-updated' => false, 'tab' => $key)); ?>><?php echo $value ?></a></li>
-                    <?php
+                <?php
                 }
                 ?>
             </ul>
@@ -56,11 +56,11 @@ settings_errors('sendsms-dashboard_messages');
             }
 
             foreach ($tabs as $key => $value) {
-                ?>
+            ?>
                 <div <?php echo $_GET['tab'] != $key ? "style='display:none'" : "" ?>>
                     <?php do_settings_sections("sendsms_dashboard_plugin_$key"); ?>
                 </div>
-                <?php
+            <?php
             }
             // output save settings button
             submit_button('Save Settings');

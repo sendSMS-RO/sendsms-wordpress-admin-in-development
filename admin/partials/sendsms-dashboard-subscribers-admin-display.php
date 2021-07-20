@@ -20,8 +20,8 @@ $table->prepare_items();
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline"><?php echo __('SendSMS - Subscribers', 'sendsms-dashboard') ?></h1>
-    <button type="submit" class="" id="sendsms-dashboard-subscribers-add-new">Add new</button>
-    <button type="submit" class="" id="sendsms-dashboard-subscribers-synchronize">Synchronize subscribers</button>
+    <button type="submit" class="" id="sendsms-dashboard-subscribers-add-new"><?= __('Add new', 'sendsms-dashboard') ?></button>
+    <button type="submit" class="" id="sendsms-dashboard-subscribers-synchronize"><?= __('Synchronize subscribers', 'sendsms-dashboard') ?></button>
 
     <form id="sendsms-form" method="POST">
         <?php
@@ -58,7 +58,7 @@ $table->prepare_items();
                     <input id="sendsms_dashboard_edit_date" type="datetime-local" step="1">
                 </fieldset>
                 <fieldset class="sendsms-edit-fieldset">
-                    <label><?php echo __("IP Adress", "sendsms-dashboard") ?></label>
+                    <label><?php echo __("IP Address", "sendsms-dashboard") ?></label>
                     <input id="sendsms_dashboard_edit_ip_address" type="text">
                 </fieldset>
                 <fieldset class="sendsms-edit-fieldset">
@@ -80,7 +80,7 @@ $table->prepare_items();
     <form id="sendsms-dashboard-add-new-subscriber-form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="POST" style="margin: 10px;">
         <h2 class="sendsms-add-new-title"><?php echo __("Add a new subscriber", "sendsms-dashboard") ?></h2>
         <div id="sendsms-widget-unsubscribe-error-message" style="color:red"></div>
-        <?php echo wp_nonce_field("sendsms-dashboard-add-new-subscriber")?>
+        <?php echo wp_nonce_field("sendsms-dashboard-add-new-subscriber") ?>
         <fieldset class="sendsms-add-new-fieldset">
             <label><?php echo __("Phone number*", "sendsms-dashboard") ?></label>
             <input id="sendsms_dashboard_add_new_phone_number" type="number" name="phone_number">
@@ -98,7 +98,7 @@ $table->prepare_items();
             <input id="sendsms_dashboard_add_new_date" type="datetime-local" step="1" name="date">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
-            <label><?php echo __("IP Adress", "sendsms-dashboard") ?></label>
+            <label><?php echo __("IP Address", "sendsms-dashboard") ?></label>
             <input id="sendsms_dashboard_add_new_ip_address" type="text" name="ip_address">
         </fieldset>
         <fieldset class="sendsms-add-new-fieldset">
@@ -113,4 +113,3 @@ $table->prepare_items();
 </div>
 
 <?php
-

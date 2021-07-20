@@ -40,12 +40,12 @@
     max-width: 130px;
 }
 
-.sendsms-containter-grid-test {
+.sendsms-container-grid-test {
     width: 100%;
     margin-top: 3em;
 }
 
-.sendsms-containter-grid-settings {
+.sendsms-container-grid-settings {
     margin: auto;
     margin-top: 3em;
     display: grid;
@@ -223,7 +223,7 @@ textarea {
     .sendsms-container {
         max-width: 720px;
     }
-    .sendsms-containter-grid-test {
+    .sendsms-container-grid-test {
         width: 75%;
         margin: auto;
         margin-top: 3em;
@@ -243,7 +243,7 @@ textarea {
     .sendsms-mobile-setting-view {
         display: none;
     }
-    .sendsms-containter-grid-settings {
+    .sendsms-container-grid-settings {
         grid-template-columns: 22% 68%;
     }
     #sendsms-dashboard-add-new-form {
@@ -268,7 +268,7 @@ textarea {
     .sendsms-container {
         max-width: 960px;
     }
-    .sendsms-containter-grid-test {
+    .sendsms-container-grid-test {
         grid-template-columns: 40% 60%;
         margin-top: 3em;
     }
@@ -278,7 +278,7 @@ textarea {
     .sendsms-button-center {
         min-height: 3em !important;
     }
-    .sendsms-containter-grid-settings {
+    .sendsms-container-grid-settings {
         grid-template-columns: 20% 80%;
     }
     .sendsms-setting-section-title {
@@ -296,7 +296,7 @@ textarea {
     .sendsms-container {
         max-width: 1140px;
     }
-    .sendsms-containter-grid-test {
+    .sendsms-container-grid-test {
         margin-top: 4em;
         grid-template-columns: 40% 60%;
     }
@@ -313,11 +313,11 @@ textarea {
     .sendsms-container {
         max-width: 1320px;
     }
-    .sendsms-containter-grid-test {
+    .sendsms-container-grid-test {
         margin: auto;
         margin-top: 4em;
     }
-    .sendsms-containter-grid-settings {
+    .sendsms-container-grid-settings {
         grid-template-columns: 15% 85%;
     }
 }

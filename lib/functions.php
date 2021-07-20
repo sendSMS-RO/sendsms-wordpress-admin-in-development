@@ -26,7 +26,7 @@ class SendSMSFunctions
     }
 
     /**
-     * Validates a phone number and concatenate the prefixe
+     * Validates a phone number and concatenate the prefix
      * 
      * @since 1.0.0
      */
@@ -49,7 +49,7 @@ class SendSMSFunctions
     }
 
     /**
-     * It clears a phone number of maliciouse characters
+     * It clears a phone number of malicious characters
      * 
      * @since 1.0.0
      */
@@ -86,7 +86,7 @@ class SendSMSFunctions
      * 
      * @since 1.0.0
      */
-    public function add_subscriber_db($fisrt_name, $last_name, $phone_number, $ip_address = null, $browser = null, $date = null)
+    public function add_subscriber_db($first_name, $last_name, $phone_number, $ip_address = null, $browser = null, $date = null)
     {
         if ($this->is_subscriber_db($phone_number)) {
             return;
@@ -101,7 +101,7 @@ class SendSMSFunctions
                 (`phone`, `first_name`, `last_name`, `date`, `ip_address`, `browser`)
                 VALUES ( %s, %s, %s, %s, %s, %s)",
                 $phone_number,
-                $fisrt_name,
+                $first_name,
                 $last_name,
                 $date,
                 $ip_address,
@@ -231,7 +231,7 @@ class SendSMSFunctions
     }
 
     /**
-     * Inser ip address in dba_close
+     * Insert ip address in dba_close
      * 
      * @since 1.0.0
      */
@@ -316,6 +316,7 @@ class SendSMSFunctions
         }
         return implode('', $pieces);
     }
+
     /**
      * This will check if there are too many request made by this ip. If not, either add one to the request counter, or reset iterator_apply
      * 
@@ -425,6 +426,9 @@ class SendSMSFunctions
         }
         $uss_roles = get_userdata($userID)->roles;
         $roles = $this->get_setting('2fa_roles', array());
+        if(empty(trim(get_user_meta($userID, 'sendsms_phone_number', true)))) {
+            return false;
+        }
         foreach ($roles as $key => $value) {
             if (in_array($key, $uss_roles)) {
                 return true;
@@ -433,7 +437,7 @@ class SendSMSFunctions
         return false;
     }
 
-    public static function destroy_current_session_for_user($user, $tokens)
+    public function destroy_current_session_for_user($user, $tokens)
     {
         $session_manager = WP_Session_Tokens::get_instance($user->ID);
 
@@ -445,7 +449,7 @@ class SendSMSFunctions
         wp_clear_auth_cookie();
     }
 
-    public static function create_login_nonce($user_id)
+    public function create_login_nonce($user_id)
     {
         $login_nonce = array();
 
@@ -457,6 +461,26 @@ class SendSMSFunctions
         }
 
         return $login_nonce;
+    }
+
+    public function verify_login_nonce($user_id, $nonce)
+    {
+        $login_nonce = get_user_meta($user_id, "sendsms-dashboard-2fa-nonce", true);
+        if (!$login_nonce) {
+            return false;
+        }
+
+        if ($nonce !== $login_nonce['key'] || time() > $login_nonce['expiration']) {
+            $this->delete_login_nonce($user_id);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function delete_login_nonce($user_id)
+    {
+        delete_user_meta($user_id, "sendsms-dashboard-2fa-nonce");
     }
 
     public $country_codes = array(

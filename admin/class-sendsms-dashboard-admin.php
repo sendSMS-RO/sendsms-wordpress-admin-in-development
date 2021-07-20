@@ -77,22 +77,22 @@ class Sendsms_Dashboard_Admin
             $this->plugin_name,
             'sendsms_object',
             [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'security' => wp_create_nonce('sendsms-security-nonce'),
-            'text_message_contains_something' => __('The approximate number of messages: ', 'sendsms-dashboard'),
-            'text_message_is_empty' => __('The field is empty', 'sendsms-dashboard'),
-            'text_button_sending' => __('It\'s being sent...', 'sendsms-dashboard'),
-            'text_button_send' => __('Send Message', 'sendsms-dashboard'),
-            'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
-            'text_internal_error' => __('Internal error.', 'sendsms-dashboard'),
-            'text_invalid_phone_number' => __('Please enter a valid phone number.', 'sendsms-dashboard'),
-            'text_invalid_first_name' => __('Please enter a valid first name.', 'sendsms-dashboard'),
-            'text_invalid_last_name' => __('Please enter a valid last name.', 'sendsms-dashboard'),
-            'text_invalid_date' => __('Please enter a valid date.', 'sendsms-dashboard'),
-            'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
-            'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard'),
-            'text_constacts_synced' => __('Contacts synchronized succesfully', 'sendsms-dashboard'),
-            'text_empty_fields' => __('Some fields are empty', 'sendsms-dashboard'),
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'security' => wp_create_nonce('sendsms-security-nonce'),
+                'text_message_contains_something' => __('The approximate number of messages: ', 'sendsms-dashboard'),
+                'text_message_is_empty' => __('The field is empty', 'sendsms-dashboard'),
+                'text_button_sending' => __('It\'s being sent...', 'sendsms-dashboard'),
+                'text_button_send' => __('Send Message', 'sendsms-dashboard'),
+                'text_invalid_security_nonce' => __('Invalid security token sent.', 'sendsms-dashboard'),
+                'text_internal_error' => __('Internal error.', 'sendsms-dashboard'),
+                'text_invalid_phone_number' => __('Please enter a valid phone number.', 'sendsms-dashboard'),
+                'text_invalid_first_name' => __('Please enter a valid first name.', 'sendsms-dashboard'),
+                'text_invalid_last_name' => __('Please enter a valid last name.', 'sendsms-dashboard'),
+                'text_invalid_date' => __('Please enter a valid date.', 'sendsms-dashboard'),
+                'text_update_subscriber_success' => __('The subscriber has been updated', 'sendsms-dashboard'),
+                'text_invalid_ip_address' => __('Please enter a valid IP Address', 'sendsms-dashboard'),
+                'text_contacts_synced' => __('Contacts synchronized successfully', 'sendsms-dashboard'),
+                'text_empty_fields' => __('Some fields are empty', 'sendsms-dashboard'),
             ]
         );
     }
@@ -106,7 +106,7 @@ class Sendsms_Dashboard_Admin
     {
         add_menu_page(
             __('SendSMS Dashboard', 'sendsms-dashboard'),
-            __('SendSMS', 'sendsms-dashboard'),
+            __('SendSMS Dashboard', 'sendsms-dashboard'),
             'manage_options',
             $this->plugin_name,
             array($this, 'page_settings'),
@@ -136,6 +136,14 @@ class Sendsms_Dashboard_Admin
             "manage_options",
             $this->plugin_name . '_subscribers',
             array($this, 'page_subscribers')
+        );
+        add_submenu_page(
+            $this->plugin_name,
+            __('SMS sending', 'sendsms-dashboard'),
+            __('SMS sending', 'sendsms-dashboard'),
+            'manage_options',
+            $this->plugin_name . '_sms_sending',
+            array($this, 'page_sms_sending')
         );
     }
 
@@ -261,12 +269,12 @@ class Sendsms_Dashboard_Admin
     {
         foreach ($args as $key => $value) {
             switch ($key) {
-            case 'password':
-                $args[$key] = trim($value);
-                break;
-            case 'store_type':
-                $args[$key] = 1;
-                break;
+                case 'password':
+                    $args[$key] = trim($value);
+                    break;
+                case 'store_type':
+                    $args[$key] = 1;
+                    break;
             }
         }
         return $args;
@@ -286,6 +294,11 @@ class Sendsms_Dashboard_Admin
     public function page_test()
     {
         include plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-test-admin-display.php';
+    }
+
+    public function page_sms_sending()
+    {
+        include plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-sms-sending-admin-display.php';
     }
 
     //Ajax handler
@@ -340,7 +353,7 @@ class Sendsms_Dashboard_Admin
             }
         }
         update_option('sendsms-dashboard-sync-group', $id);
-        wp_send_json_success('constacts_synced');
+        wp_send_json_success('contacts_synced');
     }
     /**
      * This will update the subscriber
@@ -388,15 +401,15 @@ class Sendsms_Dashboard_Admin
         $this->functions->update_subscriber_db($old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser);
         wp_send_json_success(
             array(
-            'info' => 'update_subscriber_success',
-            'new_data' => array(
+                'info' => 'update_subscriber_success',
+                'new_data' => array(
                     'phone' => esc_html($phone),
                     'first_name' => esc_html($first_name),
                     'last_name' => esc_html($last_name),
                     'date' => esc_html($date),
                     'ip_address' => esc_html($ip_address),
                     'browser' => esc_html($browser)
-            )
+                )
             )
         );
     }
@@ -460,51 +473,51 @@ class Sendsms_Dashboard_Admin
     }
     //Field creators
     /**
-     * There functions will just display the fields of the setings page
+     * There functions will just display the fields of the settings page
      */
     public function sendsms_dashboard_setting_username_callback($args)
     {
         $setting = $this->functions->get_setting_esc('username');
-        ?>
+?>
         <input type="text" name="sendsms_dashboard_plugin_settings[username]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_setting_password_callback($args)
     {
         $setting = $this->functions->get_setting_esc('password');
-        ?>
+    ?>
         <input type="password" name="sendsms_dashboard_plugin_settings[password]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_setting_label_callback($args)
     {
         $setting = $this->functions->get_setting_esc('label', '1898');
-        ?>
+    ?>
         <input type="text" name="sendsms_dashboard_plugin_settings[label]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_setting_cc_callback($args)
     {
         $setting = $this->functions->get_setting_esc('cc', "INT");
-        ?>
+    ?>
         <select type="checkbox" name="sendsms_dashboard_plugin_settings[cc]">
             <option value="INT">International</option>
-        <?php
-        foreach ($this->functions->country_codes as $key => $value) {
-            echo "<option value='$key' " . ($setting == $key ? "selected" : "") . ">$key (+$value)</option>";
-        }
-        ?>
+            <?php
+            foreach ($this->functions->country_codes as $key => $value) {
+                echo "<option value='$key' " . ($setting == $key ? "selected" : "") . ">$key (+$value)</option>";
+            }
+            ?>
         </select>
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_user_add_phone_field_callback($args)
     {
         $setting = $this->functions->get_setting_esc('add_phone_field', false);
-        ?>
+    ?>
         <input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?php echo $setting ? "checked" : "" ?>>
         <p class="sendsms-dashboard-subscript"><?php echo __("Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting.", "sendsms-dashboard") ?></p>
         <?php
@@ -515,14 +528,14 @@ class Sendsms_Dashboard_Admin
         $setting = $this->functions->get_setting('2fa_roles', array());
         $roles = get_editable_roles();
         foreach ($roles as $key => $value) {
-            ?>
+        ?>
             <div style="display: block;">
                 <label>
                     <input style="margin-top: 0px; margin-right: 5px;" type="checkbox" name="sendsms_dashboard_plugin_settings[2fa_roles][<?php echo $key ?>]" value="1" <?php echo (array_key_exists($key, $setting) && $setting[$key]) == "1" ? "checked" : "" ?>>
-            <?php echo $value['name'] ?>
+                    <?php echo $value['name'] ?>
                 </label>
             </div>
-            <?php
+        <?php
         }
     }
 
@@ -532,31 +545,31 @@ class Sendsms_Dashboard_Admin
         ?>
         <input type="text" name="sendsms_dashboard_plugin_settings[ip_limit]" value="<?php echo isset($setting) ? esc_attr($setting) : ''; ?>">
         <p class="sendsms-dashboard-subscript"><?php echo __("The maximum number of subscriptions/unsubscriptions an IP address can make per minute. This is used as follows: maximum_ip_addresses/minutes (eg: 5/10 - 5 maximum registrations every 10 minutes). You can use -1 for no restrictions (eg: 5/-1 - 5 maximum registrations on that ip). No restriction will be applied if the field is empty or if it has invalid characters.", 'sendsms-dashboard') ?></p>
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_restricted_ips_field_callback($args)
     {
         $setting = $this->functions->get_setting_esc('restricted_ips', '');
-        ?>
+    ?>
         <textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[restricted_ips]"><?php echo isset($setting) ? esc_textarea($setting) : ''; ?></textarea>
-        <p class="sendsms-dashboard-subscript"><?php echo __("These ip addresses will not be able to register subscribe/unsubscribe. Put every IP address on a separed line.", 'sendsms-dashboard') ?></p>
-        <?php
+        <p class="sendsms-dashboard-subscript"><?php echo __("These ip addresses will not be able to register subscribe/unsubscribe. Put every IP address on a separated line.", 'sendsms-dashboard') ?></p>
+    <?php
     }
 
     public function sendsms_dashboard_subscribe_verification_message_field_callback($args)
     {
         $setting = $this->functions->get_setting_esc('subscribe_verification_message', '');
-        ?>
+    ?>
         <textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[subscribe_verification_message]"><?php echo isset($setting) ? esc_textarea($setting) : ''; ?></textarea>
         <p class="sendsms-dashboard-subscript"><?php echo __("You must specify the {code} key message. The {code} key will be automatically replaced with the unique validation code. If the {code} key is not specified, the validation code will be placed at the end of the message", 'sendsms-dashboard') ?></p>
-        <?php
+    <?php
     }
 
     public function sendsms_dashboard_subscribe_phone_verification_field_callback($args)
     {
         $setting = $this->functions->get_setting_esc('subscribe_phone_verification', false);
-        ?>
+    ?>
         <input type="checkbox" name="sendsms_dashboard_plugin_settings[subscribe_phone_verification]" value="1" <?php echo $setting ? "checked" : "" ?>>
         <p class="sendsms-dashboard-subscript"><?php echo __("This will send a verification code when someone subscribe/unsubscribe", "sendsms-dashboard") ?></p>
         <?php
@@ -582,7 +595,7 @@ class Sendsms_Dashboard_Admin
     public function user_register_metadata($user_id)
     {
         if (isset($_POST['sendsms_phone_number'])) {
-            update_user_meta($user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number']);
+            update_user_meta($user_id, 'get_user_meta', $_POST['sendsms_phone_number']);
         }
     }
 
@@ -594,7 +607,7 @@ class Sendsms_Dashboard_Admin
     public function add_new_user_field_to_edit_form($args)
     {
         if (current_user_can('edit_user')) {
-            $fields['sendsms_phone_number'] = __('Phone number', 'sendsms-dashboard');
+            $fields['sendsms_phone_number'] = __('Phone number (required for sendSMS.ro 2fa)', 'sendsms-dashboard');
         }
 
         return $fields;
@@ -652,7 +665,95 @@ class Sendsms_Dashboard_Admin
         $redirect_to = isset($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : admin_url();
 
         include plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-2fa-form.php';
-        printHTML2fa($user, $login_nonce['key'], $redirect_to);
+        sendsms_dashboard_printHTML2fa($user, $login_nonce['key'], $redirect_to, $this, '');
+        exit;
+    }
+
+    public function generate_auth_code($user)
+    {
+        $phone = get_user_meta($user->ID, 'sendsms_phone_number', true);
+        // error_log(($phone));
+        $content = $this->functions->get_setting("subscribe_verification_message", ""); //TODO add a specific field
+        $this->api->message_send(false, false, $phone, $content, 'code');
+    }
+
+    public function login_form_sendsms_validate()
+    {
+        $wp_auth_id = filter_input(INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT);
+        $nonce      = filter_input(INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING);
+        $phone = get_user_meta($wp_auth_id, 'sendsms_phone_number', true);
+
+        if (!$wp_auth_id || !$nonce) {
+            return;
+        }
+
+        $user = get_userdata($wp_auth_id);
+        if (!$user) {
+            return;
+        }
+
+        if (!$this->functions->verify_login_nonce($user->ID, $nonce)) {
+            wp_safe_redirect(get_bloginfo('url'));
+            exit;
+        }
+
+        if (!$this->functions->verifyVerificationCode($phone)) { //not a valid code
+            do_action('wp_login_failed', $user->user_login);
+
+            $login_nonce = $this->functions->create_login_nonce($user->ID);
+            if (!$login_nonce) {
+                wp_die(esc_html__('Failed to create a login nonce.', 'sendsms-dashboard'));
+            }
+
+            include plugin_dir_path(__FILE__) . 'partials/sendsms-dashboard-2fa-form.php';
+            sendsms_dashboard_printHTML2fa($user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, esc_html__('ERROR: Invalid code, please submit the code again.', 'sendsms-dashboard'), false);
+            exit;
+        }
+
+        $this->functions->delete_login_nonce($user->ID);
+
+        $rememberme = false;
+        if (isset($_REQUEST['rememberme']) && $_REQUEST['rememberme']) {
+            $rememberme = true;
+        }
+
+        wp_set_auth_cookie($user->ID, $rememberme);
+
+        global $interim_login;
+        $interim_login = isset($_REQUEST['interim-login']);
+
+        if ($interim_login) {
+            $customize_login = isset($_REQUEST['customize-login']);
+            if ($customize_login) {
+                wp_enqueue_script('customize-base');
+            }
+            $message       = '<p class="message">' . __('You have logged in successfully.', 'sendsms-dashboard') . '</p>';
+            $interim_login = 'success';
+            login_header('', $message);
+        ?>
+            </div>
+            <?php
+            do_action('login_footer');
+            ?>
+            <?php if ($customize_login) : ?>
+                <script type="text/javascript">
+                    setTimeout(function() {
+                        new wp.customize.Messenger({
+                            url: '<?php echo esc_url(wp_customize_url()); ?>',
+                            channel: 'login'
+                        }).send('login')
+                    }, 1000);
+                </script>
+            <?php endif; ?>
+            </body>
+
+            </html>
+<?php
+            exit;
+        }
+        $redirect_to = apply_filters('login_redirect', $_REQUEST['redirect_to'], $_REQUEST['redirect_to'], $user);
+        wp_safe_redirect($redirect_to);
+
         exit;
     }
 }

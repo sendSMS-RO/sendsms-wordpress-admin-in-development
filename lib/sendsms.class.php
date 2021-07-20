@@ -94,7 +94,7 @@ class SendSMS
     }
 
     /**
-     * Get all groups from sensms.ro
+     * Get all groups from sendsms.ro
      * 
      * @since 1.0.0
      */

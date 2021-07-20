@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
                 modal.setTitle("Error");
                 return;
             }
-            modal.setTitle("Succes");
+            modal.setTitle("Success");
             // Parse your response here.	
         });
     });
@@ -113,23 +113,23 @@ jQuery(document).ready(function() {
 
 //count the number of characters
 document.addEventListener("DOMContentLoaded", (event) => {
-    var sendsms_daschboard_content = document.getElementsByClassName('sendsms_dashboard_content')[0];
-    if (sendsms_daschboard_content != undefined) {
-        sendsms_daschboard_content.addEventListener("input", (event) => {
-            lenghtCounter(event.target, document.getElementById(event.target.dataset['sendsmsCounter']));
+    var sendsms_dashboard_content = document.getElementsByClassName('sendsms_dashboard_content')[0];
+    if (sendsms_dashboard_content != undefined) {
+        sendsms_dashboard_content.addEventListener("input", (event) => {
+            lengthCounter(event.target, document.getElementById(event.target.dataset['sendsmsCounter']));
         });
-        sendsms_daschboard_content.addEventListener("change", (event) => {
-            lenghtCounter(event.target, document.getElementById(event.target.dataset['sendsmsCounter']));
+        sendsms_dashboard_content.addEventListener("change", (event) => {
+            lengthCounter(event.target, document.getElementById(event.target.dataset['sendsmsCounter']));
         });
 
-        function lenghtCounter(textarea, counter) {
-            var lenght = textarea.value.length;
-            var messages = lenght / 160 + 1;
-            if (lenght > 0) {
-                if (lenght % 160 === 0) {
+        function lengthCounter(textarea, counter) {
+            var length = textarea.value.length;
+            var messages = length / 160 + 1;
+            if (length > 0) {
+                if (length % 160 === 0) {
                     messages--;
                 }
-                counter.textContent = sendsms_object.text_message_contains_something + Math.floor(messages) + " (" + lenght + ")";
+                counter.textContent = sendsms_object.text_message_contains_something + Math.floor(messages) + " (" + length + ")";
             } else {
                 counter.textContent = sendsms_object.text_message_is_empty;
             }
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
 });
 
-//this will adctivate the edit form of a subscriber
+//this will activate the edit form of a subscriber
 function activateEditForm(currentObject, selector, phone, first_name, last_name, date, ip_address, browser) {
     //reactivate all elements
     jQuery(selector).parent().closest('tr').show();
@@ -152,7 +152,7 @@ function activateEditForm(currentObject, selector, phone, first_name, last_name,
     jQuery("#sendsms_dashboard_edit_browser").val(browser);
 }
 
-//just the cance edit button
+//just the cancel edit button
 function cancelEdit() {
     jQuery(".sendsms-dashboard-subscribers-edit").parent().closest('tr').fadeIn(400);
     jQuery(".sendsms-dashboard-edit-form").hide();
