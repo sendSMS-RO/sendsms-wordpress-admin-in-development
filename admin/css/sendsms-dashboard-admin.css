@@ -21,9 +21,7 @@
     margin-left: auto;
 }
 
-.sendsms-image-center,
-.sendsms-image-center-xs,
-.sendsms-button-center {
+.sendsms-image-center, .sendsms-image-center-xs, .sendsms-button-center {
     display: block !important;
     margin: auto !important;
 }
@@ -40,7 +38,7 @@
     max-width: 130px;
 }
 
-.sendsms-container-grid-test {
+.sendsms-container-grid-test, .sendsms-container-grid-mass {
     width: 100%;
     margin-top: 3em;
 }
@@ -99,7 +97,7 @@
 @-webkit-keyframes rotating
 /* Safari and Chrome */
 
-{
+    {
     from {
         -webkit-transform: rotate(0deg);
         -o-transform: rotate(0deg);
@@ -145,14 +143,12 @@
     display: none;
 }
 
-.sendsms-dashboard-edit-form input,
-textarea {
+.sendsms-dashboard-edit-form input, textarea {
     margin-left: 0px !important;
     width: 100%;
 }
 
-#sendsms-dashboard-subscribers-synchronize,
-#sendsms-dashboard-subscribers-add-new {
+#sendsms-dashboard-subscribers-synchronize, #sendsms-dashboard-subscribers-add-new {
     margin-left: 4px;
     padding: 4px 8px;
     position: relative;
@@ -210,6 +206,7 @@ textarea {
 .sendsms-add-new-title {
     text-align: center;
 }
+
 @media (min-width: 576px) {
     .sendsms-container {
         max-width: 540px;
@@ -223,7 +220,7 @@ textarea {
     .sendsms-container {
         max-width: 720px;
     }
-    .sendsms-container-grid-test {
+    .sendsms-container-grid-test, .sendsms-container-grid-mass {
         width: 75%;
         margin: auto;
         margin-top: 3em;
@@ -255,20 +252,19 @@ textarea {
     }
 }
 
-#sendsms_dashboard_add_new_phone_number::-webkit-inner-spin-button, 
-#sendsms_dashboard_add_new_phone_number::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
+#sendsms_dashboard_add_new_phone_number::-webkit-inner-spin-button, #sendsms_dashboard_add_new_phone_number::-webkit-outer-spin-button {
+    -webkit-appearance: none;
 }
 
 #sendsms_dashboard_add_new_phone_number {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 @media (min-width: 992px) {
     .sendsms-container {
         max-width: 960px;
     }
-    .sendsms-container-grid-test {
+    .sendsms-container-grid-test, .sendsms-container-grid-mass {
         grid-template-columns: 40% 60%;
         margin-top: 3em;
     }
@@ -296,7 +292,7 @@ textarea {
     .sendsms-container {
         max-width: 1140px;
     }
-    .sendsms-container-grid-test {
+    .sendsms-container-grid-test, .sendsms-container-grid-mass {
         margin-top: 4em;
         grid-template-columns: 40% 60%;
     }
@@ -313,7 +309,7 @@ textarea {
     .sendsms-container {
         max-width: 1320px;
     }
-    .sendsms-container-grid-test {
+    .sendsms-container-grid-test, .sendsms-container-grid-mass {
         margin: auto;
         margin-top: 4em;
     }
@@ -324,4 +320,27 @@ textarea {
 
 .sendsms-general-tooltip>div>div>div {
     font-weight: 400;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }
