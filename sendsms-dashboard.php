@@ -11,8 +11,8 @@
  */
 
 // If this file is called directly, abort.
-if (!defined('WPINC')) {
-    die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
 }
 
 /**
@@ -20,40 +20,38 @@ if (!defined('WPINC')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('SENDSMS_DASHBOARD_VERSION', '1.0.0');
+define( 'SENDSMS_DASHBOARD_VERSION', '1.0.0' );
 /**
  * Currently DB version
  */
-define('SENDSMS_DB_VERSION', '1.16');
+define( 'SENDSMS_DB_VERSION', '1.16' );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-sendsms-dashboard-activator.php
  */
-function activate_sendsms_dashboard()
-{
-    include_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-activator.php';
-    Sendsms_Dashboard_Activator::activate();
+function activate_sendsms_dashboard() {
+	 include_once plugin_dir_path( __FILE__ ) . 'includes/class-sendsms-dashboard-activator.php';
+	Sendsms_Dashboard_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-sendsms-dashboard-deactivator.php
  */
-function deactivate_sendsms_dashboard()
-{
-    include_once plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard-deactivator.php';
-    Sendsms_Dashboard_Deactivator::deactivate();
+function deactivate_sendsms_dashboard() {
+	include_once plugin_dir_path( __FILE__ ) . 'includes/class-sendsms-dashboard-deactivator.php';
+	Sendsms_Dashboard_Deactivator::deactivate();
 }
 
-register_activation_hook(__FILE__, 'activate_sendsms_dashboard');
-register_deactivation_hook(__FILE__, 'deactivate_sendsms_dashboard');
+register_activation_hook( __FILE__, 'activate_sendsms_dashboard' );
+register_deactivation_hook( __FILE__, 'deactivate_sendsms_dashboard' );
 
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-sendsms-dashboard.php';
 
 /**
  * Begins execution of the plugin.
@@ -64,10 +62,8 @@ require plugin_dir_path(__FILE__) . 'includes/class-sendsms-dashboard.php';
  *
  * @since 1.0.0
  */
-function run_sendsms_dashboard()
-{
-
-    $plugin = new Sendsms_Dashboard();
-    $plugin->run();
+function run_sendsms_dashboard() {
+	$plugin = new Sendsms_Dashboard();
+	$plugin->run();
 }
 run_sendsms_dashboard();

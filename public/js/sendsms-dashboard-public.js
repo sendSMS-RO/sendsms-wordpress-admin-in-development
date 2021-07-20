@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
     //AJAX for send a test
     jQuery('#sendsms_widget_subscribe_submit').on('click', function ($) {
-        jQuery.post(sendsms_object_public.ajax_url, {
+        jQuery.post(sendsms_object_public.sendsms_ajax_url, {
             'action': 'subscribe_to_newsletter',
             'security': sendsms_object_public.security,
             'phone_number': jQuery('#sendsms_widget_subscribe_phone_number').val(),
@@ -25,7 +25,7 @@ jQuery(document).ready(function () {
                 jQuery('#sendsms-widget-subscribe-verify-form').css('display', 'block');
                 //this will validate the code sent to the sms
                 jQuery('#sendsms_widget_subscribe_validate').on('click', function ($) {
-                    jQuery.post(sendsms_object_public.ajax_url, {
+                    jQuery.post(sendsms_object_public.sendsms_ajax_url, {
                         'action': 'subscribe_verify_code',
                         'security': sendsms_object_public.security,
                         'phone_number': jQuery('#sendsms_widget_subscribe_phone_number').val(),
@@ -50,7 +50,7 @@ jQuery(document).ready(function () {
     });
 
     jQuery('#sendsms_widget_unsubscribe_submit').on('click', function ($) {
-        jQuery.post(sendsms_object_public.ajax_url, {
+        jQuery.post(sendsms_object_public.sendsms_ajax_url, {
             'action': 'unsubscribe_from_newsletter',
             'security': sendsms_object_public.security,
             'phone_number': jQuery('#sendsms_widget_unsubscribe_phone_number').val()
@@ -71,7 +71,7 @@ jQuery(document).ready(function () {
                 jQuery('#sendsms-widget-unsubscribe-verify-form').css('display', 'block');
                 //this will validate the code sent to the sms
                 jQuery('#sendsms_widget_unsubscribe_validate').on('click', function ($) {
-                    jQuery.post(sendsms_object_public.ajax_url, {
+                    jQuery.post(sendsms_object_public.sendsms_ajax_url, {
                         'action': 'unsubscribe_verify_code',
                         'security': sendsms_object_public.security,
                         'phone_number': jQuery('#sendsms_widget_unsubscribe_phone_number').val(),

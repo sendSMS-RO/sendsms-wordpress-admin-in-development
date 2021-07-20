@@ -4,343 +4,347 @@
  */
 
 .sendsms-edit-title {
-    font-weight: 600;
-    font-size: large !important;
-    margin: 0.5em 0.7em 0em 0.5em !important;
+	font-weight: 600;
+	font-size: large !important;
+	margin: 0.5em 0.7em 0em 0.5em !important;
 }
 
 .sendsms-edit-fieldset {
-    margin: 1em 0.5em 0em 0.5em;
+	margin: 1em 0.5em 0em 0.5em;
 }
 
 .sendsms-container {
-    width: 100%;
-    padding-right: var(--bs-gutter-x, 0.75rem);
-    padding-left: var(--bs-gutter-x, 0.75rem);
-    margin-right: auto;
-    margin-left: auto;
+	width: 100%;
+	padding-right: var(--bs-gutter-x, 0.75rem);
+	padding-left: var(--bs-gutter-x, 0.75rem);
+	margin-right: auto;
+	margin-left: auto;
 }
 
 .sendsms-image-center, .sendsms-image-center-xs, .sendsms-button-center {
-    display: block !important;
-    margin: auto !important;
+	display: block !important;
+	margin: auto !important;
 }
 
 .sendsms-pc-setting-view {
-    display: none;
+	display: none;
 }
 
 .sendsms-text-center {
-    text-align: center;
+	text-align: center;
 }
 
 .sendsms-image-center-xs {
-    max-width: 130px;
+	max-width: 130px;
 }
 
 .sendsms-container-grid-test, .sendsms-container-grid-mass {
-    width: 100%;
-    margin-top: 3em;
+	width: 100%;
+	margin-top: 3em;
 }
 
 .sendsms-container-grid-settings {
-    margin: auto;
-    margin-top: 3em;
-    display: grid;
-    grid-template-rows: auto;
-    background-color: white;
-    border: 1px solid #e0dede;
-    padding: 1em;
-    box-sizing: border-box;
-    border-radius: 8px;
-    min-height: 400px;
+	margin: auto;
+	margin-top: 3em;
+	display: grid;
+	grid-template-rows: auto;
+	background-color: white;
+	border: 1px solid #e0dede;
+	padding: 1em;
+	box-sizing: border-box;
+	border-radius: 8px;
+	min-height: 400px;
 }
 
 .sendsms-item-input-1 {
-    margin-top: 0.7em !important;
-    display: block;
-    width: 90%;
-    font-size: 1.5em;
+	margin-top: 0.7em !important;
+	display: block;
+	width: 90%;
+	font-size: 1.5em;
 }
 
 .sendsms-item-input-2 {
-    grid-column: 2/2;
+	grid-column: 2/2;
 }
 
 .sendsms-item-input-1-3 {
-    grid-column: 1/3;
+	grid-column: 1/3;
 }
 
 .sendsms-setting-section-title>a {
-    color: inherit;
-    text-decoration: none;
+	color: inherit;
+	text-decoration: none;
 }
 
 .sendsms-setting-list {
-    margin-top: 2em;
-    display: block;
+	margin-top: 2em;
+	display: block;
 }
 
 .sendsms-setting-section-title {
-    font-weight: 500;
-    margin: 4px;
-    margin-right: 1em;
-    padding-bottom: 3px;
-    padding-top: 0.3em;
-    border-bottom: 1px solid #b7b3b3;
+	font-weight: 500;
+	margin: 4px;
+	margin-right: 1em;
+	padding-bottom: 3px;
+	padding-top: 0.3em;
+	border-bottom: 1px solid #b7b3b3;
 }
 
 .sendsms-dashboard-disabled {
-    cursor: not-allowed !important;
+	cursor: not-allowed !important;
 }
 
 @-webkit-keyframes rotating
 /* Safari and Chrome */
 
-    {
-    from {
-        -webkit-transform: rotate(0deg);
-        -o-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    to {
-        -webkit-transform: rotate(360deg);
-        -o-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	{
+	from {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes rotating {
-    from {
-        -ms-transform: rotate(0deg);
-        -moz-transform: rotate(0deg);
-        -webkit-transform: rotate(0deg);
-        -o-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    to {
-        -ms-transform: rotate(360deg);
-        -moz-transform: rotate(360deg);
-        -webkit-transform: rotate(360deg);
-        -o-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 .sendsms-dashboard-fa-spinner {
-    -webkit-animation: rotating 2s linear infinite;
-    -moz-animation: rotating 2s linear infinite;
-    -ms-animation: rotating 2s linear infinite;
-    -o-animation: rotating 2s linear infinite;
-    animation: rotating 2s linear infinite;
+	-webkit-animation: rotating 2s linear infinite;
+	-moz-animation: rotating 2s linear infinite;
+	-ms-animation: rotating 2s linear infinite;
+	-o-animation: rotating 2s linear infinite;
+	animation: rotating 2s linear infinite;
 }
 
 .sendsms-dashboard-subscript {
-    color: rgba(0, 0, 0, 0.52);
+	color: rgba(0, 0, 0, 0.52);
 }
 
 .sendsms-dashboard-edit-form {
-    display: none;
+	display: none;
 }
 
 .sendsms-dashboard-edit-form input, textarea {
-    margin-left: 0px !important;
-    width: 100%;
+	margin-left: 0px !important;
+	width: 100%;
 }
 
 #sendsms-dashboard-subscribers-synchronize, #sendsms-dashboard-subscribers-add-new {
-    margin-left: 4px;
-    padding: 4px 8px;
-    position: relative;
-    top: -3px;
-    text-decoration: none;
-    border: 1px solid #2271b1;
-    border-radius: 2px;
-    text-shadow: none;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: normal;
-    color: #2271b1;
-    background: #f6f7f7;
-    cursor: pointer;
+	margin-left: 4px;
+	padding: 4px 8px;
+	position: relative;
+	top: -3px;
+	text-decoration: none;
+	border: 1px solid #2271b1;
+	border-radius: 2px;
+	text-shadow: none;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: normal;
+	color: #2271b1;
+	background: #f6f7f7;
+	cursor: pointer;
 }
 
 #sendsms-dashboard-overlay {
-    position: fixed;
-    /* Sit on top of the page content */
-    display: none;
-    width: 100%;
-    /* Full width (cover the whole page) */
-    height: 100%;
-    /* Full height (cover the whole page) */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Black background with opacity */
-    z-index: 100000;
-    /* Specify a stack order in case you're using a different order for other elements */
+	position: fixed;
+	/* Sit on top of the page content */
+	display: none;
+	width: 100%;
+	/* Full width (cover the whole page) */
+	height: 100%;
+	/* Full height (cover the whole page) */
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	/* Black background with opacity */
+	z-index: 100000;
+	/* Specify a stack order in case you're using a different order for other elements */
 }
 
 #sendsms-dashboard-add-new-form {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 400px;
-    height: 500px;
-    margin-top: -250px;
-    /* Negative half of height. */
-    margin-left: -200px;
-    background-color: #FAF9F6;
-    display: none;
-    z-index: 100001;
-    border-radius: 10px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	height: 500px;
+	margin-top: -250px;
+	/* Negative half of height. */
+	margin-left: -200px;
+	background-color: #FAF9F6;
+	display: none;
+	z-index: 100001;
+	border-radius: 10px;
 }
 
 .sendsms-add-new-fieldset {
-    width: 100%;
-    display: grid;
+	width: 100%;
+	display: grid;
 }
 
 .sendsms-add-new-title {
-    text-align: center;
+	text-align: center;
 }
 
 @media (min-width: 576px) {
-    .sendsms-container {
-        max-width: 540px;
-    }
+	.sendsms-container {
+		max-width: 540px;
+	}
 }
 
 @media (min-width: 768px) {
-    .sendsms-edit-container {
-        width: 80%;
-    }
-    .sendsms-container {
-        max-width: 720px;
-    }
-    .sendsms-container-grid-test, .sendsms-container-grid-mass {
-        width: 75%;
-        margin: auto;
-        margin-top: 3em;
-        display: grid;
-        grid-template-columns: 50% 50%;
-        grid-template-rows: auto;
-    }
-    .sendsms-image-center-xs {
-        display: inline;
-    }
-    .sendsms-left-panel-settings {
-        border-right: 1px solid #b7b3b3;
-    }
-    .sendsms-pc-setting-view {
-        display: block;
-    }
-    .sendsms-mobile-setting-view {
-        display: none;
-    }
-    .sendsms-container-grid-settings {
-        grid-template-columns: 22% 68%;
-    }
-    #sendsms-dashboard-add-new-form {
-        width: 500px;
-        height: 450px;
-        margin-top: -225px;
-        /* Negative half of height. */
-        margin-left: -250px;
-    }
+	.sendsms-edit-container {
+		width: 80%;
+	}
+	.sendsms-container {
+		max-width: 720px;
+	}
+	.sendsms-container-grid-test, .sendsms-container-grid-mass {
+		width: 75%;
+		margin: auto;
+		margin-top: 3em;
+		display: grid;
+		grid-template-columns: 50% 50%;
+		grid-template-rows: auto;
+	}
+	.sendsms-image-center-xs {
+		display: inline;
+	}
+	.sendsms-left-panel-settings {
+		border-right: 1px solid #b7b3b3;
+	}
+	.sendsms-pc-setting-view {
+		display: block;
+	}
+	.sendsms-mobile-setting-view {
+		display: none;
+	}
+	.sendsms-container-grid-settings {
+		grid-template-columns: 22% 68%;
+	}
+	#sendsms-dashboard-add-new-form {
+		width: 500px;
+		height: 450px;
+		margin-top: -225px;
+		/* Negative half of height. */
+		margin-left: -250px;
+	}
 }
 
 #sendsms_dashboard_add_new_phone_number::-webkit-inner-spin-button, #sendsms_dashboard_add_new_phone_number::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+	-webkit-appearance: none;
 }
 
 #sendsms_dashboard_add_new_phone_number {
-    -moz-appearance: textfield;
+	-moz-appearance: textfield;
 }
 
 @media (min-width: 992px) {
-    .sendsms-container {
-        max-width: 960px;
-    }
-    .sendsms-container-grid-test, .sendsms-container-grid-mass {
-        grid-template-columns: 40% 60%;
-        margin-top: 3em;
-    }
-    .sendsms-item-input-1 {
-        font-size: 1em;
-    }
-    .sendsms-button-center {
-        min-height: 3em !important;
-    }
-    .sendsms-container-grid-settings {
-        grid-template-columns: 20% 80%;
-    }
-    .sendsms-setting-section-title {
-        font-size: 1.3em;
-        font-weight: 500;
-        margin: 4px;
-        /* no underline */
-    }
+	.sendsms-container {
+		max-width: 960px;
+	}
+	.sendsms-container-grid-test, .sendsms-container-grid-mass {
+		grid-template-columns: 40% 60%;
+		margin-top: 3em;
+	}
+	.sendsms-item-input-1 {
+		font-size: 1em;
+	}
+	.sendsms-button-center {
+		min-height: 3em !important;
+	}
+	.sendsms-container-grid-settings {
+		grid-template-columns: 20% 80%;
+	}
+	.sendsms-setting-section-title {
+		font-size: 1.3em;
+		font-weight: 500;
+		margin: 4px;
+		/* no underline */
+	}
 }
 
 @media (min-width: 1200px) {
-    .sendsms-edit-container {
-        width: 60%;
-    }
-    .sendsms-container {
-        max-width: 1140px;
-    }
-    .sendsms-container-grid-test, .sendsms-container-grid-mass {
-        margin-top: 4em;
-        grid-template-columns: 40% 60%;
-    }
-    .sendsms-setting-section-title {
-        font-size: 1.6em;
-        font-weight: 500;
-    }
+	.sendsms-edit-container {
+		width: 60%;
+	}
+	.sendsms-container {
+		max-width: 1140px;
+	}
+	.sendsms-container-grid-test, .sendsms-container-grid-mass {
+		margin-top: 4em;
+		grid-template-columns: 40% 60%;
+	}
+	.sendsms-setting-section-title {
+		font-size: 1.6em;
+		font-weight: 500;
+	}
 }
 
 @media (min-width: 1400px) {
-    .sendsms-edit-container {
-        width: 40%;
-    }
-    .sendsms-container {
-        max-width: 1320px;
-    }
-    .sendsms-container-grid-test, .sendsms-container-grid-mass {
-        margin: auto;
-        margin-top: 4em;
-    }
-    .sendsms-container-grid-settings {
-        grid-template-columns: 15% 85%;
-    }
+	.sendsms-edit-container {
+		width: 40%;
+	}
+	.sendsms-container {
+		max-width: 1320px;
+	}
+	.sendsms-container-grid-test, .sendsms-container-grid-mass {
+		margin: auto;
+		margin-top: 4em;
+	}
+	.sendsms-container-grid-settings {
+		grid-template-columns: 15% 85%;
+	}
 }
 
 .sendsms-general-tooltip>div>div>div {
-    font-weight: 400;
+	font-weight: 400;
 }
 
 .tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
 }
 
 .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
 }
 
 .tooltip:hover .tooltiptext {
-    visibility: visible;
+	visibility: visible;
+}
+
+.sendsms-hidden {
+	display: none;
 }
