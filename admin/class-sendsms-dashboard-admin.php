@@ -219,6 +219,14 @@ class Sendsms_Dashboard_Admin {
 			'sendsms_dashboard_user'
 		);
 
+		add_settings_field(
+			'sendsms_dashboard_2fa_verification_message_field',
+			__( 'Two-factor authentication verification message', 'sendsms-dashboard' ),
+			array( $this, 'sendsms_dashboard_2fa_verification_message_field_callback' ),
+			'sendsms_dashboard_plugin_user',
+			'sendsms_dashboard_user'
+		);
+
 		add_settings_section(
 			'sendsms_dashboard_subscription',
 			"<div class='sendsms-settings-title'>" . __( 'Subscription Settings', 'sendsms-dashboard' ) . '</div>',
@@ -590,6 +598,14 @@ class Sendsms_Dashboard_Admin {
 		<?php
 	}
 
+	public function sendsms_dashboard_2fa_verification_message_field_callback( $args ) {
+		$setting = $this->functions->get_setting_esc( '2fa_verification_message', '' );
+		?>
+		<textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[2fa_verification_message]"><?php echo isset( $setting ) ? esc_textarea( $setting ) : ''; ?></textarea>
+		<p class="sendsms-dashboard-subscript"><?php echo __( 'You must specify the {code} key message. The {code} key will be automatically replaced with the unique validation code. If the {code} key is not specified, the validation code will be placed at the end of the message', 'sendsms-dashboard' ); ?></p>
+		<?php
+	}
+
 	public function sendsms_dashboard_subscribe_phone_verification_field_callback( $args ) {
 		$setting = $this->functions->get_setting_esc( 'subscribe_phone_verification', false );
 		?>
@@ -687,7 +703,7 @@ class Sendsms_Dashboard_Admin {
 
 	public function generate_auth_code( $user ) {
 		$phone   = get_user_meta( $user->ID, 'sendsms_phone_number', true );
-		$content = $this->functions->get_setting( 'subscribe_verification_message', '' ); // TODO add a specific field
+		$content = $this->functions->get_setting( '2fa_verification_message', '' ); // TODO add a specific field
 		$this->api->message_send( false, false, $phone, $content, 'code' );
 	}
 
