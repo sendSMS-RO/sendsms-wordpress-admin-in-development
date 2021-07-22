@@ -24,7 +24,12 @@ define( 'SENDSMS_DASHBOARD_VERSION', '1.0.0' );
 /**
  * Currently DB version
  */
-define( 'SENDSMS_DB_VERSION', '1.16' );
+define( 'SENDSMS_DASHBOARD_DB_VERSION', '1.16' );
+/**
+ * Plugin directory
+ */
+define( 'SENDSMS_DASHBOARD_PLUGIN_DIRECTORY', plugin_dir_path( __FILE__ ) );
+
 
 /**
  * The code that runs during plugin activation.

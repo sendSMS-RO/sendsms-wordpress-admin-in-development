@@ -7,6 +7,9 @@ if ( ! defined( 'WPINC' ) ) {
 class SendSMS {
 
 
+
+
+
 	var $functions;
 
 	function __construct() {
@@ -62,6 +65,70 @@ class SendSMS {
 	 * @since 1.0.0
 	 */
 	function send_batch( $phones, $message ) {
+		if ( $file = fopen( SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . 'batches/batch.csv', 'w' ) ) {
+			$this->functions->get_auth( $username, $password, $label );
+			$headers = array(
+				'message',
+				'to',
+				'from',
+			);
+			fputcsv( $file, $headers );
+			foreach ( $phones as $phone ) {
+				fputcsv(
+					$file,
+					array(
+						$message,
+						$phone,
+						$label,
+					)
+				);
+			}
+			// $start_time = '2970-01-01 02:00:00';
+			$start_time = '';
+			$name       = 'WordPress - ' . get_site_url() . ' - ' . uniqid();
+			$data       = file_get_contents( SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . '/batches/batch.csv' );
+			$results    = json_decode(
+				wp_remote_retrieve_body(
+					wp_remote_post(
+						'https://api.sendsms.ro/json?action=batch_create&username=' . urlencode( $username ) . '&password=' . urlencode( $password ) . '&start_time=' . urlencode( $start_time ) . '&name=' . urlencode( $name ),
+						array(
+							'body' => array( 'data' => $data ),
+						)
+					)
+				),
+				true
+			);
+			if ( ! isset( $results['status'] ) || $results['status'] < 0 ) {
+				echo json_encode( $results );
+				wp_die();
+			}
+			// log into history table
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'sendsms_dashboard_history';
+			$wpdb->query(
+				$wpdb->prepare(
+					"
+                INSERT INTO $table_name
+                (`phone`, `status`, `message`, `details`, `content`, `type`, `sent_on`)
+                VALUES ( %s, %s, %s, %s, %s, %s, %s)
+            ",
+					__( 'Go to hub.sendsms.ro', 'sendsms-dashboard' ),
+					isset( $results['status'] ) ? $results['status'] : '',
+					isset( $results['message'] ) ? $results['message'] : '',
+					isset( $results['details'] ) ? $results['details'] : '',
+					__( 'We created your campaign. Go and check the batch called: ', 'sendsms-dashboard' ) . $name,
+					__( 'Batch Campaign', 'sendsms-dashboard' ),
+					date( 'Y-m-d H:i:s' )
+				)
+			);
+			fclose( $file );
+			if ( ! unlink( SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . '/batches/batch.csv' ) ) {
+				return 'Unable to delete previous batch file! Please check file/folder permissions (' . SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . '/batches/batch.csv)';
+			}
+			return $results;
+		} else {
+			return 'Unable to open/create batch file! Please check file/folder permissions (' . SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . 'batches/batch.csv)';
+		}
 	}
 
 	/**

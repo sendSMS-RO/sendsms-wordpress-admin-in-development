@@ -35,7 +35,7 @@ class Sendsms_Dashboard_Activator {
 
 		// updates
 		// TO DO: refactor this...
-		if ( $installed_ver != SENDSMS_DB_VERSION ) {
+		if ( $installed_ver != SENDSMS_DASHBOARD_DB_VERSION ) {
 			$table_name_history     = $wpdb->prefix . 'sendsms_dashboard_history';
 			$table_name_subscribers = $wpdb->prefix . 'sendsms_dashboard_subscribers';
 			$table_name_ip_address  = $wpdb->prefix . 'sendsms_dashboard_ip_address';
@@ -73,7 +73,7 @@ class Sendsms_Dashboard_Activator {
 			dbDelta( $sql2 );
 			dbDelta( $sql3 );
 
-			add_option( 'sendsms_dashboard_db_version', SENDSMS_DB_VERSION );
+			add_option( 'sendsms_dashboard_db_version', SENDSMS_DASHBOARD_DB_VERSION );
 		}
 	}
 }

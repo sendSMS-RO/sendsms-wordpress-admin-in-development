@@ -15,6 +15,7 @@ class Sendsms_Dashboard_Admin {
 
 
 
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -440,7 +441,10 @@ class Sendsms_Dashboard_Admin {
 		}
 		$phones = array();
 		if ( $_POST['receivers_type'] === 'subscribers' ) {
-			$phones = $this->functions->get_all_phones_subscriber_db();
+			$phonesAux = $this->functions->get_all_phones_subscriber_db();
+			foreach ( $phonesAux as $phoneAux ) {
+				$phones[] = $phoneAux['phone'];
+			}
 		} else {
 			$args  = array(
 				'role'   => $_POST['role'] === 'all' ? '' : (string) ( $_POST['role'] ),
@@ -459,13 +463,17 @@ class Sendsms_Dashboard_Admin {
 			wp_send_json_error( __( 'We were unable to find any phone numbers', 'sendsms-dashboard' ) );
 		}
 		$result = $this->api->send_batch(
-			isset( $_POST['phone_number'] ) ? wp_unslash( $_POST['phone_number'] ) : '',
+			$phones,
 			isset( $_POST['message'] ) ? wp_unslash( $_POST['message'] ) : ''
 		);
 		if ( $result['status'] > 0 ) {
 			wp_send_json_success( __( 'Message sent', 'sendsms-dashboard' ) );
 		} else {
-			wp_send_json_error( __( 'Status: ', 'sendsms-dashboard' ) . ( isset( $result['status'] ) ? $result['status'] : '' ) . __( '<br>Message: ', 'sendsms-dashboard' ) . ( isset( $result['message'] ) ? $result['message'] : '' ) . __( '<br>Details: ', 'sendsms-dashboard' ) . ( isset( $result['details'] ) ? $result['details'] : '' ) );
+			if ( is_array( $result ) ) {
+				wp_send_json_error( __( 'Status: ', 'sendsms-dashboard' ) . ( isset( $result['status'] ) ? $result['status'] : '' ) . __( '<br>Message: ', 'sendsms-dashboard' ) . ( isset( $result['message'] ) ? $result['message'] : '' ) . __( '<br>Details: ', 'sendsms-dashboard' ) . ( isset( $result['details'] ) ? $result['details'] : '' ) );
+			} else {
+				wp_send_json_error( $result );
+			}
 		}
 	}
 
@@ -678,8 +686,7 @@ class Sendsms_Dashboard_Admin {
 	}
 
 	public function generate_auth_code( $user ) {
-		$phone = get_user_meta( $user->ID, 'sendsms_phone_number', true );
-		// error_log(($phone));
+		$phone   = get_user_meta( $user->ID, 'sendsms_phone_number', true );
 		$content = $this->functions->get_setting( 'subscribe_verification_message', '' ); // TODO add a specific field
 		$this->api->message_send( false, false, $phone, $content, 'code' );
 	}
