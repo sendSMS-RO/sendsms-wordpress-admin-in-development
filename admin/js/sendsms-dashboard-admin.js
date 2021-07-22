@@ -201,18 +201,18 @@ jQuery( document ).ready(
 document.addEventListener(
 	"DOMContentLoaded",
 	(event) => {
-    var sendsms_dashboard_content = document.getElementsByClassName( 'sendsms_dashboard_content' )[0];
+		var sendsms_dashboard_content = document.getElementsByClassName( 'sendsms_dashboard_content' )[0];
 		if (sendsms_dashboard_content != undefined) {
 			sendsms_dashboard_content.addEventListener(
 				"input",
 				(event) => {
-                lengthCounter( event.target, document.getElementById( event.target.dataset['sendsmsCounter'] ) );
+					lengthCounter( event.target, document.getElementById( event.target.dataset['sendsmsCounter'] ) );
 				}
 			);
 			sendsms_dashboard_content.addEventListener(
 				"change",
 				(event) => {
-					lengthCounter( event.target, document.getElementById( event.target.dataset['sendsmsCounter'] ) );
+                lengthCounter( event.target, document.getElementById( event.target.dataset['sendsmsCounter'] ) );
 				}
 			);
 
