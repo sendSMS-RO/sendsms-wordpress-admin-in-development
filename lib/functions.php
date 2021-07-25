@@ -6,6 +6,7 @@ require_once 'sendsms.class.php';
 
 class SendSMSFunctions {
 
+
 	var $wpdb;
 
 	function __construct() {
@@ -414,7 +415,7 @@ class SendSMSFunctions {
 		}
 		$uss_roles = get_userdata( $userID )->roles;
 		$roles     = $this->get_setting( '2fa_roles', array() );
-		if ( empty( trim( get_user_meta( $userID, 'sendsms_phone_number', true ) ) ) ) {
+		if ( empty( trim( $this->get_user_phone( $userID ) ) ) ) {
 			return false;
 		}
 		foreach ( $roles as $key => $value ) {
@@ -467,6 +468,19 @@ class SendSMSFunctions {
 		delete_user_meta( $user_id, 'sendsms-dashboard-2fa-nonce' );
 	}
 
+	public function get_user_phone( $user_id ) {
+		$phone_meta = $this->get_setting( 'phone_meta', '' );
+		if ( ! empty( $phone_meta ) ) {
+			foreach ( preg_split( "/((\r?\n)|(\r\n?))/", $phone_meta ) as $meta ) {
+				$phone = get_user_meta( $user_id, $meta, true );
+				if ( ! empty( $this->validate_phone( $phone ) ) ) {
+					return $phone;
+				}
+			}
+		}
+		return get_user_meta( $user_id, 'sendsms_phone_number', true );
+	}
+	
 	public $country_codes = array(
 		'AC' => '247',
 		'AD' => '376',

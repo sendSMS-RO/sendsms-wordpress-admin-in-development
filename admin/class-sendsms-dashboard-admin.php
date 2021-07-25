@@ -227,6 +227,14 @@ class Sendsms_Dashboard_Admin {
 			'sendsms_dashboard_user'
 		);
 
+		add_settings_field(
+			'sendsms_dashboard_phone_meta',
+			__( 'Phone metadata list', 'sendsms-dashboard' ),
+			array( $this, 'sendsms_dashboard_phone_meta_field_callback' ),
+			'sendsms_dashboard_plugin_user',
+			'sendsms_dashboard_user'
+		);
+
 		add_settings_section(
 			'sendsms_dashboard_subscription',
 			"<div class='sendsms-settings-title'>" . __( 'Subscription Settings', 'sendsms-dashboard' ) . '</div>',
@@ -460,7 +468,7 @@ class Sendsms_Dashboard_Admin {
 			);
 			$users = get_users( $args );
 			foreach ( $users as $user ) {
-				$phone = get_user_meta( $user->ID, 'sendsms_phone_number', true );
+				$phone = $this->functions->get_user_phone( $user->ID );
 				if ( ! empty( $phone ) ) {
 					$phones[] = $phone;
 				}
@@ -590,6 +598,14 @@ class Sendsms_Dashboard_Admin {
 		<?php
 	}
 
+	public function sendsms_dashboard_phone_meta_field_callback( $args ) {
+		$setting = $this->functions->get_setting_esc( 'phone_meta', '' );
+		?>
+		<textarea cols="30" rows="5" name="sendsms_dashboard_plugin_settings[phone_meta]"><?php echo isset( $setting ) ? esc_textarea( $setting ) : ''; ?></textarea>
+		<p class="sendsms-dashboard-subscript"><?php echo __( 'Here you are able to add phone number meta key from "userdata" table. The default is set to sendsms_phone_number but you can change it if you want to use another phone number field. Any input here, will override the default value. If you want to use multiple phone fields, add them on a separated line and we will query for the first valid phone number.', 'sendsms-dashboard' ); ?></p>
+		<?php
+	}
+
 	public function sendsms_dashboard_subscribe_verification_message_field_callback( $args ) {
 		$setting = $this->functions->get_setting_esc( 'subscribe_verification_message', '' );
 		?>
@@ -702,15 +718,15 @@ class Sendsms_Dashboard_Admin {
 	}
 
 	public function generate_auth_code( $user ) {
-		$phone   = get_user_meta( $user->ID, 'sendsms_phone_number', true );
+		$phone   = $this->functions->get_user_phone( $user->ID );
 		$content = $this->functions->get_setting( '2fa_verification_message', '' ); // TODO add a specific field
 		$this->api->message_send( false, false, $phone, $content, 'code' );
 	}
 
 	public function login_form_sendsms_validate() {
-		 $wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
-		$nonce       = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
-		$phone       = get_user_meta( $wp_auth_id, 'sendsms_phone_number', true );
+		$wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
+		$nonce      = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
+		$phone      = $this->functions->get_user_phone( $wp_auth_id );
 
 		if ( ! $wp_auth_id || ! $nonce ) {
 			return;
