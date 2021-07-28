@@ -16,6 +16,7 @@ class Sendsms_Dashboard_Admin {
 
 
 
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -92,6 +93,7 @@ class Sendsms_Dashboard_Admin {
 				'text_invalid_ip_address'         => __( 'Please enter a valid IP Address', 'sendsms-dashboard' ),
 				'text_contacts_synced'            => __( 'Contacts synchronized successfully', 'sendsms-dashboard' ),
 				'text_empty_fields'               => __( 'Some fields are empty', 'sendsms-dashboard' ),
+				'text_cookie_expired'             => __( 'The verification code has expired. Please refresh the page and try again.', 'sendsms-dashboard' ),
 			)
 		);
 	}
@@ -205,7 +207,7 @@ class Sendsms_Dashboard_Admin {
 
 		add_settings_field(
 			'sendsms_dashboard_user_add_phone_field',
-			__( 'Add phone number field / Enable 2fa?', 'sendsms-dashboard' ),
+			__( 'Add phone number field / Enable 2fa? IMPORTANT:This works only with the default wp login form (wp-admin). It may break if you have another login system in place.', 'sendsms-dashboard' ),
 			array( $this, 'sendsms_dashboard_user_add_phone_field_callback' ),
 			'sendsms_dashboard_plugin_user',
 			'sendsms_dashboard_user'
@@ -563,7 +565,7 @@ class Sendsms_Dashboard_Admin {
 		$setting = $this->functions->get_setting_esc( 'add_phone_field', false );
 		?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?php echo $setting ? 'checked' : ''; ?>>
-		<p class="sendsms-dashboard-subscript"><?php echo __( 'Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting.', 'sendsms-dashboard' ); ?></p>
+		<p class="sendsms-dashboard-subscript"><?php echo __( 'Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting. A user must have a phone number, or 2fa won\'t be activated for him.', 'sendsms-dashboard' ); ?></p>
 		<?php
 	}
 
@@ -658,10 +660,7 @@ class Sendsms_Dashboard_Admin {
 	 * @since 1.0.0
 	 */
 	public function add_new_user_field_to_edit_form( $args ) {
-		if ( current_user_can( 'edit_user' ) ) {
-			$fields['sendsms_phone_number'] = __( 'Phone number (required for sendSMS.ro 2fa)', 'sendsms-dashboard' );
-		}
-
+		$fields['sendsms_phone_number'] = __( 'Phone number (required for sendSMS 2fa)', 'sendsms-dashboard' );
 		return $fields;
 	}
 
@@ -670,6 +669,32 @@ class Sendsms_Dashboard_Admin {
 	 */
 	public function add_register_field() {
 		include plugin_dir_path( __FILE__ ) . 'partials/user/sendsms-dashboard-mobile-field-register.php';
+	}
+
+	/**
+	 * Set registration errors + show continuation form if everything is ok
+	 */
+	public function set_registration_errors( WP_Error $errors, $sanitized_user_login, $user_email ) {
+		$phone = isset( $_POST['sendsms_phone_number'] ) ? $this->functions->validate_phone( $_POST['sendsms_phone_number'] ) : '';
+		if ( $phone === '' ) {
+			$errors->add( 'invalid_phone', __( '<strong>Error</strong>: Your phone number is empty or not valid', 'sendsms-dashboard' ) );
+		}
+		if ( ! isset( $_POST['register_nonce'] ) ) {
+			$errors->add( 'internal_error', __( '<strong>Error</strong>: You should not be here', 'sendsms-dashboard' ) );
+		}
+		if ( ! empty( $errors->errors ) ) {
+			error_log( json_encode( $errors ) );
+			return $errors;
+		}
+		setcookie( 'sanitized_user_login', maybe_serialize( $sanitized_user_login ) );
+		setcookie( 'user_email', maybe_serialize( $user_email ) );
+		setcookie( 'sendsms_phone', maybe_serialize( $phone ) );
+		if ( ! headers_sent() ) {
+			header( 'Content-Type: text/html; charset=utf-8' );
+		}
+		error_log( '1' );
+		include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-register-2fa-form.php'; // popup here, but I need to stop the reg process
+		exit();
 	}
 
 	/**
@@ -720,10 +745,11 @@ class Sendsms_Dashboard_Admin {
 	public function generate_auth_code( $user ) {
 		$phone   = $this->functions->get_user_phone( $user->ID );
 		$content = $this->functions->get_setting( '2fa_verification_message', '' ); // TODO add a specific field
-		$this->api->message_send( false, false, $phone, $content, 'code' );
+		$this->api->message_send( false, false, $phone, $content, 'code', '_2fa' );
 	}
 
 	public function login_form_sendsms_validate() {
+
 		$wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
 		$nonce      = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
 		$phone      = $this->functions->get_user_phone( $wp_auth_id );
@@ -742,7 +768,7 @@ class Sendsms_Dashboard_Admin {
 			exit;
 		}
 
-		if ( ! $this->functions->verifyVerificationCode( $phone ) ) { // not a valid code
+		if ( ! isset( $_COOKIE['sendsms_subscribe_check_2fa'] ) || ! $this->functions->verifyVerificationCode( $phone, '_2fa' ) ) { // TODO expired cookie msg
 			do_action( 'wp_login_failed', $user->user_login );
 
 			$login_nonce = $this->functions->create_login_nonce( $user->ID );
@@ -751,7 +777,11 @@ class Sendsms_Dashboard_Admin {
 			}
 
 			include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-2fa-form.php';
-			sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, esc_html__( 'ERROR: Invalid code, please submit the code again.', 'sendsms-dashboard' ), false );
+			if ( ! isset( $_COOKIE['sendsms_subscribe_check_2fa'] ) ) {
+				sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, esc_html__( 'ERROR: The verification code has expired. Please refresh the page and try again.', 'sendsms-dashboard' ), false );
+			} else {
+				sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, esc_html__( 'ERROR: Invalid code, please submit the code again.', 'sendsms-dashboard' ), false );
+			}
 			exit;
 		}
 

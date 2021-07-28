@@ -21,7 +21,7 @@ class SendSMS {
 	 *
 	 * @since 1.0.0
 	 */
-	function message_send( $short, $gdpr, $to, $content, $type ) {
+	function message_send( $short, $gdpr, $to, $content, $type, $suffix = '' ) {
 		global $wpdb;
 		$content = $content;
 		$this->functions->get_auth( $username, $password, $label );
@@ -34,7 +34,7 @@ class SendSMS {
 			if ( ! strpos( $content, '{code}' ) ) {
 				$content .= '{code}';
 			}
-			$code       = $this->functions->generateVerificationCode( $to );
+			$code       = $this->functions->generateVerificationCode( $to, $suffix );
 			$newContent = str_replace( '{code}', $code, $content );
 			$results    = json_decode( wp_remote_retrieve_body( wp_remote_get( 'https://api.sendsms.ro/json?action=message_send&username=' . urlencode( $username ) . '&password=' . urlencode( $password ) . '&from=' . urlencode( $label ) . '&to=' . urlencode( $to ) . '&text=' . urlencode( $newContent ), $args ) ), true );
 		} else {

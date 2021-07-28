@@ -87,6 +87,7 @@ class Sendsms_Dashboard_Public {
 				'text_waiting_validation'        => __( 'Please enter the verification code sent to your phone via SMS', 'sendsms-dashboard' ),
 				'text_invalid_verification_code' => __( 'The verification field is empty or it is not valid', 'sendsms-dashboard' ),
 				'text_phone_not_found'           => __( 'We were unable to find this phone number inside our database', 'sendsms-dashboard' ),
+				'text_cookie_expired'            => __( 'The verification code has expired. Please refresh the page and try again.', 'sendsms-dashboard' ),
 			)
 		);
 	}
@@ -140,7 +141,7 @@ class Sendsms_Dashboard_Public {
 			}
 			if ( $this->functions->get_setting( 'subscribe_phone_verification', false ) ) {
 				$content = $this->functions->get_setting( 'subscribe_verification_message', '' );
-				$result  = $this->api->message_send( false, false, $phone, $content, 'CODE' );
+				$result  = $this->api->message_send( false, false, $phone, $content, 'CODE', '_sub' );
 				if ( $result['status'] > 0 ) {
 					wp_send_json( 'waiting_validation' );
 				} else {
@@ -156,7 +157,7 @@ class Sendsms_Dashboard_Public {
 	}
 
 	/**
-	 * This will handle the unsubscription process
+	 * This will handle the unsubscribe process
 	 *
 	 * @since 1.0.0
 	 */
@@ -184,7 +185,7 @@ class Sendsms_Dashboard_Public {
 			}
 			if ( $this->functions->get_setting( 'subscribe_phone_verification', false ) ) {
 				$content = $this->functions->get_setting( 'subscribe_verification_message', '' );
-				$result  = $this->api->message_send( false, false, $phone, $content, 'CODE' );
+				$result  = $this->api->message_send( false, false, $phone, $content, 'CODE', '_unsub' );
 				if ( $result['status'] > 0 ) {
 					wp_send_json( 'waiting_validation' );
 				} else {
@@ -217,11 +218,15 @@ class Sendsms_Dashboard_Public {
 			wp_send_json_error( 'invalid_security_nonce' );
 			wp_die();
 		}
-		if ( ! isset( $_COOKIE['sendsms_subscribe_check'] ) || empty( $first_name ) || empty( $last_name ) ) {
+		if ( empty( $first_name ) || empty( $last_name ) ) {
 			wp_send_json_error( 'internal_error' );
 			wp_die();
 		}
-		$isValidToken = $this->functions->verifyVerificationCode( $phone );
+		if ( ! isset( $_COOKIE['sendsms_subscribe_check_sub'] ) ) {
+			wp_send_json_error( 'cookie_expired' );
+			wp_die();
+		}
+		$isValidToken = $this->functions->verifyVerificationCode( $phone, '_sub' );
 		if ( empty( $phone ) || ! $isValidToken ) {
 			wp_send_json_error( 'invalid_verification_code' );
 			wp_die();
@@ -241,11 +246,11 @@ class Sendsms_Dashboard_Public {
 			wp_send_json_error( 'invalid_security_nonce' );
 			wp_die();
 		}
-		if ( ! isset( $_COOKIE['sendsms_subscribe_check'] ) ) {
-			wp_send_json_error( 'internal_error' );
+		if ( ! isset( $_COOKIE['sendsms_subscribe_check_unsub'] ) ) {
+			wp_send_json_error( 'cookie_expired' );
 			wp_die();
 		}
-		$isValidToken = $this->functions->verifyVerificationCode( $phone );
+		$isValidToken = $this->functions->verifyVerificationCode( $phone, '_unsub' );
 		if ( empty( $phone ) || ! $isValidToken ) {
 			wp_send_json_error( 'invalid_verification_code' );
 			wp_die();
