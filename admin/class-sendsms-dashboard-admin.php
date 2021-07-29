@@ -17,6 +17,10 @@ class Sendsms_Dashboard_Admin {
 
 
 
+
+
+
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -207,7 +211,7 @@ class Sendsms_Dashboard_Admin {
 
 		add_settings_field(
 			'sendsms_dashboard_user_add_phone_field',
-			__( 'Add phone number field / Enable 2fa? IMPORTANT:This works only with the default wp login form (wp-admin). It may break if you have another login system in place.', 'sendsms-dashboard' ),
+			__( 'Add phone number field / Enable 2fa? IMPORTANT:This is designed only with the default wp login form (wp-admin) in mind. It may break if you have another login system in place. Test it in a development environment first.', 'sendsms-dashboard' ),
 			array( $this, 'sendsms_dashboard_user_add_phone_field_callback' ),
 			'sendsms_dashboard_plugin_user',
 			'sendsms_dashboard_user'
@@ -565,7 +569,7 @@ class Sendsms_Dashboard_Admin {
 		$setting = $this->functions->get_setting_esc( 'add_phone_field', false );
 		?>
 		<input type="checkbox" name="sendsms_dashboard_plugin_settings[add_phone_field]" value="1" <?php echo $setting ? 'checked' : ''; ?>>
-		<p class="sendsms-dashboard-subscript"><?php echo __( 'Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting. A user must have a phone number, or 2fa won\'t be activated for him.', 'sendsms-dashboard' ); ?></p>
+		<p class="sendsms-dashboard-subscript"><?php echo __( 'Add a phone number field in the user editing form and activate the 2fa feature. You can disable the 2fa feature by unchecking every role, but you cannot use 2fa without this setting. A user must have a phone number, or they will be required to add one.', 'sendsms-dashboard' ); ?></p>
 		<?php
 	}
 
@@ -650,7 +654,7 @@ class Sendsms_Dashboard_Admin {
 	 */
 	public function user_register_metadata( $user_id ) {
 		if ( isset( $_POST['sendsms_phone_number'] ) ) {
-			update_user_meta( $user_id, 'get_user_meta', $_POST['sendsms_phone_number'] );
+			update_user_meta( $user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number'] );
 		}
 	}
 
@@ -739,23 +743,29 @@ class Sendsms_Dashboard_Admin {
 
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : admin_url();
 
+		$hasPhone = true;
+		if ( empty( trim( $this->functions->get_user_phone( $user->ID ) ) ) ) {
+			$hasPhone = false;
+		}
+
 		include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-2fa-form.php';
-		sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $redirect_to, $this, '' );
+		sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $redirect_to, $this, '', true, $hasPhone );
 		exit;
 	}
 
-	public function generate_auth_code( $user ) {
-		$phone   = $this->functions->get_user_phone( $user->ID );
+	public function generate_auth_code( $user, $phone_no ) {
+		$phone   = $phone_no == '' ? $this->functions->get_user_phone( $user->ID ) : $phone_no;
 		$content = $this->functions->get_setting( '2fa_verification_message', '' ); // TODO add a specific field
 		$this->api->message_send( false, false, $phone, $content, 'code', '_2fa' );
 	}
 
 	public function login_form_sendsms_validate() {
-
-		$wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
-		$nonce      = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
-		$phone      = $this->functions->get_user_phone( $wp_auth_id );
-
+		 $wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
+		$nonce       = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
+		$phone       = filter_input( INPUT_POST, 'wp-auth-phone', FILTER_SANITIZE_STRING ) != ''
+			? filter_input( INPUT_POST, 'wp-auth-phone', FILTER_SANITIZE_STRING )
+			: $this->functions->get_user_phone( $wp_auth_id );
+		error_log( $phone );
 		if ( ! $wp_auth_id || ! $nonce ) {
 			return;
 		}
@@ -806,6 +816,9 @@ class Sendsms_Dashboard_Admin {
 			}
 			$message       = '<p class="message">' . __( 'You have logged in successfully.', 'sendsms-dashboard' ) . '</p>';
 			$interim_login = 'success';
+			if ( ! function_exists( 'login_header' ) ) {
+				include_once SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . 'includes/class-wp-login.php';
+			}
 			login_header( '', $message );
 			?>
 			</div>
@@ -828,8 +841,60 @@ class Sendsms_Dashboard_Admin {
 			<?php
 			exit;
 		}
+		if ( empty( trim( $this->functions->get_user_phone( $wp_auth_id ) ) ) ) {
+			update_user_meta( $user->ID, 'sendsms_phone_number', $phone );
+		}
 		$redirect_to = apply_filters( 'login_redirect', $_REQUEST['redirect_to'], $_REQUEST['redirect_to'], $user );
 		wp_safe_redirect( $redirect_to );
+
+		exit;
+	}
+
+	public function login_form_sendsms_send_code() {
+		$wp_auth_id = filter_input( INPUT_POST, 'wp-auth-id', FILTER_SANITIZE_NUMBER_INT );
+		$nonce      = filter_input( INPUT_POST, 'wp-auth-nonce', FILTER_SANITIZE_STRING );
+
+		if ( ! $wp_auth_id || ! $nonce ) {
+			return;
+		}
+
+		$user = get_userdata( $wp_auth_id );
+		if ( ! $user ) {
+			return;
+		}
+
+		if ( ! $this->functions->verify_login_nonce( $user->ID, $nonce ) ) {
+			wp_safe_redirect( get_bloginfo( 'url' ) );
+			exit;
+		}
+
+		if ( empty( trim( $this->functions->get_user_phone( $user->ID ) ) ) ) { // in case he did something shady
+			$phone = wp_unslash( $_POST['phone'] );
+		} else {
+			$phone = trim( $this->functions->get_user_phone( $user->ID ) );
+		}
+
+		if ( $this->functions->validate_phone( $phone ) == '' ) { // TODO expired cookie msg
+			do_action( 'wp_login_failed', $user->user_login );
+
+			$login_nonce = $this->functions->create_login_nonce( $user->ID );
+			if ( ! $login_nonce ) {
+				wp_die( esc_html__( 'Failed to create a login nonce.', 'sendsms-dashboard' ) );
+			}
+
+			include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-2fa-form.php';
+			sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, esc_html__( 'ERROR: Invalid phone number', 'sendsms-dashboard' ), false, false, '' );
+			exit;
+		} else {
+			$login_nonce = $this->functions->create_login_nonce( $user->ID );
+			if ( ! $login_nonce ) {
+				wp_die( esc_html__( 'Failed to create a login nonce.', 'sendsms-dashboard' ) );
+			}
+
+			include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-2fa-form.php';
+			sendsms_dashboard_printHTML2fa( $user, $login_nonce['key'], $_REQUEST['redirect_to'], $this, '', true, true, $phone );
+			exit;
+		}
 
 		exit;
 	}

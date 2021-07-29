@@ -7,7 +7,7 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-IMPORTANT: Our 2fa features works only with wordpress default login form (the one accesed via wp-admin when you first install wordpress). Do not activate the 2fa feature for a user who will log via another method beacuse it will most likely break.
+IMPORTANT: Our 2fa features was designed to work with wordpress default login form (the one accessed via wp-admin when you first install wordpress). If you are having another login form, this may break it. Make sure to check compatibility on a development environment.
 
 Use our SMS shipping solution to deliver the right information at the right time. Give your customers a superior experience!
 With our service you can secure your website with 2fa on a role basis.

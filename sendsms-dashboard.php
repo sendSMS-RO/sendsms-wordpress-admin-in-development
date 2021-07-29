@@ -28,7 +28,7 @@ define( 'SENDSMS_DASHBOARD_DB_VERSION', '1.0.0' );
 /**
  * Plugin directory
  */
-define( 'SENDSMS_DASHBOARD_PLUGIN_DIRECTORY', plugin_dir_path( __FILE__ ) );
+define( 'SENDSMS_DASHBOARD_PLUGIN_DIRECTORY', plugin_dir_path( __FILE__ ) ); // TODO this should be used more in future versions
 
 
 /**

@@ -415,9 +415,6 @@ class SendSMSFunctions {
 		}
 		$uss_roles = get_userdata( $userID )->roles;
 		$roles     = $this->get_setting( '2fa_roles', array() );
-		if ( empty( trim( $this->get_user_phone( $userID ) ) ) ) {
-			return false;
-		}
 		foreach ( $roles as $key => $value ) {
 			if ( in_array( $key, $uss_roles ) ) {
 				return true;
