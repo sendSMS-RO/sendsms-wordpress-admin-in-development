@@ -158,9 +158,10 @@ class Sendsms_Dashboard {
 			// this invalidates the cookies and show the correct verification form if needed
 			$this->loader->add_action( 'wp_login', $plugin_admin, 'twofa_processing', 10, 2 ); // comment this to deactivate 2fa
 			$this->loader->add_action( 'login_form_sendsms_validate', $plugin_admin, 'login_form_sendsms_validate' );
-			// register
-			$this->loader->add_action( 'register_form', $plugin_admin, 'add_register_field' );
-			$this->loader->add_filter( 'registration_errors', $plugin_admin, 'set_registration_errors', 100, 3 );
+			// register #there hooks are deactivated due to WordPress not letting your check both email and password
+			// $this->loader->add_action( 'register_form', $plugin_admin, 'add_register_field' );
+			// $this->loader->add_filter( 'registration_errors', $plugin_admin, 'set_registration_errors', 100, 3 );
+			// $this->loader->add_action( 'register_post_sendsms_validate', $plugin_admin, 'register_post_sendsms_validate' );
 		}
 	}
 

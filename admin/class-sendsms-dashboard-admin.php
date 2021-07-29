@@ -667,36 +667,38 @@ class Sendsms_Dashboard_Admin {
 	/**
 	 * Add a field to the register form aka wp-login.php
 	 */
-	public function add_register_field() {
-		include plugin_dir_path( __FILE__ ) . 'partials/user/sendsms-dashboard-mobile-field-register.php';
-	}
+	// public function add_register_field() {
+	// include plugin_dir_path( __FILE__ ) . 'partials/user/sendsms-dashboard-mobile-field-register.php';
+	// }
 
 	/**
 	 * Set registration errors + show continuation form if everything is ok
 	 */
-	public function set_registration_errors( WP_Error $errors, $sanitized_user_login, $user_email ) {
-		$phone = isset( $_POST['sendsms_phone_number'] ) ? $this->functions->validate_phone( $_POST['sendsms_phone_number'] ) : '';
-		if ( $phone === '' ) {
-			$errors->add( 'invalid_phone', __( '<strong>Error</strong>: Your phone number is empty or not valid', 'sendsms-dashboard' ) );
-		}
-		if ( ! isset( $_POST['register_nonce'] ) ) {
-			$errors->add( 'internal_error', __( '<strong>Error</strong>: You should not be here', 'sendsms-dashboard' ) );
-		}
-		if ( ! empty( $errors->errors ) ) {
-			error_log( json_encode( $errors ) );
-			return $errors;
-		}
-		setcookie( 'sanitized_user_login', maybe_serialize( $sanitized_user_login ) );
-		setcookie( 'user_email', maybe_serialize( $user_email ) );
-		setcookie( 'sendsms_phone', maybe_serialize( $phone ) );
-		if ( ! headers_sent() ) {
-			header( 'Content-Type: text/html; charset=utf-8' );
-		}
-		error_log( '1' );
-		include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-register-2fa-form.php'; // popup here, but I need to stop the reg process
-		exit();
-	}
+	// public function set_registration_errors( WP_Error $errors, $sanitized_user_login, $user_email ) {
+	// $phone = isset( $_POST['sendsms_phone_number'] ) ? $this->functions->validate_phone( $_POST['sendsms_phone_number'] ) : '';
+	// if ( $phone === '' ) {
+	// $errors->add( 'invalid_phone', __( '<strong>Error</strong>: Your phone number is empty or not valid', 'sendsms-dashboard' ) );
+	// }
+	// if ( ! isset( $_POST['register_nonce'] ) ) {
+	// $errors->add( 'internal_error', __( '<strong>Error</strong>: You should not be here', 'sendsms-dashboard' ) );
+	// }
+	// if ( ! empty( $errors->errors ) ) {
+	// return $errors;
+	// }
+	// setcookie( 'sanitized_user_login', maybe_serialize( $sanitized_user_login ) );
+	// setcookie( 'user_email', maybe_serialize( $user_email ) );
+	// setcookie( 'sendsms_phone', maybe_serialize( $phone ) );
+	// $content = $this->functions->get_setting( '2fa_verification_message', '' );
+	// $this->api->message_send( false, false, $phone, $content, 'code', '_2fa_register' ); //TODO add refresh check
+	// if ( ! headers_sent() ) {
+	// header( 'Content-Type: text/html; charset=utf-8' );
+	// }
+	// include plugin_dir_path( __FILE__ ) . 'partials/sendsms-dashboard-register-2fa-form.php'; // popup here, but I need to stop the reg process
+	// exit();
+	// }
 
+	// public function register_post_sendsms_validate() {
+	// }
 	/**
 	 * This function will copy all auth tokens we will later invalidate
 	 *
