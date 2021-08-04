@@ -8,6 +8,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Sendsms_Dashboard_Subscribers extends WP_List_Table {
 
 
+
 	var $table_name;
 	var $wpdb;
 	var $functions;
@@ -37,7 +38,13 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table {
 		$nonce   = wp_create_nonce( 'sendsms-dashboard-subscribers-bulk-actions' );
 		$actions = array(
 			'inline' => sprintf( '<button type="button" data-sendsms-dashboard-phone="%s" class="button-link editinline sendsms-dashboard-subscribers-edit">Edit</button>', $issue['phone'] ),
-			'delete' => sprintf( '<a href="?page=%s&action=%s&phone=%s&_wpnonce=%s">Delete</a>', $_REQUEST['page'], 'delete', $issue['phone'], $nonce ),
+			'delete' => sprintf(
+				'<a href="?page=%s&action=%s&phone=%s&_wpnonce=%s">Delete</a>',
+				filter_var( $_REQUEST['page'], FILTER_SANITIZE_STRING ),
+				'delete',
+				$issue['phone'],
+				$nonce
+			),
 		);
 
 		return sprintf( '<p>%1$s</p> %2$s', $issue['phone'], $this->row_actions( $actions ) );

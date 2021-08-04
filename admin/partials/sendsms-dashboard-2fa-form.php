@@ -50,7 +50,6 @@ function sendsms_dashboard_printHTML2fa( $user, $nonce, $redirect, $class, $erro
 		</form>
 		<?php
 		if ( $regenCode ) {
-			error_log( 'gen code' );
 			$class->generate_auth_code( $user, $phone );
 		}
 	} else {

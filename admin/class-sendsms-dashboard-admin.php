@@ -21,6 +21,7 @@ class Sendsms_Dashboard_Admin {
 
 
 
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -65,7 +66,7 @@ class Sendsms_Dashboard_Admin {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/sendsms-dashboard-admin.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . '-jBox', 'https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.2.14/dist/jBox.all.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-jBox', plugin_dir_url( __FILE__ ) . 'css/jBox.all.min.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -76,7 +77,7 @@ class Sendsms_Dashboard_Admin {
 	public function enqueue_scripts() {
 		 wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/sendsms-dashboard-admin.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . '-font-awesome', plugin_dir_url( __FILE__ ) . 'js/all.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name . '-jBox', 'https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.2.7/dist/jBox.all.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-jBox', plugin_dir_url( __FILE__ ) . 'js/jBox.all.min.js', array( 'jquery' ), $this->version, false );
 		wp_localize_script(
 			$this->plugin_name,
 			'sendsms_object',
@@ -389,12 +390,18 @@ class Sendsms_Dashboard_Admin {
 			wp_send_json_error( 'invalid_phone_number' );
 			wp_die();
 		}
-		$first_name = wp_unslash( $_POST['first_name'] );
+
+		$first_name = wp_unslash(
+			filter_var( $_POST['first_name'], FILTER_SANITIZE_STRING )
+		);
 		if ( empty( $first_name ) ) {
 			wp_send_json_error( 'invalid_first_name' );
 			wp_die();
 		}
-		$last_name = wp_unslash( $_POST['last_name'] );
+
+		$last_name = wp_unslash(
+			filter_var( $_POST['last_name'], FILTER_SANITIZE_STRING )
+		);
 		if ( empty( $last_name ) ) {
 			wp_send_json_error( 'invalid_last_name' );
 			wp_die();
@@ -403,13 +410,22 @@ class Sendsms_Dashboard_Admin {
 			wp_send_json_error( 'invalid_date' );
 			wp_die();
 		}
-		$date       = str_replace( 'T', ' ', $_POST['date'] );
-		$ip_address = rest_is_ip_address( $_POST['ip_address'] );
-		if ( ! $ip_address ) {
-			wp_send_json_error( 'invalid_ip_address' );
-			wp_die();
+		$date       = str_replace(
+			'T',
+			' ',
+			filter_var( $_POST['date'], FILTER_SANITIZE_STRING )
+		);
+		$ip_address = '';
+		if ( isset( $_POST['ip_address'] ) ) {
+			$ip_address = rest_is_ip_address( $_POST['ip_address'] );
+			if ( ! $ip_address ) {
+				wp_send_json_error( 'invalid_ip_address' );
+				wp_die();
+			}
 		}
-		$browser = wp_unslash( $_POST['browser'] );
+		$browser = wp_unslash(
+			filter_var( $_POST['browser'], FILTER_SANITIZE_STRING )
+		);
 		$this->functions->update_subscriber_db( $old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser );
 		wp_send_json_success(
 			array(
@@ -765,7 +781,6 @@ class Sendsms_Dashboard_Admin {
 		$phone       = filter_input( INPUT_POST, 'wp-auth-phone', FILTER_SANITIZE_STRING ) != ''
 			? filter_input( INPUT_POST, 'wp-auth-phone', FILTER_SANITIZE_STRING )
 			: $this->functions->get_user_phone( $wp_auth_id );
-		error_log( $phone );
 		if ( ! $wp_auth_id || ! $nonce ) {
 			return;
 		}

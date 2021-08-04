@@ -28,7 +28,7 @@ settings_errors( 'sendsms-dashboard_messages' );
 			<?php
 				$response = $api->get_user_balance();
 			if ( $response['status'] >= 0 ) {
-				echo __( 'Your current sendsms.ro balance is: €', 'sendsms-dashboard' ) . $response['details'];
+				echo __( 'Your current sendsms.ro balance is: €', 'sendsms-dashboard' ) . esc_html( $response['details'] );
 			} else {
 				echo __( 'Please configure your account first', 'sendsms-dashboard' );
 			}
