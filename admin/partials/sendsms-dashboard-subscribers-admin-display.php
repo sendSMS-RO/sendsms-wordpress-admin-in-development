@@ -5,11 +5,11 @@ if ( isset( $_POST['add-new-subscriber'] ) ) {
 		wp_die();
 	}
 	$phone      = $this->functions->validate_phone( $_POST['phone_number'] );
-	$first_name = wp_unslash( $_POST['first_name'] );
-	$last_name  = wp_unslash( $_POST['last_name'] );
-	$date       = str_replace( 'T', ' ', $_POST['date'] );
-	$ip_address = $_POST['ip_address'];
-	$browser    = wp_unslash( $_POST['browser'] );
+	$first_name = wp_unslash( sanitize_text_field( $_POST['first_name'] ) );
+	$last_name  = wp_unslash( sanitize_text_field( $_POST['last_name'] ) );
+	$date       = str_replace( 'T', ' ', sanitize_text_field( $_POST['date'] ) );
+	$ip_address = sanitize_text_field( $_POST['ip_address'] );
+	$browser    = wp_unslash( sanitize_text_field( $_POST['browser'] ) );
 	$this->functions->add_subscriber_db( $first_name, $last_name, $phone, $ip_address, $browser, $date );
 }
 

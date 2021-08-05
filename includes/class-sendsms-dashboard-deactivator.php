@@ -24,7 +24,7 @@ class Sendsms_Dashboard_Deactivator {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
-		$plugin = isset( $_REQUEST['plugin'] ) ? filter_var( $_REQUEST['plugin'], FILTER_SANITIZE_STRING ) : '';
+		$plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field( $_REQUEST['plugin'] ) : '';
 		check_admin_referer( "deactivate-plugin_{$plugin}" );
 		// TODO: add a defined variable for db deletion, options and settings
 	}

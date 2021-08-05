@@ -15,14 +15,14 @@
  * @param string   $message  Optional. Message to display in header. Default empty.
  * @param WP_Error $wp_error Optional. The error to pass. Default is a WP_Error instance.
  */
-function login_header( $title = 'Log In', $message = '', $wp_error = null ) {
+function sendsms_dashboard_login_header( $title = 'Log In', $message = '', $wp_error = null ) {
 	global $error, $interim_login, $action;
 
 	// Don't index any of these forms.
 	add_filter( 'wp_robots', 'wp_robots_sensitive_page' );
 	add_action( 'login_head', 'wp_strict_cross_origin_referrer' );
 
-	add_action( 'login_head', 'wp_login_viewport_meta' );
+	add_action( 'login_head', 'sendsms_dashboard_wp_login_viewport_meta' );
 
 	if ( ! is_wp_error( $wp_error ) ) {
 		$wp_error = new WP_Error();
@@ -179,7 +179,6 @@ function login_header( $title = 'Log In', $message = '', $wp_error = null ) {
 	 *
 	 * @since 4.6.0
 	 */
-	do_action( 'login_header' );
 
 	?>
 	<div id="login">
@@ -195,7 +194,7 @@ function login_header( $title = 'Log In', $message = '', $wp_error = null ) {
 	$message = apply_filters( 'login_message', $message );
 
 	if ( ! empty( $message ) ) {
-		echo $message . "\n";
+		echo esc_html( $message ) . "\n";
 	}
 
 	// In case a plugin uses $error rather than the $wp_errors object.
@@ -241,9 +240,9 @@ function login_header( $title = 'Log In', $message = '', $wp_error = null ) {
 			echo '<p class="message">' . apply_filters( 'login_messages', $messages ) . "</p>\n";
 		}
 	}
-} // End of login_header().
+}
 
-function wp_login_viewport_meta() {
+function sendsms_dashboard_wp_login_viewport_meta() {
 	?>
 	<meta name="viewport" content="width=device-width" />
 	<?php

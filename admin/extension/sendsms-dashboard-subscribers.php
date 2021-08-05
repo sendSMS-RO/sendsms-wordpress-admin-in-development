@@ -40,7 +40,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table {
 			'inline' => sprintf( '<button type="button" data-sendsms-dashboard-phone="%s" class="button-link editinline sendsms-dashboard-subscribers-edit">Edit</button>', $issue['phone'] ),
 			'delete' => sprintf(
 				'<a href="?page=%s&action=%s&phone=%s&_wpnonce=%s">Delete</a>',
-				filter_var( $_REQUEST['page'], FILTER_SANITIZE_STRING ),
+				sanitize_text_field( $_REQUEST['page'] ),
 				'delete',
 				$issue['phone'],
 				$nonce

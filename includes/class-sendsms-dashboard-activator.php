@@ -28,7 +28,7 @@ class Sendsms_Dashboard_Activator {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
-		$plugin = isset( $_REQUEST['plugin'] ) ? filter_var( $_REQUEST['plugin'], FILTER_SANITIZE_STRING ) : '';
+		$plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field( $_REQUEST['plugin'] ) : '';
 		check_admin_referer( "activate-plugin_{$plugin}" );
 
 		$installed_ver = get_option( 'sendsms_dashboard_db_version' );

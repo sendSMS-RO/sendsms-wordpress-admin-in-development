@@ -392,7 +392,7 @@ class Sendsms_Dashboard_Admin {
 		}
 
 		$first_name = wp_unslash(
-			filter_var( $_POST['first_name'], FILTER_SANITIZE_STRING )
+			sanitize_text_field( $_POST['first_name'] )
 		);
 		if ( empty( $first_name ) ) {
 			wp_send_json_error( 'invalid_first_name' );
@@ -400,7 +400,7 @@ class Sendsms_Dashboard_Admin {
 		}
 
 		$last_name = wp_unslash(
-			filter_var( $_POST['last_name'], FILTER_SANITIZE_STRING )
+			sanitize_text_field( $_POST['last_name'] )
 		);
 		if ( empty( $last_name ) ) {
 			wp_send_json_error( 'invalid_last_name' );
@@ -413,7 +413,7 @@ class Sendsms_Dashboard_Admin {
 		$date       = str_replace(
 			'T',
 			' ',
-			filter_var( $_POST['date'], FILTER_SANITIZE_STRING )
+			sanitize_text_field( $_POST['date'] )
 		);
 		$ip_address = '';
 		if ( isset( $_POST['ip_address'] ) ) {
@@ -424,7 +424,7 @@ class Sendsms_Dashboard_Admin {
 			}
 		}
 		$browser = wp_unslash(
-			filter_var( $_POST['browser'], FILTER_SANITIZE_STRING )
+			sanitize_text_field( $_POST['browser'] )
 		);
 		$this->functions->update_subscriber_db( $old_phone, $phone, $first_name, $last_name, $date, $ip_address, $browser );
 		wp_send_json_success(
@@ -597,7 +597,7 @@ class Sendsms_Dashboard_Admin {
 			<div style="display: block;">
 				<label>
 					<input style="margin-top: 0px; margin-right: 5px;" type="checkbox" name="sendsms_dashboard_plugin_settings[2fa_roles][<?php echo $key; ?>]" value="1" <?php echo ( array_key_exists( $key, $setting ) && $setting[ $key ] ) == '1' ? 'checked' : ''; ?>>
-					<?php echo $value['name']; ?>
+					<?php echo esc_html( $value['name'] ); ?>
 				</label>
 			</div>
 			<?php
@@ -831,10 +831,8 @@ class Sendsms_Dashboard_Admin {
 			}
 			$message       = '<p class="message">' . __( 'You have logged in successfully.', 'sendsms-dashboard' ) . '</p>';
 			$interim_login = 'success';
-			if ( ! function_exists( 'login_header' ) ) {
 				include_once SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . 'includes/class-wp-login.php';
-			}
-			login_header( '', $message );
+				sendsms_dashboard_login_header( '', $message );
 			?>
 			</div>
 			<?php

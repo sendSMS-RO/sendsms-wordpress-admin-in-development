@@ -29,7 +29,7 @@
 			<select id="role_selector" class="sendsms-item-input-1 sendsms-hidden">
 				<option value="all">All</option>
 				<?php foreach ( get_editable_roles() as $key => $value ) { ?>
-					<option value="<?php echo $value['name']; ?>"><?php echo $value['name']; ?></option>
+					<option value="<?php echo esc_attr( $value['name'] ); ?>"><?php echo esc_html( $value['name'] ); ?></option>
 				<?php } ?>
 			</select>
 
