@@ -4,7 +4,7 @@ if ( isset( $_POST['add-new-subscriber'] ) ) {
 	if ( ! check_ajax_referer( 'sendsms-dashboard-add-new-subscriber', 'security', false ) ) {
 		wp_die();
 	}
-	$phone      = $this->functions->validate_phone( $_POST['phone_number'] );
+	$phone      = $this->functions->validate_phone( sanitize_text_field( $_POST['phone_number'] ) );
 	$first_name = wp_unslash( sanitize_text_field( $_POST['first_name'] ) );
 	$last_name  = wp_unslash( sanitize_text_field( $_POST['last_name'] ) );
 	$date       = str_replace( 'T', ' ', sanitize_text_field( $_POST['date'] ) );
@@ -77,7 +77,7 @@ $table->prepare_items();
 <!-- This is the add new form -->
 <div id="sendsms-dashboard-overlay" onclick="closeAddNewForm()"></div>
 <div id="sendsms-dashboard-add-new-form">
-	<form id="sendsms-dashboard-add-new-subscriber-form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="POST" style="margin: 10px;">
+	<form id="sendsms-dashboard-add-new-subscriber-form" action="<?php echo esc_url( $_SERVER['REQUEST_URI'] ); ?>" method="POST" style="margin: 10px;">
 		<h2 class="sendsms-add-new-title"><?php echo __( 'Add a new subscriber', 'sendsms-dashboard' ); ?></h2>
 		<div id="sendsms-widget-unsubscribe-error-message" style="color:red"></div>
 		<?php echo wp_nonce_field( 'sendsms-dashboard-add-new-subscriber' ); ?>

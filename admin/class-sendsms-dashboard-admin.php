@@ -379,12 +379,12 @@ class Sendsms_Dashboard_Admin {
 			wp_send_json_error( 'invalid_security_nonce' );
 			wp_die();
 		}
-		$old_phone = $this->functions->clear_phone_number( $_POST['old_phone'] );
+		$old_phone = $this->functions->validate_phone( $_POST['old_phone'] );
 		if ( ! isset( $old_phone ) || is_null( $old_phone ) || ! $this->functions->is_subscriber_db( $old_phone ) ) {
 			wp_send_json_error( 'internal_error' );
 			wp_die();
 		}
-		$phone     = $this->functions->clear_phone_number( $_POST['phone'] );
+		$phone     = $this->functions->validate_phone( $_POST['phone'] );
 		$validDate = $this->functions->validate_date( str_replace( 'T', ' ', $_POST['date'] ), 'Y-m-d H:i:s' );
 		if ( empty( $phone ) ) {
 			wp_send_json_error( 'invalid_phone_number' );
@@ -455,8 +455,8 @@ class Sendsms_Dashboard_Admin {
 		$result = $this->api->message_send(
 			$_POST['short'] == 'true' ? true : false,
 			$_POST['gdpr'] == 'true' ? true : false,
-			isset( $_POST['phone_number'] ) ? wp_unslash( $_POST['phone_number'] ) : '',
-			isset( $_POST['message'] ) ? wp_unslash( $_POST['message'] ) : '',
+			isset( $_POST['phone_number'] ) ? wp_unslash( sanitize_text_field( $_POST['phone_number'] ) ) : '',
+			isset( $_POST['message'] ) ? wp_unslash( sanitize_text_field( $_POST['message'] ) ) : '',
 			'TEST'
 		);
 		if ( $result['status'] > 0 ) {
@@ -485,7 +485,7 @@ class Sendsms_Dashboard_Admin {
 			}
 		} else {
 			$args  = array(
-				'role'   => $_POST['role'] === 'all' ? '' : (string) ( $_POST['role'] ),
+				'role'   => $_POST['role'] === 'all' ? '' : (string) ( sanitize_text_field( $_POST['role'] ) ),
 				'fields' => array( 'ID' ),
 			);
 			$users = get_users( $args );
@@ -502,7 +502,7 @@ class Sendsms_Dashboard_Admin {
 		}
 		$result = $this->api->send_batch(
 			$phones,
-			isset( $_POST['message'] ) ? wp_unslash( $_POST['message'] ) : ''
+			isset( $_POST['message'] ) ? wp_unslash( sanitize_text_field( $_POST['message'] ) ) : ''
 		);
 		if ( $result['status'] > 0 ) {
 			wp_send_json_success( __( 'Message sent', 'sendsms-dashboard' ) );
@@ -574,7 +574,7 @@ class Sendsms_Dashboard_Admin {
 			<option value="INT">International</option>
 			<?php
 			foreach ( $this->functions->country_codes as $key => $value ) {
-				echo "<option value='$key' " . ( $setting == $key ? 'selected' : '' ) . ">$key (+$value)</option>";
+				echo '<option value="' . esc_attr( $key ) . ( $setting == $key ? '" selected>' : '">' ) . esc_html( $key ) . '(+' . esc_html( $value ) . ')</option>';
 			}
 			?>
 		</select>
@@ -596,7 +596,7 @@ class Sendsms_Dashboard_Admin {
 			?>
 			<div style="display: block;">
 				<label>
-					<input style="margin-top: 0px; margin-right: 5px;" type="checkbox" name="sendsms_dashboard_plugin_settings[2fa_roles][<?php echo $key; ?>]" value="1" <?php echo ( array_key_exists( $key, $setting ) && $setting[ $key ] ) == '1' ? 'checked' : ''; ?>>
+					<input style="margin-top: 0px; margin-right: 5px;" type="checkbox" name="sendsms_dashboard_plugin_settings[2fa_roles][<?php echo esc_attr( $key ); ?>]" value="1" <?php echo ( array_key_exists( $key, $setting ) && $setting[ $key ] ) == '1' ? 'checked' : ''; ?>>
 					<?php echo esc_html( $value['name'] ); ?>
 				</label>
 			</div>
@@ -670,7 +670,7 @@ class Sendsms_Dashboard_Admin {
 	 */
 	public function user_register_metadata( $user_id ) {
 		if ( isset( $_POST['sendsms_phone_number'] ) ) {
-			update_user_meta( $user_id, 'sendsms_phone_number', $_POST['sendsms_phone_number'] );
+			update_user_meta( $user_id, 'sendsms_phone_number', sanitize_text_field( $_POST['sendsms_phone_number'] ) );
 		}
 	}
 
@@ -882,7 +882,7 @@ class Sendsms_Dashboard_Admin {
 		}
 
 		if ( empty( trim( $this->functions->get_user_phone( $user->ID ) ) ) ) { // in case he did something shady
-			$phone = wp_unslash( $_POST['phone'] );
+			$phone = wp_unslash( sanitize_text_field( $_POST['phone'] ) );
 		} else {
 			$phone = trim( $this->functions->get_user_phone( $user->ID ) );
 		}

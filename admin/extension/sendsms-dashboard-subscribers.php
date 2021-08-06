@@ -98,7 +98,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table {
 				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'sendsms-dashboard-subscribers-bulk-actions' ) ) {
 					die();
 				}
-				$phone = $this->functions->clear_phone_number( $_GET['phone'] );
+				$phone = $this->functions->validate_phone( $_GET['phone'] );
 				if ( $this->functions->is_subscriber_db( $phone ) ) {
 					$synced = $this->functions->get_subscriber_db( $phone )[0]['synced'];
 					if ( ! is_null( $synced ) ) {
@@ -117,7 +117,7 @@ class Sendsms_Dashboard_Subscribers extends WP_List_Table {
 					die();
 				}
 				foreach ( $_POST['sendsms_dashboard_subscriber'] as $phone ) {
-					$phone = $this->functions->clear_phone_number( $phone );
+					$phone = $this->functions->validate_phone( $phone );
 					if ( $this->functions->is_subscriber_db( $phone ) ) {
 						$synced = $this->functions->get_subscriber_db( $phone )[0]['synced'];
 						if ( ! is_null( $synced ) ) {

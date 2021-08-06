@@ -25,15 +25,15 @@ settings_errors( 'sendsms-dashboard_messages' );
 			<img class="sendsms-image-center-xs" src=<?php echo plugin_dir_url( dirname( __FILE__ ) ) . 'img' . DIRECTORY_SEPARATOR . 'logo-test-area.png'; ?>>
 			<p><?php echo __( 'If you don\'t have an account, you can register <a href="https://hub.sendsms.ro/register" target="_blank">here</a>', 'sendsms-dashboard' ); ?></p>
 			<p>
-			<?php
+				<?php
 				$response = $api->get_user_balance();
-			if ( $response['status'] >= 0 ) {
-				echo __( 'Your current sendsms.ro balance is: €', 'sendsms-dashboard' ) . esc_html( $response['details'] );
-			} else {
-				echo __( 'Please configure your account first', 'sendsms-dashboard' );
-			}
-			?>
-				</p>
+				if ( $response['status'] >= 0 ) {
+					echo __( 'Your current sendsms.ro balance is: €', 'sendsms-dashboard' ) . esc_html( $response['details'] );
+				} else {
+					echo __( 'Please configure your account first', 'sendsms-dashboard' );
+				}
+				?>
+			</p>
 			<ul class="sendsms-setting-list">
 				<?php
 				foreach ( $tabs as $key => $value ) {
@@ -47,7 +47,7 @@ settings_errors( 'sendsms-dashboard_messages' );
 						)
 					);
 					?>
-																		><?php echo $value; ?></a></li>
+					><?php echo esc_html( $value ); ?></a></li>
 					<?php
 				}
 				?>
@@ -68,7 +68,7 @@ settings_errors( 'sendsms-dashboard_messages' );
 
 			foreach ( $tabs as $key => $value ) {
 				?>
-				<div <?php echo $_GET['tab'] != $key ? "style='display:none'" : ''; ?>>
+				<div <?php echo esc_html( $_GET['tab'] ) != $key ? "style='display:none'" : ''; ?>>
 					<?php do_settings_sections( "sendsms_dashboard_plugin_$key" ); ?>
 				</div>
 				<?php
