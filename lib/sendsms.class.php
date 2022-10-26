@@ -5,11 +5,6 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 class SendSMS {
-
-
-
-
-
 	var $functions;
 
 	function __construct() {
@@ -62,9 +57,14 @@ class SendSMS {
 	/**
 	 * Create and send batch messages
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.1
 	 */
 	function send_batch( $phones, $message ) {
+        if (!file_exists(SENDSMS_DASHBOARD_PLUGIN_DIRECTORY.'batches')) {
+            if (!mkdir($concurrentDirectory = SENDSMS_DASHBOARD_PLUGIN_DIRECTORY.'batches') && !is_dir($concurrentDirectory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            }
+        }
 		if ( $file = fopen( SENDSMS_DASHBOARD_PLUGIN_DIRECTORY . 'batches/batch.csv', 'w' ) ) {
 			$this->functions->get_auth( $username, $password, $label );
 			$headers = array(

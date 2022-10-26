@@ -504,7 +504,7 @@ class Sendsms_Dashboard_Admin {
 			$phones,
 			isset( $_POST['message'] ) ? wp_unslash( sanitize_text_field( $_POST['message'] ) ) : ''
 		);
-		if ( $result['status'] > 0 ) {
+		if ( $result['status'] === 0 ) {
 			wp_send_json_success( __( 'Message sent', 'sendsms-dashboard' ) );
 		} else {
 			if ( is_array( $result ) ) {
